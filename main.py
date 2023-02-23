@@ -24,6 +24,40 @@ else:
     print('rejected')
 
 
+"""
+Allows to make our automaton's table more consistent ?
+input = the table corresponding to the actual automaton
+output = the updating table corresponding to the new actual automaton
+-- uses function membership_test
+"""
+def lstar_consistent(Mq, Pref, T, alphabet):
+    for s1 in Pref:
+        for s2 in Pref:
+            for a in alphabet:
+                for e in T:
+                    if Pref[s1] == "RED" and Pref[s2] == "RED" and Mq[str(s1 + e)] == Mq[str(s2 + e)] and Mq[str(s1 + a + e)] != Mq[str(s2 + a + e)]:
+                        T.add(str(a + e))
+                        for x in alphabet:
+                            Mq[str(x + a + e)] = '*'
+
+    membership_test(Mq, Pref, T) # ça c'est la sauce
+    return Mq, Pref, T
+
+
+"""
+Allows to fill the table's automat with a membership test for all empty gaps
+input = the table corresponding to the actual automaton
+output = the updating table corresponding to the same automaton but filled
+"""
+"""def membership_test(automate, Mq, Pref, T, alphabet):
+    for x in alphabet:
+        for y in alphabet:
+            if Mq[x+y] == '*':
+                res = automate.accepts(x+y)
+                Mq[x+y] = res
+    return Mq, Pref, T""" # j'ai fais bordel mais je le laisse lol
+
+
 
 alphabet = [] # j'ai mis pour que ma fonction me fasse pas la tête mais on peut changer ou enlever
 
