@@ -41,7 +41,7 @@ def lstar_consistent(Mq, Pref, T, alphabet):
                             Mq[str(x + a + e)] = '*'
 
     membership_test(Mq, Pref, T) # ça c'est la sauce
-    return Mq, Pref, T
+    return Mq, Pref, T #je me demande est-ce que c'est pas mieux de renvoyer table où table = [Mq, Pref, T]
 
 
 """
