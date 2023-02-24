@@ -30,18 +30,18 @@ input = the table corresponding to the actual automaton
 output = the updating table corresponding to the new actual automaton
 -- uses function membership_test
 """
-def lstar_consistent(Mq, Pref, T, alphabet):
-    for s1 in Pref:
-        for s2 in Pref:
+def lstar_consistent(mq, pref, exp, alphabet):
+    for s1 in pref:
+        for s2 in pref:
             for a in alphabet:
-                for e in T:
-                    if Pref[s1] == "RED" and Pref[s2] == "RED" and Mq[str(s1 + e)] == Mq[str(s2 + e)] and Mq[str(s1 + a + e)] != Mq[str(s2 + a + e)]:
-                        T.add(str(a + e))
+                for e in exp:
+                    if pref[s1] == "RED" and pref[s2] == "RED" and mq[str(s1 + e)] == mq[str(s2 + e)] and mq[str(s1 + a + e)] != mq[str(s2 + a + e)]:
+                        exp.add(str(a + e))
                         for x in alphabet:
-                            Mq[str(x + a + e)] = '*'
+                            mq[str(x + a + e)] = '*'
 
-    membership_test(Mq, Pref, T) # ça c'est la sauce
-    return Mq, Pref, T #je me demande est-ce que c'est pas mieux de renvoyer table où table = [Mq, Pref, T]
+    membership_test(mq, pref, exp) # ça c'est la sauce
+    return mq, pref,exp #je me demande est-ce que c'est pas mieux de renvoyer table où table = [mq, pref, exp]
 
 
 """
@@ -49,13 +49,13 @@ Allows to fill the table's automat with a membership test for all empty gaps
 input = the table corresponding to the actual automaton
 output = the updating table corresponding to the same automaton but filled
 """
-"""def membership_test(automate, Mq, Pref, T, alphabet):
+"""def membership_test(automate, mq, pref, T, alphabet):
     for x in alphabet:
         for y in alphabet:
-            if Mq[x+y] == '*':
+            if mq[x+y] == '*':
                 res = automate.accepts(x+y)
-                Mq[x+y] = res
-    return Mq, Pref, T""" # j'ai fais bordel mais je le laisse lol
+                mq[x+y] = res
+    return mq, pref, T""" # j'ai fais bordel mais je le laisse lol
 
 
 
