@@ -98,28 +98,31 @@ def get_prefixes(word):
 
 def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
-    V = set()
     for u in pref:
         etat = True
         if pref[u] == "red":
-            for v in V:
+            for v in Q:
                 if mq[v] == mq[u]:  #Dois-je le faire pour tous les "v + exp" ???
                     # pauline : je pense que il faut aussi regarder les exp car
                     # c'est toute la "ligne" de 0 et de 1 qui doit être égale si
                     # j'ai bien compris ?
+                    # Carla : Oui tu as compris, il faut que je trouve un moyen efficace de le faire
                     etat = False
                     break
             if etat:
-                V.add(u)
+                Q.add(u)
     F_a = set()
     F_r = set() # pauline : est ce que F_R est utilisé ?
+                # Carla : Non je pense qu'on peut l'effacer. C'était seulement pour suivre le pseudo algo
     delta = {}
     # pauline : ce qui est appelé Q dans le document c'est l'ensemble V
     # ici ? car là je crois que Q est toujours vide ici donc je suis pas
     # sure que le for va boucler
+    # Carla : Ah oui merci c'est bon j'ai corrigé (je pense)
     for q_u in Q :
         # pauline : je pense que epsilon c'est le mot vide donc (si q_u
         # c'est bien le nom de l'état donc u) q_u + epsilon c'est juste q_u ?
+        # Carla : Oui, on peut écrire seulement q_u je crois
         if mq[str(q_u + "lambda")] == 1:
             F_a.add(q_u)
         else:
@@ -132,6 +135,7 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
                     # car là si j'ai bien compris on renvoie vers le premier état tel que
                     # OT[ua][epsilon] = OT[w][epsilon] mais ça doit être égal sur toute la
                     # "ligne" je pense ? ou alors j'ai pas compris
+                    # Carla : Oui c'est bien ça
                     w = y
                     break
             delta[q_u][a] = w
