@@ -35,8 +35,18 @@ def lstar_consistent(mq, pref, exp, alphabet):
         for s2 in pref:
             for a in alphabet:
                 for e in exp:
+                    # pauline : je pense il faut rajouter qqchose ici pour vérifier que on a bien MQ[s1+e] = MQ[s2+e] POUR TOUT e
+                    # (car on veut bien que toute la "ligne" de 0 et de 1 corresponde)
+                    # et genre ensuite chercher un a tel que MQ[s1+a+e] != MQ[s2+a+e]
+                    # peut etre le for s1, for s2, puis vérifier que pour tout e on a MQ[s1+e] = MQ[s2+e]
+                    # et ensuite un for a puis for e pour tester si ils existent ?
+                    # si ça te va
                     if pref[s1] == "RED" and pref[s2] == "RED" and mq[str(s1 + e)] == mq[str(s2 + e)] and mq[str(s1 + a + e)] != mq[str(s2 + a + e)]:
                         exp.add(str(a + e))
+                        # pauline : peut être rajouter break ? car je crois que il faut en trouver que un
+                        # pauline : ce qui est en dessous j'ai pas trop compris, est ce que c'est
+                        # pour remplir les trous de la table ?
+                        # si oui j'aurais mis un for line in pref, un for e in exp et un test de si (line+e) est dans mq
                         for x in alphabet:
                             mq[str(x + a + e)] = '*'
 
