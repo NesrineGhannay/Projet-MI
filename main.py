@@ -85,3 +85,35 @@ def get_prefixes(word):
         prefixes.append(word[0:i])
     return prefixes
 
+
+def lstar_buildautomaton(mq, pref, exp, alphabet):
+    Q = set()
+    V = set()
+    for u in pref:
+        etat = True
+        if pref[u] == "red":
+            for v in V:
+                if mq[v] == mq[u]:  #Dois-je le faire pour tous les "v + exp" ???
+                    etat = False
+                    break
+            if etat:
+                V.add(u)
+    F_a = set()
+    F_r = set()
+    delta = {}
+    for q_u in Q :
+        if mq[str(q_u + "lambda")] == 1:
+            F_a.add(q_u)
+        else:
+            F_r.add(q_u)
+        delta[q_u] = {}
+        for a in alphabet:
+            for y in Q:
+                if mq[str(q_u + a)] == mq[y]:
+                    w = y
+                    break
+            delta[q_u][a] = w
+    return DFA(Q, alphabet, delta, "lambda", F_a)
+
+#On pourrait écrire pref = {"red" : ["lambda", "a", "aa", "aab"], "blue" : [...]} ?
+#On pourra donc accéder directement à red, au lieu de tester pour chaque mot (ligne 92/94)...
