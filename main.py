@@ -24,6 +24,12 @@ else:
     print('rejected')
 
 
+"""
+Allows to make our automaton's table consistent 
+input = the table corresponding to the actual automaton
+output = the updating table corresponding to the new actual automaton
+-- uses function membership_test
+"""
 def lstar_consistent(mq, pref, exp):
     for s1 in pref:
         for s2 in pref:
