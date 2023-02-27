@@ -100,15 +100,18 @@ def get_prefixes(word):
 def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
     for u in pref:
-        etat = True
         if pref[u] == "red":
             for v in Q:
-                if mq[v] == mq[u]:  #Dois-je le faire pour tous les "v + exp" ???
+                etat = False
+                for e in exp :
+                    if mq[v + e] != mq[u + e]:
                     # pauline : je pense que il faut aussi regarder les exp car
                     # c'est toute la "ligne" de 0 et de 1 qui doit être égale si
                     # j'ai bien compris ?
-                    # Carla : Oui tu as compris, il faut que je trouve un moyen efficace de le faire
-                    etat = False
+                    # Carla : Oui tu as compris, je crois que j'ai rectifié
+                        etat = True
+                        break
+                if not etat:
                     break
             if etat:
                 Q.add(u)
