@@ -101,14 +101,11 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
     for u in pref:
         if pref[u] == "red":
+            etat = False  # pauline : je rajoute hors du for pour éviter l'erreur
             for v in Q:
                 etat = False
                 for e in exp :
                     if mq[v + e] != mq[u + e]:
-                    # pauline : je pense que il faut aussi regarder les exp car
-                    # c'est toute la "ligne" de 0 et de 1 qui doit être égale si
-                    # j'ai bien compris ?
-                    # Carla : Oui tu as compris, je crois que j'ai rectifié
                         etat = True
                         break
                 if not etat:
@@ -119,31 +116,31 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
     F_r = set() # pauline : est ce que F_R est utilisé ?
                 # Carla : Non je pense qu'on peut l'effacer. C'était seulement pour suivre le pseudo algo
     delta = {}
-    # pauline : ce qui est appelé Q dans le document c'est l'ensemble V
-    # ici ? car là je crois que Q est toujours vide ici donc je suis pas
-    # sure que le for va boucler
-    # Carla : Ah oui merci c'est bon j'ai corrigé (je pense)
     for q_u in Q :
         # pauline : je pense que epsilon c'est le mot vide donc (si q_u
         # c'est bien le nom de l'état donc u) q_u + epsilon c'est juste q_u ?
         # Carla : Oui, on peut écrire seulement q_u je crois
+        # pauline : je pense que si on met + "lambda" ça ne marchera pas
         if mq[str(q_u + "lambda")] == 1:
             F_a.add(q_u)
         else:
             F_r.add(q_u)
         delta[q_u] = {}
         for a in alphabet:
+            w = "" # pauline : je rajoute hors du for pour éviter l'erreur
             for y in Q:
-                if mq[str(q_u + a)] == mq[y]:
+                if compareOT(mq, exp, str(q_u + a), str(y)) :
+                # if mq[str(q_u + a)] == mq[y]:
                     # pauline : je pense que pareil il faut peut être regarder pour les exp ?
                     # car là si j'ai bien compris on renvoie vers le premier état tel que
                     # OT[ua][epsilon] = OT[w][epsilon] mais ça doit être égal sur toute la
                     # "ligne" je pense ? ou alors j'ai pas compris
                     # Carla : Oui c'est bien ça
+                    # pauline : j'ai proposé une modif du coup
                     w = y
                     break
             delta[q_u][a] = w
-    return DFA(Q, alphabet, delta, "lambda", F_a)
+    return DFA(Q, alphabet, delta, "lambda", F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
 
 #On pourrait écrire pref = {"red" : ["lambda", "a", "aa", "aab"], "blue" : [...]} ?
 #On pourra donc accéder directement à red, au lieu de tester pour chaque mot (ligne 92/94)...
@@ -181,9 +178,13 @@ def membership_test(u):
 def lstar_close(mq, pref, exp, alphabet):
     dernier = exp[len(exp) - 1]
     for s in blue(pref):
-        if different(mq, pref, exp, s):
+        if different(mq, pref, exp, s): # pauline : dsl j'ai pas trop compris cette partie
+            # different ça teste si la dernière colonne de s est differente de toutes les
+            # dernières colonnes de red ? jsp si il faut pas tester sur tous les exp pour que
+            # toute la "ligne" soit identique (jsp si c clair) comme dans la fonction compareOT
             pref[s] = "red"
-            for a in alphabet :
+            for a in alphabet : # pauline : est ce que c'est pas for e in exp plutot ?
+                # ou alors j'ai mal compris
                 mq[s + a + dernier] = membership_test(s + a + dernier)
                 pref[s + a] = "blue"
     return mq, pref, exp
