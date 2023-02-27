@@ -129,14 +129,17 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
         for a in alphabet:
             w = "" # pauline : je rajoute hors du for pour éviter l'erreur
             for y in Q:
-                if compareOT(mq, exp, str(q_u + a), str(y)) :
-                # if mq[str(q_u + a)] == mq[y]:
+                result = True
+                for e in exp:
+                    if mq[str(q_u + a + e)] != mq[y + e]:
                     # pauline : je pense que pareil il faut peut être regarder pour les exp ?
                     # car là si j'ai bien compris on renvoie vers le premier état tel que
                     # OT[ua][epsilon] = OT[w][epsilon] mais ça doit être égal sur toute la
                     # "ligne" je pense ? ou alors j'ai pas compris
-                    # Carla : Oui c'est bien ça
-                    # pauline : j'ai proposé une modif du coup
+                    # Carla : Oui c'est bien ça, je crois avoir corriger
+                        result = False
+                        break
+                if result:
                     w = y
                     break
             delta[q_u][a] = w
