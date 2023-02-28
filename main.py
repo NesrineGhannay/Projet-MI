@@ -1,7 +1,7 @@
 from automata.fa.dfa import DFA
 
 # j'ai mis les tests de la documentation apparemment ça marche
-# j'ai mis aussi frozendict et networkx et pydot parceque automata en a besoin
+# j'ai mis aussi frozendict et networkx et pydot parce que automata en a besoin
 
 # DFA which matches all binary strings ending in an odd number of '1's
 dfa = DFA(
@@ -33,7 +33,7 @@ output = the updating table corresponding to the new actual automaton
 def lstar_consistent(mq, pref, exp):
     for s1 in pref:
         for s2 in pref:
-            if pref[s1] == "RED" and pref[s2] == "RED":
+            if pref[s1] == "red" and pref[s2] == "red":
                 if compareOT(mq, exp, s1, s2):
                     for e in exp:
                         for a in alphabet:
@@ -153,7 +153,6 @@ input = the table corresponding to the actual automaton
 output = the updating table corresponding to the new actual automaton
 -- uses function membership_test
 """
-
 def blue(pref):
     blue = []
     for i in pref:
@@ -167,6 +166,7 @@ def red(pref):
         if pref[i] == "red":
             red.append(i)
     return red
+
 def different(mq, pref, exp, s):
     dernier = exp[len(exp) - 1]
     for u in red(pref):
