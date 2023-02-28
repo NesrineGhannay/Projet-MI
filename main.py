@@ -49,7 +49,14 @@ def lstar_consistent(mq, pref, exp):
 def compareOT(mq, exp, u, v):
     for e in exp:
         if mq[str(u+e)] != mq[str(v+e)] :
-            return False
+            return Falfor v in Q:
+                etat = False
+                for e in exp :
+                    if mq[v + e] != mq[u + e]:
+                        etat = True
+                        break
+                if not etat:
+                    breakse
     return True
 
 
@@ -83,7 +90,7 @@ def LSTAR_USEEQ(mq, pref, exp, answer):
     for line in [*pref]:
         for e in exp:
             if str(line+e) not in mq:
-                mq[str(line+e)] # = membership_query(str(line+e)) # nom temporaire selon comment on fait pour les requetes d'appartenance
+                mq[str(line+e)] = membership_test(str(line+e)) # nom temporaire selon comment on fait pour les requetes d'appartenance
     # return mq, pref, exp # j'allais le mettre mais enft ça modifie direct je pense (j'espère)
 
 
