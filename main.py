@@ -23,6 +23,21 @@ if dfa.accepts_input('0'):
 else:
     print('rejected')
 
+def is_closed(mq, pref, exp):
+    for s in blue(pref):
+        for u in red(pref):
+            if not compareOT(mq, exp, s, u):
+                return False
+    return True
+
+def is_consistent(mq, pref, exp):
+    for s1 in red(pref):
+        for s2 in red(pref):
+            if compareOT(mq, exp, s1, s2):
+                for a in alphabet:
+                    if not compareOT(mq, exp, str(s1+a), str(s2+a)):
+                        return False
+    return True
 
 """
 Allows to make our automaton's table consistent 
