@@ -96,21 +96,22 @@ def get_prefixes(word):
     return prefixes
 
 
+# Create the automaton
 def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
-    for u in pref:
-        if pref[u] == "red":
-            etat = False  # pauline : je rajoute hors du for pour éviter l'erreur
-            for v in Q:
-                etat = False
-                for e in exp :
-                    if mq[v + e] != mq[u + e]:
-                        etat = True
-                        break
-                if not etat:
+    rouge = red(pref)
+    for u in rouge:
+        etat = False  # pauline : je rajoute hors du for pour éviter l'erreur
+        for v in Q:
+            etat = False
+            for e in exp :
+                if mq[v + e] != mq[u + e]:
+                    etat = True
                     break
-            if etat:
-                Q.add(u)
+            if not etat:
+                break
+        if etat:
+            Q.add(u)
     F_a = set()
     F_r = set() # pauline : est ce que F_R est utilisé ?
                 # Carla : Non je pense qu'on peut l'effacer. C'était seulement pour suivre le pseudo algo
@@ -144,9 +145,6 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
             delta[q_u][a] = w
     return DFA(Q, alphabet, delta, "", F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
 
-#On pourrait écrire pref = {"red" : ["lambda", "a", "aa", "aab"], "blue" : [...]} ?
-#On pourra donc accéder directement à red, au lieu de tester pour chaque mot (ligne 92/94)...
-
 """
 Allows to make our automaton's table close ?
 input = the table corresponding to the actual automaton
@@ -167,6 +165,9 @@ def red(pref):
         if pref[i] == "red":
             red.append(i)
     return red
+
+
+
 def different(mq, pref, exp, s):
     dernier = exp[len(exp) - 1]
     for u in red(pref):
