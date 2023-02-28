@@ -101,7 +101,7 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
     rouge = red(pref)
     for u in rouge:
-        etat = True  # pauline : je rajoute hors du for pour éviter l'erreur
+        etat = True
         for v in Q:
             if compareOT(mq, exp, u, v):
                 etat = False
@@ -109,37 +109,18 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
         if etat:
             Q.add(u)
     F_a = set()
-    F_r = set() # pauline : est ce que F_R est utilisé ?
-                # Carla : Non je pense qu'on peut l'effacer. C'était seulement pour suivre le pseudo algo
     delta = {}
     for q_u in Q :
-        # pauline : je pense que epsilon c'est le mot vide donc (si q_u
-        # c'est bien le nom de l'état donc u) q_u + epsilon c'est juste q_u ?
-        # Carla : Oui, on peut écrire seulement q_u je crois
-        # pauline : je pense que si on met + "lambda" ça ne marchera pas
         if mq[str(q_u)] == 1:
             F_a.add(q_u)
-        else:
-            F_r.add(q_u)
         delta[q_u] = {}
         for a in alphabet:
-            w = "" # pauline : je rajoute hors du for pour éviter l'erreur
+            x = q_u + a
             for y in Q:
-                result = True
-                for e in exp:
-                    if mq[str(q_u + a + e)] != mq[y + e]:
-                    # pauline : je pense que pareil il faut peut être regarder pour les exp ?
-                    # car là si j'ai bien compris on renvoie vers le premier état tel que
-                    # OT[ua][epsilon] = OT[w][epsilon] mais ça doit être égal sur toute la
-                    # "ligne" je pense ? ou alors j'ai pas compris
-                    # Carla : Oui c'est bien ça, je crois avoir corriger
-                        result = False
-                        break
-                if result:
-                    w = y
+                if compareOT(mq, exp, x, y):
+                    delta[q_u][a] = y
                     break
-            delta[q_u][a] = w
-    return DFA(states=Q, input_symbols=alphabet, transitions=delta, initial_state="", final_states=F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
+    return DFA(states=Q, input_symbols=alphabet, transitions=delta, initial_state="", final_states=F_a)
 
 """
 Allows to make our automaton's table close ?
@@ -147,6 +128,7 @@ input = the table corresponding to the actual automaton
 output = the updating table corresponding to the new actual automaton
 -- uses function membership_test
 """
+
 def blue(pref):
     blue = []
     for i in pref:
@@ -160,8 +142,6 @@ def red(pref):
         if pref[i] == "red":
             red.append(i)
     return red
-
-
 
 
 def different(mq, pref, exp, s):
