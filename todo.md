@@ -8,4 +8,4 @@ QUESTION :
 
 - Comment faire le test d'équivalence ?
 - Comment faire le test d'appartenance ?
-- Quel est l'alphabet de notre automates ? il est donné ou il faut aussi le determiner ?
+- Quel est l'alphabet de notre automate ? il est donné ou il faut aussi le determiner ?
