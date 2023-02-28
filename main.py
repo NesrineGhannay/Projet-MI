@@ -128,6 +128,7 @@ input = the table corresponding to the actual automaton
 output = the updating table corresponding to the new actual automaton
 -- uses function membership_test
 """
+
 def blue(pref):
     blue = []
     for i in pref:
