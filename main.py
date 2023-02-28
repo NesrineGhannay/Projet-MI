@@ -49,15 +49,7 @@ def lstar_consistent(mq, pref, exp):
 def compareOT(mq, exp, u, v):
     for e in exp:
         if mq[str(u+e)] != mq[str(v+e)] :
-            return Falfor v in Q:
-                etat = False
-                for e in exp :
-                    if mq[v + e] != mq[u + e]:
-                        etat = True
-                        break
-                if not etat:
-                    breakse
-    return True
+
 
 
 
