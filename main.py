@@ -101,14 +101,10 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
     rouge = red(pref)
     for u in rouge:
-        etat = False  # pauline : je rajoute hors du for pour éviter l'erreur
+        etat = True  # pauline : je rajoute hors du for pour éviter l'erreur
         for v in Q:
-            etat = False
-            for e in exp :
-                if mq[v + e] != mq[u + e]:
-                    etat = True
-                    break
-            if not etat:
+            if compareOT(mq, exp, u, v):
+                etat = False
                 break
         if etat:
             Q.add(u)
