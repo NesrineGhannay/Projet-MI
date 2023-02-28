@@ -101,7 +101,7 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
     rouge = red(pref)
     for u in rouge:
-        etat = True  # pauline : je rajoute hors du for pour éviter l'erreur
+        etat = True
         for v in Q:
             if compareOT(mq, exp, u, v):
                 etat = False
@@ -109,18 +109,10 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
         if etat:
             Q.add(u)
     F_a = set()
-    F_r = set() # pauline : est ce que F_R est utilisé ?
-                # Carla : Non je pense qu'on peut l'effacer. C'était seulement pour suivre le pseudo algo
     delta = {}
     for q_u in Q :
-        # pauline : je pense que epsilon c'est le mot vide donc (si q_u
-        # c'est bien le nom de l'état donc u) q_u + epsilon c'est juste q_u ?
-        # Carla : Oui, on peut écrire seulement q_u je crois
-        # pauline : je pense que si on met + "lambda" ça ne marchera pas
         if mq[str(q_u)] == 1:
             F_a.add(q_u)
-        else:
-            F_r.add(q_u)
         delta[q_u] = {}
         for a in alphabet:
             x = q_u + a
@@ -128,7 +120,7 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
                 if compareOT(mq, exp, x, y):
                     delta[q_u][a] = y
                     break
-    return DFA(states=Q, input_symbols=alphabet, transitions=delta, initial_state="", final_states=F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
+    return DFA(states=Q, input_symbols=alphabet, transitions=delta, initial_state="", final_states=F_a)
 
 """
 Allows to make our automaton's table close ?
@@ -149,8 +141,6 @@ def red(pref):
         if pref[i] == "red":
             red.append(i)
     return red
-
-
 
 
 def different(mq, pref, exp, s):
