@@ -172,13 +172,9 @@ def membership_test(u):
 def lstar_close(mq, pref, exp, alphabet):
     dernier = exp[len(exp) - 1]
     for s in blue(pref):
-        if different(mq, pref, exp, s): # pauline : dsl j'ai pas trop compris cette partie
-            # different ça teste si la dernière colonne de s est differente de toutes les
-            # dernières colonnes de red ? jsp si il faut pas tester sur tous les exp pour que
-            # toute la "ligne" soit identique (jsp si c clair) comme dans la fonction compareOT
+        if different(mq, pref, exp, s):
             pref[s] = "red"
-            for a in alphabet : # pauline : est ce que c'est pas for e in exp plutot ?
-                # ou alors j'ai mal compris
+            for a in alphabet :
                 mq[s + a + dernier] = membership_test(s + a + dernier)
                 pref[s + a] = "blue"
     return mq, pref, exp
@@ -206,3 +202,13 @@ def Lstar_Initialise():
     return table
 
 print(Lstar_Initialise())
+
+def isConsistent(mq, pref, exp):
+
+
+def isClose(mq, pref, exp):
+
+def lstar():
+
+    Lstar_Initialise()
+    do while ()
