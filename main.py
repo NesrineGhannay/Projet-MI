@@ -143,7 +143,7 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
                     w = y
                     break
             delta[q_u][a] = w
-    return DFA(Q, alphabet, delta, "", F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
+    return DFA(states=Q, input_symbols=alphabet, transitions=delta, initial_state="", final_states=F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
 
 """
 Allows to make our automaton's table close ?
