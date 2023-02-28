@@ -117,7 +117,9 @@ def get_prefixes(word):
     return prefixes
 
 
-# Create the automaton
+"""
+Create the automaton
+"""
 def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
     rouge = red(pref)
@@ -223,4 +225,4 @@ def lstar():
         answer = equivalence_test(mq, pref, exp)
         if answer != True :
             mq, pref, exp = LSTAR_USEEQ(mq, pref, exp)
-    return lstar_buildautomaton(mq, pref, exp)
+    return lstar_buildautomaton(mq, pref, exp, alphabet)
