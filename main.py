@@ -45,7 +45,8 @@ input = the table corresponding to the actual automaton
 output = the updating table corresponding to the new actual automaton
 -- uses function membership_test
 """
-def lstar_consistent(mq, pref, exp):
+
+def find_consistency_problem(mq, pref, exp):
     for s1 in pref:
         for s2 in pref:
             if pref[s1] == "red" and pref[s2] == "red":
@@ -53,8 +54,13 @@ def lstar_consistent(mq, pref, exp):
                     for e in exp:
                         for a in alphabet:
                             if mq[str(s1 + a + e)] != mq[str(s2 + a + e)]:
-                                exp.add(str(a + e))
-                                break
+                                return a, e
+    return False
+# on a pas eu le temps de modifier mais peut etre que ça sert à rien de faire deux fois tout
+# le parcours : on peut fusionner find_consistency_problem et is_consistent
+def lstar_consistent(mq, pref, exp):
+    a, e = find_consistency_problem(mq, pref, exp)
+    exp.add(str(a + e))
     for line in pref:
         for e in exp:
             if str(line+e) not in mq:
