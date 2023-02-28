@@ -187,3 +187,27 @@ def lstar_close(mq, pref, exp, alphabet):
                 mq[s + a + dernier] = membership_test(s + a + dernier)
                 pref[s + a] = "blue"
     return mq, pref, exp
+
+
+epsilon = 0
+alphabet = {'a','b'}
+
+def Lstar_Initialise():
+    red = []
+    red.append('epsilon')
+    blue = []
+    for l in alphabet:
+        blue.append(l)
+    exp = []
+    exp.append('epsilon')
+    n=len(red) # nombre de lignes
+    m=len(exp) # nombre de colonnes
+    M = 'teste d equivalence'
+    table = [[ '' for j in range(m)] for i in range(n)]
+    print(table)
+    table['epsilon']['epsilon'] = M('epsilon')
+    for lettre in alphabet:
+        table[lettre]['epsilon'] = M(lettre)
+    return table
+
+print(Lstar_Initialise())
