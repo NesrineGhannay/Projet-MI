@@ -143,7 +143,6 @@ input = the table corresponding to the actual automaton
 output = the updating table corresponding to the new actual automaton
 -- uses function membership_test
 """
-
 def blue(pref):
     blue = []
     for i in pref:
@@ -157,7 +156,6 @@ def red(pref):
         if pref[i] == "red":
             red.append(i)
     return red
-
 
 def different(mq, pref, exp, s):
     dernier = exp[len(exp) - 1]
@@ -178,7 +176,6 @@ def lstar_close(mq, pref, exp, alphabet):
                 mq[s + a + dernier] = membership_test(s + a + dernier)
                 pref[s + a] = "blue"
     return mq, pref, exp
-
 
 epsilon = 0
 alphabet = {'a','b'}
@@ -203,12 +200,21 @@ def Lstar_Initialise():
 
 print(Lstar_Initialise())
 
-def isConsistent(mq, pref, exp):
-
-
-def isClose(mq, pref, exp):
+#A implementer, demander a Harry
+def equivalence_test(mq, pref, exp):
+    return True
 
 def lstar():
-
-    Lstar_Initialise()
-    do while ()
+    mq, pref, exp = Lstar_Initialise()
+    a = True
+    while a or answer:
+        a = False
+        while not is_closed(mq, pref, exp) or not is_consistent(mq, pref, exp):
+            if not is_closed(mq, pref, exp) :
+                mq, pref, exp = lstar_close(mq, pref, exp, alphabet)
+            if not is_consistent(mq, pref, exp):
+                mq, pref, exp = lstar_consistent(mq, pref, exp, alphabet)
+        answer = equivalence_test(mq, pref, exp)
+        if answer != True :
+            mq, pref, exp = LSTAR_USEEQ(mq, pref, exp)
+    return lstar_buildautomaton(mq, pref, exp)
