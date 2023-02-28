@@ -121,7 +121,7 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
         # c'est bien le nom de l'état donc u) q_u + epsilon c'est juste q_u ?
         # Carla : Oui, on peut écrire seulement q_u je crois
         # pauline : je pense que si on met + "lambda" ça ne marchera pas
-        if mq[str(q_u + "lambda")] == 1:
+        if mq[str(q_u)] == 1:
             F_a.add(q_u)
         else:
             F_r.add(q_u)
@@ -143,7 +143,7 @@ def lstar_buildautomaton(mq, pref, exp, alphabet):
                     w = y
                     break
             delta[q_u][a] = w
-    return DFA(Q, alphabet, delta, "lambda", F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
+    return DFA(Q, alphabet, delta, "", F_a) # pauline : ici pareil je me demande si il faut pas mettre "" au lieu de "lambda"
 
 #On pourrait écrire pref = {"red" : ["lambda", "a", "aa", "aab"], "blue" : [...]} ?
 #On pourra donc accéder directement à red, au lieu de tester pour chaque mot (ligne 92/94)...
