@@ -1,4 +1,5 @@
 from automata.fa.dfa import DFA
+import Angluin
 
 # j'ai mis les tests de la documentation apparemment ça marche
 # j'ai mis aussi frozendict et networkx et pydot parce que automata en a besoin
