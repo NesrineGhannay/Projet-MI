@@ -60,14 +60,6 @@ class Angluin:
                     return False
         return True
 
-    def is_consistent(self, mq, pref, exp):
-        for s1 in self.red(pref):
-            for s2 in self.red(pref):
-                if self.compareOT(mq, exp, s1, s2):
-                    for a in self.alphabet:
-                        if not self.compareOT(mq, exp, str(s1 + a), str(s2 + a)):
-                            return False
-        return True
 
     def different(self, mq, pref, exp, s):
         dernier = exp[len(exp) - 1]
@@ -100,6 +92,15 @@ class Angluin:
                     mq[s + a + dernier] = self.membership_test(s + a + dernier)
                     pref[s + a] = "blue"
         return mq, pref, exp
+
+    def is_consistent(self, mq, pref, exp):
+        for s1 in self.red(pref):
+            for s2 in self.red(pref):
+                if self.compareOT(mq, exp, s1, s2):
+                    for a in self.alphabet:
+                        if not self.compareOT(mq, exp, str(s1 + a), str(s2 + a)):
+                            return False
+        return True
 
     """
     Allows to make our automaton's table consistent 
