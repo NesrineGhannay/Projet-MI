@@ -73,13 +73,6 @@ class Angluin:
     input = the table corresponding to the actual automaton
     output = the updating table corresponding to the same automaton but filled
     """
-    """def membership_test(automate, mq, pref, T, alphabet):
-        for x in alphabet:
-            for y in alphabet:
-                if mq[x+y] == '*':
-                    res = automate.accepts(x+y)
-                    mq[x+y] = res
-        return mq, pref, T"""  # j'ai fais bordel mais je le laisse lol
     def membership_test(self, u):
         return 0
 
