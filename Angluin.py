@@ -93,14 +93,35 @@ class Angluin:
                     pref[s + a] = "blue"
         return mq, pref, exp
 
-    def is_consistent(self, mq, pref, exp):
+
+    """
+    Allows to find the example who make the table not consistency if she is not
+    input = the table corresponding to the actual automaton
+    output = [False, (a,e)] if the word (a+e) make the table not consistent
+             [True] if the table is consistent
+    """
+    def find_consistency_problem(self, mq, pref, exp):
         for s1 in self.red(pref):
             for s2 in self.red(pref):
                 if self.compareOT(mq, exp, s1, s2):
-                    for a in self.alphabet:
-                        if not self.compareOT(mq, exp, str(s1 + a), str(s2 + a)):
-                            return False
-        return True
+                    for e in exp:
+                        for a in self.alphabet:
+                            if mq[str(s1 + a + e)] != mq[str(s2 + a + e)]:
+                                return [False, (a, e)]
+        return [True]
+
+
+    """
+    Allows to know if the table is consistent or not, thanks to find_consistency_problem
+    input = the table corresponding to the actual automaton
+    output = False (if find_consistency_problem return [False, (a,e)] the table is not consistent)
+             True  (if find_consistency_problem return only [True] the table is consistent)
+    """
+    def is_consistent(self, mq, pref, exp):
+        res = self.find_consistency_problem(self, mq, pref, exp)
+        if res[0]:
+            return True
+        return False
 
     """
     Allows to make our automaton's table consistent 
@@ -108,27 +129,13 @@ class Angluin:
     output = the updating table corresponding to the new actual automaton
     -- uses function membership_test
     """
-    def find_consistency_problem(self, mq, pref, exp):
-        for s1 in pref:
-            for s2 in pref:
-                if pref[s1] == "red" and pref[s2] == "red":
-                    if self.compareOT(mq, exp, s1, s2):
-                        for e in exp:
-                            for a in self.alphabet:
-                                if mq[str(s1 + a + e)] != mq[str(s2 + a + e)]:
-                                    return a, e
-        return False
-
-    # on a pas eu le temps de modifier mais peut etre que ça sert à rien de faire deux fois tout
-    # le parcours : on peut fusionner find_consistency_problem et is_consistent
-
     def lstar_consistent(self, mq, pref, exp):
-        a, e = self.find_consistency_problem(mq, pref, exp)
+        a, e = self.find_consistency_problem(mq, pref, exp)[1]
         exp.add(str(a + e))
         for line in pref:
             for e in exp:
                 if str(line + e) not in mq:
-                    mq[str(line + e)] = '*'  # membership_test(mq, pref, exp)
+                    self.membership_test(self, str(line + e))
 
 
     def equivalence_test(self, mq, pref, exp):
