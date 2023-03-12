@@ -39,7 +39,6 @@ class Angluin:
     output = the updating table corresponding to the new actual automaton
     -- uses function membership_test
     """
-
     def blue(self, pref):
         blue = []
         for i in pref:
@@ -89,7 +88,6 @@ class Angluin:
                     res = automate.accepts(x+y)
                     mq[x+y] = res
         return mq, pref, T"""  # j'ai fais bordel mais je le laisse lol
-
     def membership_test(self, u):
         return 0
 
@@ -109,7 +107,6 @@ class Angluin:
     output = the updating table corresponding to the new actual automaton
     -- uses function membership_test
     """
-
     def find_consistency_problem(self, mq, pref, exp):
         for s1 in pref:
             for s2 in pref:
@@ -132,14 +129,13 @@ class Angluin:
                 if str(line + e) not in mq:
                     mq[str(line + e)] = '*'  # membership_test(mq, pref, exp)
 
-    # A implementer, demander a Harry
+
     def equivalence_test(self, mq, pref, exp):
         return True
 
     """
     Renvoie les préfixes d'un mot sous forme de liste. dsl je sais pas faire la documentation python propre je regarde après, j'ai mis ça pour pas oublier
     """
-
     def get_prefixes(self, word):
         prefixes = []
         for i in range(len(word) + 1):
@@ -165,7 +161,6 @@ class Angluin:
     """
     Create the automaton
     """
-
     def lstar_buildautomaton(self, mq, pref, exp):
         Q = set()
         rouge = self.red(pref)
