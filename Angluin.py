@@ -6,7 +6,7 @@ class Angluin:
     def __init__(self, alphabet, automaton_to_learn):
         self.alphabet = alphabet
         self.automaton = automaton_to_learn
-        #Carla : proposer à mettre Lstar_Initialise() ici
+        # Carla : proposer à mettre Lstar_Initialise() ici
 
     def Lstar_Initialise(self):
         red = []
@@ -26,7 +26,6 @@ class Angluin:
             table[lettre]['epsilon'] = M(lettre)
         return table
 
-
     def compareOT(self, mq, exp, u, v):
         for e in exp:
             if mq[str(u + e)] != mq[str(v + e)]:
@@ -39,6 +38,7 @@ class Angluin:
     output = the updating table corresponding to the new actual automaton
     -- uses function membership_test
     """
+
     def blue(self, pref):
         blue = []
         for i in pref:
@@ -60,7 +60,6 @@ class Angluin:
                     return False
         return True
 
-
     def different(self, mq, pref, exp, s):
         dernier = exp[len(exp) - 1]
         for u in self.red(pref):
@@ -73,6 +72,7 @@ class Angluin:
     input = the table corresponding to the actual automaton
     output = the updating table corresponding to the same automaton but filled
     """
+
     def membership_test(self, u):
         return 0
 
@@ -86,13 +86,13 @@ class Angluin:
                     pref[s + a] = "blue"
         return mq, pref, exp
 
-
     """
     Allows to find the example who make the table not consistency if she is not
     input = the table corresponding to the actual automaton
     output = [False, (a,e)] if the word (a+e) make the table not consistent
              [True] if the table is consistent
     """
+
     def find_consistency_problem(self, mq, pref, exp):
         for s1 in self.red(pref):
             for s2 in self.red(pref):
@@ -103,13 +103,13 @@ class Angluin:
                                 return [False, (a, e)]
         return [True]
 
-
     """
     Allows to know if the table is consistent or not, thanks to find_consistency_problem
     input = the table corresponding to the actual automaton
     output = False (if find_consistency_problem return [False, (a,e)] the table is not consistent)
              True  (if find_consistency_problem return only [True] the table is consistent)
     """
+
     def is_consistent(self, mq, pref, exp):
         res = self.find_consistency_problem(self, mq, pref, exp)
         if res[0]:
@@ -122,6 +122,7 @@ class Angluin:
     output = the updating table corresponding to the new actual automaton
     -- uses function membership_test
     """
+
     def lstar_consistent(self, mq, pref, exp):
         a, e = self.find_consistency_problem(mq, pref, exp)[1]
         exp.add(str(a + e))
@@ -130,13 +131,13 @@ class Angluin:
                 if str(line + e) not in mq:
                     self.membership_test(self, str(line + e))
 
-
     def equivalence_test(self, mq, pref, exp):
         return True
 
     """
     Renvoie les préfixes d'un mot sous forme de liste. dsl je sais pas faire la documentation python propre je regarde après, j'ai mis ça pour pas oublier
     """
+
     def get_prefixes(self, word):
         prefixes = []
         for i in range(len(word) + 1):
@@ -164,30 +165,31 @@ class Angluin:
     Input = the table corresponding to the actual automaton
     Output = the automaton corresponding to the table
     """
+
     def lstar_build_automaton(self, mq, pref, exp):
-        Q = set()
+        states = set()
         red = self.red(pref)
         for u in red:
-            etat = True
-            for v in Q:
+            state = True
+            for v in states:
                 if self.compareOT(mq, exp, u, v):
-                    etat = False
+                    state = False
                     break
-            if etat:
-                Q.add(u)
-        F_a = set()
-        delta = {}
-        for q_u in Q:
-            if mq[str(q_u)] == 1:
-                F_a.add(q_u)
-            delta[q_u] = {}
-            for a in self.alphabet:
-                x = q_u + a
-                for y in Q:
-                    if self.compareOT(mq, exp, x, y):
-                        delta[q_u][a] = y
+            if state:
+                states.add(u)
+        final_states = set()
+        transitions = {}
+        for state in states:
+            if mq[state] == 1:
+                final_states.add(state)
+            transitions[state] = {}
+            for letter in self.alphabet:
+                x = state + letter
+                for other_state in states:
+                    if self.compareOT(mq, exp, x, other_state):
+                        transitions[state][letter] = other_state
                         break
-        return DFA(states=Q, input_symbols=self.alphabet, transitions=delta, initial_state="", final_states=F_a)
+        return DFA(states=states, input_symbols=self.alphabet, transitions=transitions, initial_state="", final_states=final_states)
 
     # Carla : je ne sais pas à quelle méthode cela correspond
     epsilon = 0
