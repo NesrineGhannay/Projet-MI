@@ -27,7 +27,8 @@ class Angluin:
         STA = red + blue
         for colonne in self.exp:
             for ligne in STA:
-                self.mq[str(ligne + "." + colonne)] = fill_the_table(str(ligne + "." + colonne))
+                # self.mq[str(ligne + "." + colonne)] = fill_the_table(str(ligne + "." + colonne))
+                self.fill_the_table(str(ligne + "." + colonne))
 
         return self.mq, self.pref, self.exp
 
