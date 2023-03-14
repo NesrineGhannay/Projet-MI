@@ -28,8 +28,6 @@ class Angluin:
             table[lettre]['epsilon'] = M(lettre)
         return table
 
-    print(Lstar_Initialise())
-
     def compareOT(self, mq, exp, u, v):
         for e in exp:
             if mq[str(u + e)] != mq[str(v + e)]:
@@ -140,7 +138,6 @@ class Angluin:
                 if str(line + e) not in mq:
                     self.membership_test(self, str(line + e))
 
-
     def equivalence_test(self, mq, pref, exp):
         return True
 
@@ -170,32 +167,35 @@ class Angluin:
         # return mq, pref, exp # j'allais le mettre mais enft ça modifie direct je pense (j'espère)
 
     """
-    Create the automaton
+    Allows to create the automaton
+    Input = the table corresponding to the actual automaton
+    Output = the automaton corresponding to the table
     """
-    def lstar_buildautomaton(self, mq, pref, exp):
-        Q = set()
-        rouge = self.red(pref)
-        for u in rouge:
-            etat = True
-            for v in Q:
+
+    def lstar_build_automaton(self, mq, pref, exp):
+        states = set()
+        red = self.red(pref)
+        for u in red:
+            state = True
+            for v in states:
                 if self.compareOT(mq, exp, u, v):
-                    etat = False
+                    state = False
                     break
-            if etat:
-                Q.add(u)
-        F_a = set()
-        delta = {}
-        for q_u in Q:
-            if mq[str(q_u)] == 1:
-                F_a.add(q_u)
-            delta[q_u] = {}
-            for a in self.alphabet:
-                x = q_u + a
-                for y in Q:
-                    if self.compareOT(mq, exp, x, y):
-                        delta[q_u][a] = y
+            if state:
+                states.add(u)
+        final_states = set()
+        transitions = {}
+        for state in states:
+            if mq[state] == 1:
+                final_states.add(state)
+            transitions[state] = {}
+            for letter in self.alphabet:
+                x = state + letter
+                for other_state in states:
+                    if self.compareOT(mq, exp, x, other_state):
+                        transitions[state][letter] = other_state
                         break
-        return DFA(states=Q, input_symbols=self.alphabet, transitions=delta, initial_state="", final_states=F_a)
+        return DFA(states=states, input_symbols=self.alphabet, transitions=transitions, initial_state="", final_states=final_states)
 
     # Carla : je ne sais pas à quelle méthode cela correspond
     epsilon = 0
@@ -214,4 +214,4 @@ class Angluin:
             answer = self.equivalence_test(mq, pref, exp)
             if answer != True:
                 mq, pref, exp = self.LSTAR_USEEQ(mq, pref, exp)  # Carla :cette méthode ne retourne rien pour l'instant
-        return self.lstar_buildautomaton(mq, pref, exp)
+        return self.lstar_build_automaton(mq, pref, exp)
