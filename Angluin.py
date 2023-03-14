@@ -12,21 +12,24 @@ class Angluin:
 
     def Lstar_Initialise(self):
         red = []
-        red.append('epsilon')
+        red.append("")
         blue = []
-        for l in self.alphabet:
-            blue.append(l)
-        exp = []
-        exp.append('epsilon')
-        n = len(red)  # nombre de lignes
-        m = len(exp)  # nombre de colonnes
-        M = 'teste d equivalence'
-        table = [['' for j in range(m)] for i in range(n)]
-        print(table)
-        table['epsilon']['epsilon'] = M('epsilon')
         for lettre in self.alphabet:
-            table[lettre]['epsilon'] = M(lettre)
-        return table
+            blue.append(lettre)
+
+        self.exp.append("")
+
+        for r in red:
+            self.pref[r] = "red"
+        for b in blue:
+            self.pref[b] = "blue"
+
+        STA = red + blue
+        for colonne in self.exp:
+            for ligne in STA:
+                self.mq[str(ligne + "." + colonne)] = fill_the_table(str(ligne + "." + colonne))
+
+        return self.mq, self.pref, self.exp
 
     def compareOT(self, u, v):
         for e in self.exp:
