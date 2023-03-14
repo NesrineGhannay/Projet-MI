@@ -5,7 +5,8 @@ class Angluin:
 
     def __init__(self, alphabet, automaton_to_learn):
         self.alphabet = alphabet
-        self.automate = automaton_to_learn
+        self.automaton = automaton_to_learn
+        #Carla : proposer à initialiser mq, exp et pref ici pour ne pas avoir besoin de les mettre en arguments dans chacune des méthodes
 
     def Lstar_Initialise(self):
         red = []
