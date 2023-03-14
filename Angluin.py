@@ -3,9 +3,9 @@ from automata.fa.dfa import DFA
 
 class Angluin:
 
-    def __init__(self, alphabet, automate_a_apprendre):
+    def __init__(self, alphabet, automaton_to_learn):
         self.alphabet = alphabet
-        self.automate = automate_a_apprendre
+        self.automate = automaton_to_learn
 
     def Lstar_Initialise(self):
         red = []
