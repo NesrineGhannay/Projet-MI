@@ -24,9 +24,9 @@ class Angluin:
         for b in blue:
             self.pref[b] = "blue"
 
-        STA = red + blue
+        # STA = red + blue
         for colonne in self.exp:
-            for ligne in STA:
+            for ligne in self.pref:
                 self.fill_the_table(str(ligne + colonne))
 
 
