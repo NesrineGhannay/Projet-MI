@@ -33,7 +33,7 @@ class DFA(fa.FA):
         object.__setattr__(self, '_word_cache', [])
         object.__setattr__(self, '_count_cache', [])
 
-    def __eq__(self, other):
+    def __eq__(self, other, witness=False):
         """
         Return True if two DFAs are equivalent. Uses an optimized version of
         the Hopcroft-Karp algorithm. See https://arxiv.org/abs/0907.5058
@@ -43,45 +43,67 @@ class DFA(fa.FA):
         if not isinstance(other, DFA) or self.input_symbols != other.input_symbols:
             return NotImplemented
 
-        operand_dfas = (self, other)
-        initial_state_a = (self.initial_state, 0)
+        operand_dfas = (self, other) # tuple avec les deux automates à comparer
+        initial_state_a = (self.initial_state, 0) # le operand index c'est le 2e élément
         initial_state_b = (other.initial_state, 1)
 
         def is_final_state(state_pair):
-            state, operand_index = state_pair
-            return state in operand_dfas[operand_index].final_states
+            state, operand_index = state_pair # operand index c'est pour indiquer lequel des deux automates ça concerne
+            return state in operand_dfas[operand_index].final_states # dit si l'etat est bien un etat final de l'automate correspondant
 
         def transition(state_pair, symbol):
             state, operand_index = state_pair
             return (
                 operand_dfas[operand_index]._get_next_current_state(
                     state, symbol),
-                operand_index
+                operand_index # renvoie un couple avec l'état d'arrivée + dans quel automate on est
             )
 
         # Get data structures
-        state_sets = nx.utils.union_find.UnionFind((initial_state_a, initial_state_b))
+        state_sets = nx.utils.union_find.UnionFind((initial_state_a, initial_state_b)) # je crois c un état qui contient les deux états
+        # en fait non je crois c'est une partition ou on a deux familles qui sont les deux états initiaux
         pair_stack = deque()
 
+        trace = {} # pour associer chaque état de state_sets au mot par lequel on l'a découvert
+
+        print("pair_stack : ", pair_stack)
+
         # Do union find
-        state_sets.union(initial_state_a, initial_state_b)
-        pair_stack.append((initial_state_a, initial_state_b))
+        state_sets.union(initial_state_a, initial_state_b) # et là on fusionne
+        pair_stack.append((initial_state_a, initial_state_b)) # on fait une pile avec toutes les paires d'états ?
+
+        if witness:
+            trace[state_sets[initial_state_a]] = "" # pour arriver à l'état initial on lit le mot epsilon
+
 
         while pair_stack:
-            q_a, q_b = pair_stack.pop()
+            print("\npair_stack : ", pair_stack)
+            q_a, q_b = pair_stack.pop() # on récupère la fin de la deque
+            print("q_a : ", q_a, " ", is_final_state(q_a))
+            print("q_b : ", q_b, " ", is_final_state(q_b))
 
-            if is_final_state(q_a) ^ is_final_state(q_b):
+            if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif !!!!!!!!!!!!!!!!!!
+                if witness :
+                    print("contre-exemple : ", trace[state_sets[q_a]])
+                    return trace[state_sets[q_a]]
                 return False
 
             for symbol in self.input_symbols:
-
+                print("symbol : ", symbol)
                 r_1 = state_sets[transition(q_a, symbol)]
                 r_2 = state_sets[transition(q_b, symbol)]
 
+                print("r_1 : ", r_1)
+                print("r_2 : ", r_2)
+
                 if r_1 != r_2:
                     state_sets.union(r_1, r_2)
+                    if witness :
+                        trace[state_sets[r_1]] = trace[state_sets[q_a]] + symbol
                     pair_stack.append((r_1, r_2))
+                print("trace : ", trace)
 
+        print("equivalence")
         return True
 
     def __le__(self, other):
