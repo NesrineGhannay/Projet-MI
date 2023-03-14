@@ -115,7 +115,7 @@ class Angluin:
     output = False (if find_consistency_problem return [False, (a,e)] the table is not consistent)
              True  (if find_consistency_problem return only [True] the table is consistent)
     """
-    def is_consistent(self, mq, pref, exp):
+    def is_consistent(self):
         res = self.find_consistency_problem()
         if res[0]:
             return True
@@ -202,6 +202,6 @@ class Angluin:
                 if not self.is_consistent():
                     self.lstar_consistent()
             answer = self.equivalence_test()
-            if answer != True:
+            if not answer:
                 self.LSTAR_USEEQ()
         return self.lstar_build_automaton()
