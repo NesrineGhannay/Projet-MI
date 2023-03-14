@@ -74,14 +74,11 @@ class Angluin:
     input = the table corresponding to the actual automaton
     output = the updating table corresponding to the same automaton but filled
     """
-    def membership_test(self, u):
+    def fill_the_table(self, u):
         if self.automate.accept(u):
-
-
-
-
-
-
+            self.mq[u] = 1
+        else:
+            self.mq[u] = 0
 
 
     def lstar_close(self):
@@ -136,7 +133,7 @@ class Angluin:
         for line in pref:
             for e in exp:
                 if str(line + e) not in mq:
-                    self.membership_test(self, str(line + e))
+                    self.fill_the_table(self, str(line + e))
 
     def equivalence_test(self, mq, pref, exp):
         return True
@@ -162,9 +159,10 @@ class Angluin:
         for line in [*pref]:
             for e in exp:
                 if str(line + e) not in mq:
-                    mq[str(line + e)] = self.membership_test(
-                        str(line + e))  # nom temporaire selon comment on fait pour les requetes d'appartenance
+                    # mq[str(line + e)] = self.membership_test(
+                    #     str(line + e))  # nom temporaire selon comment on fait pour les requetes d'appartenance
         # return mq, pref, exp # j'allais le mettre mais enft ça modifie direct je pense (j'espère)
+                    self.fill_the_table(self, str(line+e))
 
     """
     Allows to create the automaton
