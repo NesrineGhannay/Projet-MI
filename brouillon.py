@@ -124,6 +124,8 @@ exp1 = ["", "a"]
 
 #print(lstar_buildautomaton(mq, pref, exp, alphabet))
 
-print(lstar_close(mq, pref, exp, alphabet)[0], lstar_close(mq, pref, exp, alphabet)[1],lstar_close(mq, pref, exp, alphabet)[2])
+#print(lstar_close(mq, pref, exp, alphabet)[0], lstar_close(mq, pref, exp, alphabet)[1],lstar_close(mq, pref, exp, alphabet)[2])
 
 print(lstar_close(mq1, pref1, exp1, alphabet)[0], lstar_close(mq1, pref1, exp1, alphabet)[1],lstar_close(mq1, pref1, exp1, alphabet)[2])
+
+#print(different(mq, pref, exp, "a"))

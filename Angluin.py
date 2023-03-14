@@ -63,11 +63,15 @@ class Angluin:
                     return False
         return True
 
+    def ligne(self, s):
+        list = []
+        for e in self.exp:
+            list.append(self.mq[s + e])
+        return list
 
     def different(self, s):
-        dernier = self.exp[len(self.exp) - 1]
-        for u in self.red(self.pref):
-            if self.mq[s + dernier] == self.mq[u + dernier]:
+        for u in self.red():
+            if self.ligne(s) == self.ligne(u):
                 return False
         return True
 
@@ -82,17 +86,14 @@ class Angluin:
         else:
             self.mq[u] = 0
 
-
     def lstar_close(self):
-        dernier = self.exp[len(self.exp) - 1]
-        for s in self.blue(self.pref):
+        for s in self.blue():
             if self.different(s):
                 self.pref[s] = "red"
                 for a in self.alphabet:
-                    self.mq[s + a + dernier] = self.membership_test(s + a + dernier)
-                    self.pref[s + a] = "blue"
-        return self.mq, self.pref, self.exp
-
+                    for e in self.exp:
+                        self.mq[s + a + e] = self.fill_the_table(s + a + e)
+                        self.pref[s + a] = "blue"
 
     """
     Allows to find the example who make the table not consistency if she is not
