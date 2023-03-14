@@ -41,7 +41,9 @@ class UnionFind:
         self.weights = {}
         for x in elements:
             self.weights[x] = 1
-            self.parents[x] = x
+            self.parents[x] = x # l'identifiant de la classe ?
+
+        print("self.parents : ", self.parents)
 
     def __getitem__(self, object):
         """Find and return the name of the set containing the object."""
@@ -91,6 +93,7 @@ class UnionFind:
     def union(self, *objects):
         """Find the sets containing the objects and merge them all."""
         # Find the heaviest root according to its weight.
+        print("union de ", *objects)
         roots = iter(
             sorted(
                 {self[x] for x in objects}, key=lambda r: self.weights[r], reverse=True
@@ -102,5 +105,6 @@ class UnionFind:
             return
 
         for r in roots:
+            # print("root: ", r)
             self.weights[root] += self.weights[r]
             self.parents[r] = root
