@@ -23,3 +23,4 @@ if dfa.accepts_input('0'):
     print('accepted')
 else:
     print('rejected')
+

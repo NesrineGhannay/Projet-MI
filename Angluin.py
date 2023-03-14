@@ -3,9 +3,12 @@ from automata.fa.dfa import DFA
 
 class Angluin:
 
-    def __init__(self, alphabet, automate_a_apprendre):
+    def __init__(self, alphabet, automate_a_apprendre, mq, pref, exp):
         self.alphabet = alphabet
         self.automate = automate_a_apprendre
+        self.mq = mq
+        self.pref = pref
+        self.exp = exp
 
     def Lstar_Initialise(self):
         red = []
@@ -74,11 +77,18 @@ class Angluin:
     output = the updating table corresponding to the same automaton but filled
     """
     def membership_test(self, u):
-        return 0
+        if self.automate.accept(u):
 
-    def lstar_close(self, mq, pref, exp, alphabet):
-        dernier = exp[len(exp) - 1]
-        for s in self.blue(pref):
+
+
+
+
+
+
+
+    def lstar_close(self):
+        dernier = self.exp[len(self.exp) - 1]
+        for s in self.blue(self.pref):
             if self.different(mq, pref, exp, s):
                 pref[s] = "red"
                 for a in alphabet:
