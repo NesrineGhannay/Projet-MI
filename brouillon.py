@@ -19,25 +19,48 @@ def red(pref):
         if pref[i] == "red":
             red.append(i)
     return red
+# def different(mq, pref, exp, s):
+#     dernier = exp[len(exp) - 1]
+#     for u in red(pref):
+#         if mq[s + dernier] == mq[u + dernier]:
+#             return False
+#     return True
+
+def ligne(mq, exp, s):
+    list = []
+    for e in exp:
+        list.append(mq[s + e])
+    return list
+
 def different(mq, pref, exp, s):
-    dernier = exp[len(exp) - 1]
     for u in red(pref):
-        if mq[s + dernier] == mq[u + dernier]:
+        if ligne(mq, exp, s) == ligne(mq, exp, u):
             return False
     return True
 
 def test_appartenance(u):
     return 0
 
+# def lstar_close(mq, pref, exp, alphabet):
+#     dernier = exp[len(exp) - 1]
+#     for s in blue(pref):
+#         if different(mq, pref, exp, s):
+#             pref[s] = "red"
+#             for a in alphabet :
+#                 mq[s + a + dernier] = test_appartenance(s + a + dernier)
+#                 pref[s + a] = "blue"
+#     return mq, pref, exp
+
 def lstar_close(mq, pref, exp, alphabet):
-    dernier = exp[len(exp) - 1]
     for s in blue(pref):
         if different(mq, pref, exp, s):
             pref[s] = "red"
             for a in alphabet :
-                mq[s + a + dernier] = test_appartenance(s + a + dernier)
-                pref[s + a] = "blue"
+                for e in exp :
+                    mq[s+a+e] = test_appartenance(s+a+e)
+                    pref[s+a] = "blue"
     return mq, pref, exp
+
 
 def lstar_buildautomaton(mq, pref, exp, alphabet):
     Q = set()
@@ -95,6 +118,12 @@ pref = {"":"red", "a":"blue", "b":"blue"}
 exp = [""]
 alphabet = {"a","b"}
 
-print(lstar_buildautomaton(mq, pref, exp, alphabet))
+mq1 = {"": 0, "a":1, "b":1, "aa":0, "ab":1, "ba":0, "aaa":1, "aba":1}
+pref1 = {"":"red", "a":"red", "b":"blue", "aa":"blue", "ab":"blue"}
+exp1 = ["", "a"]
+
+#print(lstar_buildautomaton(mq, pref, exp, alphabet))
 
 print(lstar_close(mq, pref, exp, alphabet)[0], lstar_close(mq, pref, exp, alphabet)[1],lstar_close(mq, pref, exp, alphabet)[2])
+
+print(lstar_close(mq1, pref1, exp1, alphabet)[0], lstar_close(mq1, pref1, exp1, alphabet)[1],lstar_close(mq1, pref1, exp1, alphabet)[2])
