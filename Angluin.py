@@ -191,6 +191,9 @@ class Angluin:
                         break
         return DFA(states=states, input_symbols=self.alphabet, transitions=transitions, initial_state="", final_states=final_states)
 
+    """
+    Programme principal
+    """
     def lstar(self):
         self.Lstar_Initialise()
         a = True
