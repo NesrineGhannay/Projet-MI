@@ -189,7 +189,8 @@ class Angluin:
                     if self.compareOT(x, other_state):
                         transitions[state][letter] = other_state
                         break
-        return DFA(states=states, input_symbols=self.alphabet, transitions=transitions, initial_state="", final_states=final_states)
+        return DFA(states=states, input_symbols=self.alphabet, transitions=transitions,
+                   initial_state="", final_states=final_states)
 
     """
     Programme principal
