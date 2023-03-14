@@ -166,8 +166,8 @@ class Angluin:
     """
     def lstar_build_automaton(self, mq, pref, exp):
         Q = set()
-        rouge = self.red(pref)
-        for u in rouge:
+        red = self.red(pref)
+        for u in red:
             etat = True
             for v in Q:
                 if self.compareOT(mq, exp, u, v):
