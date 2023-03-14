@@ -25,7 +25,6 @@ class Angluin:
             table[lettre]['epsilon'] = M(lettre)
         return table
 
-    print(Lstar_Initialise())
 
     def compareOT(self, mq, exp, u, v):
         for e in exp:
@@ -160,9 +159,11 @@ class Angluin:
         # return mq, pref, exp # j'allais le mettre mais enft ça modifie direct je pense (j'espère)
 
     """
-    Create the automaton
+    Allows to create the automaton
+    Input = the table corresponding to the actual automaton
+    Output = the automaton corresponding to the table
     """
-    def lstar_buildautomaton(self, mq, pref, exp):
+    def lstar_build_automaton(self, mq, pref, exp):
         Q = set()
         rouge = self.red(pref)
         for u in rouge:
@@ -204,4 +205,4 @@ class Angluin:
             answer = self.equivalence_test(mq, pref, exp)
             if answer != True:
                 mq, pref, exp = self.LSTAR_USEEQ(mq, pref, exp)  # Carla :cette méthode ne retourne rien pour l'instant
-        return self.lstar_buildautomaton(mq, pref, exp)
+        return self.lstar_build_automaton(mq, pref, exp)
