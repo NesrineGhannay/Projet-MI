@@ -77,7 +77,7 @@ class Angluin:
     output = the updating table corresponding to the same automaton but filled
     """
     def fill_the_table(self, u):
-        if self.automate.accept(u):
+        if self.automate.accepts_input(u):
             self.mq[u] = 1
         else:
             self.mq[u] = 0
@@ -131,7 +131,7 @@ class Angluin:
     """
     def lstar_consistent(self):
         a, e = self.find_consistency_problem()[1]
-        self.exp.add(str(a + e))
+        self.exp.append(str(a + e))
         for line in self.pref:
             for e in self.exp:
                 if str(line + e) not in self.mq:
