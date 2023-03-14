@@ -133,7 +133,7 @@ class Angluin:
         for line in self.pref:
             for e in self.exp:
                 if str(line + e) not in self.mq:
-                    self.fill_the_table(self, str(line + e))
+                    self.fill_the_table(str(line + e))
 
     def equivalence_test(self):
         return True
@@ -159,10 +159,7 @@ class Angluin:
         for line in [*self.pref]:
             for e in self.exp:
                 if str(line + e) not in self.mq:
-                    # self.mq[str(line + e)] = self.membership_test(
-                    # str(line + e))  # nom temporaire selon comment on fait pour les requetes d'appartenance
-        # return mq, pref, exp # j'allais le mettre mais enft ça modifie direct je pense (j'espère)
-                    self.fill_the_table(self, str(line+e))
+                    self.fill_the_table(str(line+e))
 
     """
     Allows to create the automaton
@@ -195,16 +192,16 @@ class Angluin:
         return DFA(states=states, input_symbols=self.alphabet, transitions=transitions, initial_state="", final_states=final_states)
 
     def lstar(self):
-        mq, pref, exp = self.Lstar_Initialise()
+        self.Lstar_Initialise()
         a = True
         while a or self.answer:
             a = False
-            while not self.is_closed(mq, pref, exp) or not self.is_consistent(mq, pref, exp):
-                if not self.is_closed(mq, pref, exp):
-                    mq, pref, exp = self.lstar_close(mq, pref, exp, self.alphabet)
-                if not self.is_consistent(mq, pref, exp):
-                    mq, pref, exp = self.lstar_consistent(mq, pref, exp)  # Carla :cette méthode ne retourne rien...
-            answer = self.equivalence_test(mq, pref, exp)
+            while not self.is_closed() or not self.is_consistent():
+                if not self.is_closed():
+                    self.lstar_close()
+                if not self.is_consistent():
+                    self.lstar_consistent()
+            answer = self.equivalence_test()
             if answer != True:
-                mq, pref, exp = self.LSTAR_USEEQ(mq, pref, exp)  # Carla :cette méthode ne retourne rien pour l'instant
-        return self.lstar_build_automaton(mq, pref, exp)
+                self.LSTAR_USEEQ()
+        return self.lstar_build_automaton()
