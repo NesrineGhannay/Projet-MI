@@ -9,3 +9,6 @@ QUESTION :
 - Comment faire le test d'équivalence ?
 - Comment faire le test d'appartenance ?
 - Quel est l'alphabet de notre automate ? il est donné ou il faut aussi le determiner ?
+
+# TODO LIST POUR A FAIRE UN JOUR
+- [ ] supprimer les print (et commentaires ?) dans union_find et dfa
