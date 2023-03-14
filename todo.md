@@ -12,3 +12,5 @@ QUESTION :
 
 # TODO LIST POUR A FAIRE UN JOUR
 - [ ] supprimer les print (et commentaires ?) dans union_find et dfa
+- [ ] voir compareOT et ligne dans méthode de kaftar
+- [ ] voir exemple nazrine

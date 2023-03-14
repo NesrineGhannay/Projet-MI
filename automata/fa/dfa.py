@@ -60,7 +60,7 @@ class DFA(fa.FA):
             )
 
         # Get data structures
-        state_sets = nx.utils.union_find.UnionFind((initial_state_a, initial_state_b)) # je crois c un état qui contient les deux états
+        state_sets = nx.utils.union_find.UnionFind((initial_state_a, initial_state_b))
         # en fait non je crois c'est une partition ou on a deux familles qui sont les deux états initiaux
         pair_stack = deque()
 
