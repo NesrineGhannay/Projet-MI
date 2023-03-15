@@ -1,4 +1,5 @@
 from automata.fa.dfa import DFA
+from Angluin import *
 # """
 # Allows to make our automaton's table close ?
 # input = the table corresponding to the actual automaton
@@ -142,17 +143,35 @@ from automata.fa.dfa import DFA
 #
 # #print(different(mq, pref, exp, "a"))
 
-A = DFA(states={"0", "1", "puits"},
-        input_symbols={"b", "a"},
-        transitions={"0" : {"a" : "1", "b" : "0"}, "1" : {"a" : "1", "b" : "puits"}, "puits" : {"a" : "puits", "b" : "puits"}},
-        initial_state="0",
-        final_states={"1"}
-        )
-C = DFA(states={"0", "1", "2","puits"},
-        input_symbols={"b", "a"},
-        transitions={"0" : {"a" : "1", "b" : "0"}, "1" : {"a" : "2", "b" : "puits"}, "2" : {"a" : "2", "b" : "puits"}, "puits" : {"a" : "puits", "b" : "puits"}},
-        initial_state="0",
-        final_states={"2"}
-        )
 
-A.__eq__(C, witness=True)
+# TEST D'ÉQUIVALENCE
+# A = DFA(states={"0", "1", "puits"},
+#         input_symbols={"b", "a"},
+#         transitions={"0" : {"a" : "1", "b" : "0"}, "1" : {"a" : "1", "b" : "puits"}, "puits" : {"a" : "puits", "b" : "puits"}},
+#         initial_state="0",
+#         final_states={"1"}
+#         )
+# C = DFA(states={"0", "1", "2","puits"},
+#         input_symbols={"b", "a"},
+#         transitions={"0" : {"a" : "1", "b" : "0"}, "1" : {"a" : "2", "b" : "puits"}, "2" : {"a" : "2", "b" : "puits"}, "puits" : {"a" : "puits", "b" : "puits"}},
+#         initial_state="0",
+#         final_states={"2"}
+#         )
+#
+# A.__eq__(C, witness=True)
+
+# AUTOMATE LSTAR
+automate = DFA(states={"0", "1", "2", "3"},
+               input_symbols={"a","b"},
+               transitions={
+                   "0" : {"a" : "1", "b" : "3"},
+                   "1" : {"a" : "0", "b" : "2"},
+                   "2" : {"a" : "3", "b" : "1"},
+                   "3" : {"a" : "2", "b" : "0"}
+               },
+               initial_state="0",
+               final_states={"0"}
+)
+
+angluin = Angluin({"a","b"}, automate)
+resultat = angluin.lstar()
