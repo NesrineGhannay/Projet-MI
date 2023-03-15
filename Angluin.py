@@ -3,12 +3,12 @@ from automata.fa.dfa import DFA
 
 class Angluin:
 
-    def __init__(self, alphabet, automate_a_apprendre, mq, pref, exp):
+    def __init__(self, alphabet, automate_a_apprendre):
         self.alphabet = alphabet
         self.automate = automate_a_apprendre
-        self.mq = mq
-        self.pref = pref
-        self.exp = exp
+        self.mq = {}
+        self.pref = {}
+        self.exp = []
 
     def Lstar_Initialise(self):
         red = []
@@ -92,7 +92,8 @@ class Angluin:
                 self.pref[s] = "red"
                 for a in self.alphabet:
                     for e in self.exp:
-                        self.mq[s + a + e] = self.fill_the_table(s + a + e)
+                        # self.mq[s + a + e] = self.fill_the_table(s + a + e)
+                        self.fill_the_table(s + a + e)
                         self.pref[s + a] = "blue"
 
     """
