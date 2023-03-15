@@ -57,10 +57,19 @@ class Angluin:
         return red
 
     def is_closed(self):
-        for s in self.blue():
-            for u in self.red():
-                if not self.compareOT(s, u):
-                    return False
+        # for s in self.blue():
+        #     for u in self.red():
+        #         if not self.compareOT(s, u):
+        #             return False
+        # return True
+        elts_blue = self.blue()
+        elts_red = self.red()
+        lignes_red = set()
+        for u in elts_red :
+            lignes_red.add(str(self.ligne(u)))
+        for s in elts_blue :
+            if not str(self.ligne(s)) in lignes_red:
+                return False
         return True
 
     def ligne(self, s):
@@ -202,13 +211,22 @@ class Angluin:
     def lstar(self):
         self.Lstar_Initialise()
         print("initialisé")
-        a = True
-        while a or self.answer:
+        a = True # pour rentrer dans le while car c'est un do until
+        while a or not answer:
             a = False
             while not self.is_closed() or not self.is_consistent():
                 if not self.is_closed():
                     print("pas fermé")
+                    # print("avant : ")
+                    # print("mq : ", self.mq)
+                    # print("pref : ", self.pref)
+                    # print("exp : ", self.exp)
                     self.lstar_close()
+                    # print("après : ")
+                    # print("mq : ", self.mq)
+                    # print("pref : ", self.pref)
+                    # print("exp : ", self.exp)
+                    print(self.is_closed())
                 if not self.is_consistent():
                     print("pas consistant")
                     self.lstar_consistent()
