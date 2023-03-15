@@ -71,7 +71,7 @@ C = DFA(states={"0", "1", "2","puits"},
 
 # AUTOMATE LSTAR
 automate = DFA(states={"0", "1", "2", "3"},
-               input_symbols={"a","b"},
+               input_symbols={"b","a"},
                transitions={
                    "0" : {"a" : "1", "b" : "3"},
                    "1" : {"a" : "0", "b" : "2"},
@@ -82,5 +82,5 @@ automate = DFA(states={"0", "1", "2", "3"},
                final_states={"0"}
 )
 
-# angluin = Angluin({"a","b"}, automate)
-# resultat = angluin.lstar()
+angluin = Angluin({"a","b"}, automate)
+resultat = angluin.lstar()
