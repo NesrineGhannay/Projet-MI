@@ -102,8 +102,8 @@ class Angluin:
                 for a in self.alphabet:
                     for e in self.exp:
                         # self.mq[s + a + e] = self.fill_the_table(s + a + e)
-                        self.fill_the_table(s + a + e)
-                        self.pref[s + a] = "blue"
+                        self.fill_the_table(str(s + a + e))
+                        self.pref[str(s + a)] = "blue"
 
     """
     Allows to find the example who make the table not consistency if she is not
@@ -212,30 +212,34 @@ class Angluin:
         self.Lstar_Initialise()
         print("initialisé")
         a = True # pour rentrer dans le while car c'est un do until
-        while a or not answer:
+        while a or answer!=True:
             a = False
+            print("BOUCLE WHILE  1 ")
             while not self.is_closed() or not self.is_consistent():
+                print("BOUCLE WHILE 2 : ", "clos : ",self.is_closed(), " consistent : ", self.is_consistent())
+
                 if not self.is_closed():
                     print("pas fermé")
-                    # print("avant : ")
-                    # print("mq : ", self.mq)
-                    # print("pref : ", self.pref)
-                    # print("exp : ", self.exp)
                     self.lstar_close()
-                    # print("après : ")
-                    # print("mq : ", self.mq)
-                    # print("pref : ", self.pref)
-                    # print("exp : ", self.exp)
                     print("fermé ?", self.is_closed())
+
                 if not self.is_consistent():
                     print("pas consistant")
                     self.lstar_consistent()
+                    print("consistent ? ", self.is_consistent())
+
             # answer = self.equivalence_test()
             proposition = self.lstar_build_automaton() # automate construit par l'algo
             answer = proposition.__eq__(self.automate, witness=True) # test d'équivalence
             print("answer: ", answer)
-            if not answer:
+            # if not answer:
+
+            if answer != True:
                 print("l'automate n'est pas bon")
-                self.LSTAR_USEEQ()
+                self.LSTAR_USEEQ(answer)
+
+            else:
+                print("Automate trouvé : ")
+                return proposition
         # return self.lstar_build_automaton()
         return proposition

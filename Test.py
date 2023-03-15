@@ -84,3 +84,4 @@ automate = DFA(states={"0", "1", "2", "3"},
 
 angluin = Angluin({"a","b"}, automate)
 resultat = angluin.lstar()
+print("RESULTAT : ", resultat)
