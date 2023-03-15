@@ -66,7 +66,7 @@ class DFA(fa.FA):
 
         trace = {} # pour associer chaque état de state_sets au mot par lequel on l'a découvert
 
-        print("pair_stack : ", pair_stack)
+        # print("pair_stack : ", pair_stack)
 
         # Do union find
         state_sets.union(initial_state_a, initial_state_b) # et là on fusionne
@@ -77,33 +77,33 @@ class DFA(fa.FA):
 
 
         while pair_stack:
-            print("\npair_stack : ", pair_stack)
+            # print("\npair_stack : ", pair_stack)
             q_a, q_b = pair_stack.pop() # on récupère la fin de la deque
-            print("q_a : ", q_a, " ", is_final_state(q_a))
-            print("q_b : ", q_b, " ", is_final_state(q_b))
+            # print("q_a : ", q_a, " ", is_final_state(q_a))
+            # print("q_b : ", q_b, " ", is_final_state(q_b))
 
             if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif !!!!!!!!!!!!!!!!!!
                 if witness :
-                    print("contre-exemple : ", trace[state_sets[q_a]])
+                    # print("contre-exemple : ", trace[state_sets[q_a]])
                     return trace[state_sets[q_a]]
                 return False
 
             for symbol in self.input_symbols:
-                print("symbol : ", symbol)
+                # print("symbol : ", symbol)
                 r_1 = state_sets[transition(q_a, symbol)]
                 r_2 = state_sets[transition(q_b, symbol)]
 
-                print("r_1 : ", r_1)
-                print("r_2 : ", r_2)
+                # print("r_1 : ", r_1)
+                # print("r_2 : ", r_2)
 
                 if r_1 != r_2:
                     state_sets.union(r_1, r_2)
                     if witness :
                         trace[state_sets[r_1]] = trace[state_sets[q_a]] + symbol
                     pair_stack.append((r_1, r_2))
-                print("trace : ", trace)
+                # print("trace : ", trace)
 
-        print("equivalence")
+        # print("equivalence")
         return True
 
     def __le__(self, other):
