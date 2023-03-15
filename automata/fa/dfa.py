@@ -77,10 +77,7 @@ class DFA(fa.FA):
 
 
         while pair_stack:
-            # print("\npair_stack : ", pair_stack)
             q_a, q_b = pair_stack.pop() # on récupère la fin de la deque
-            # print("q_a : ", q_a, " ", is_final_state(q_a))
-            # print("q_b : ", q_b, " ", is_final_state(q_b))
 
             if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif !!!!!!!!!!!!!!!!!!
                 if witness :
@@ -89,12 +86,8 @@ class DFA(fa.FA):
                 return False
 
             for symbol in self.input_symbols:
-                # print("symbol : ", symbol)
                 r_1 = state_sets[transition(q_a, symbol)]
                 r_2 = state_sets[transition(q_b, symbol)]
-
-                # print("r_1 : ", r_1)
-                # print("r_2 : ", r_2)
 
                 if r_1 != r_2:
                     state_sets.union(r_1, r_2)
