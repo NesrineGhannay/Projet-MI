@@ -71,7 +71,7 @@ C = DFA(states={"0", "1", "2","puits"},
 
 # AUTOMATE LSTAR
 automate = DFA(states={"0", "1", "2", "3"},
-               input_symbols={"b","a"},
+               input_symbols={"a","b"},
                transitions={
                    "0" : {"a" : "1", "b" : "3"},
                    "1" : {"a" : "0", "b" : "2"},

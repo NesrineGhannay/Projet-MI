@@ -148,8 +148,8 @@ class Angluin:
                 if str(line + e) not in self.mq:
                     self.fill_the_table(str(line + e))
 
-    def equivalence_test(self):
-        return True
+    # def equivalence_test(self):
+    #     return True
 
     """
     Renvoie les préfixes d'un mot sous forme de liste. dsl je sais pas faire la documentation python propre je regarde après, j'ai mis ça pour pas oublier
@@ -165,11 +165,13 @@ class Angluin:
         for p in prefixes:
             self.pref[p] = "red"
             for a in self.alphabet:
-                if str(p + a) not in prefixes:
+                # if str(p + a) not in prefixes :
+                if str(p + a) not in prefixes and str(p + a) not in self.pref:
                     self.pref[str(p + a)] = "blue"
         # for line in pref.keys():
         # for line in list(pref.keys()):
-        for line in [*self.pref]:
+        # for line in [*self.pref]:
+        for line in self.pref:
             for e in self.exp:
                 if str(line + e) not in self.mq:
                     self.fill_the_table(str(line+e))
@@ -214,28 +216,43 @@ class Angluin:
         a = True # pour rentrer dans le while car c'est un do until
         while a or answer != True:
             a = False
-
+            print("BOUCLE WHILE  1")
             while not self.is_closed() or not self.is_consistent():
-
+                print("BOUCLE WHILE 2 : ", "clos : ",self.is_closed(), " consistent : ", self.is_consistent())
+                # print("avant")
+                # print("mq : ", self.mq)
+                # print("pref : ", self.pref)
+                # print("exp : ", self.exp)
                 if not self.is_closed():
+                    print("pas fermé")
                     self.lstar_close()
+                    print("fermé ?", self.is_closed())
+                    # print("mq : ", self.mq)
+                    # print("pref : ", self.pref)
+                    # print("exp : ", self.exp)
+
                 if not self.is_consistent():
+                    print("pas consistant")
                     self.lstar_consistent()
+                    print("consistent ? ", self.is_consistent())
+                    # print("mq : ", self.mq)
+                    # print("pref : ", self.pref)
+                    # print("exp : ", self.exp)
 
             # answer = self.equivalence_test()
             proposition = self.lstar_build_automaton() # automate construit par l'algo
             answer = proposition.__eq__(self.automate, witness=True) # test d'équivalence
             print("answer: ", answer)
-            # if not answer:
-
-            print("mq =", self.mq)
-            print("pref =", self.pref)
-            print("exp =", self.exp)
-            print(proposition)
 
             if answer != True:
                 print("l'automate n'est pas bon")
                 self.LSTAR_USEEQ(answer)
+                # print("mq : ", self.mq)
+                # print("pref : ", self.pref)
+                # print("exp : ", self.exp)
 
+            else:
+                print("Automate trouvé : ")
+                return proposition
         # return self.lstar_build_automaton()
         return proposition
