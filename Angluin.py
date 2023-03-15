@@ -200,15 +200,22 @@ class Angluin:
     """
     def lstar(self):
         self.Lstar_Initialise()
+        print("initialisé")
         a = True
         while a or self.answer:
             a = False
             while not self.is_closed() or not self.is_consistent():
                 if not self.is_closed():
+                    print("pas fermé")
                     self.lstar_close()
                 if not self.is_consistent():
+                    print("pas consistant")
                     self.lstar_consistent()
-            answer = self.equivalence_test()
+            # answer = self.equivalence_test()
+            proposition = self.lstar_build_automaton() # automate construit par l'algo
+            answer = proposition.__eq__(self.automate, witness=True) # test d'équivalence
             if not answer:
+                print("l'automate n'est pas bon")
                 self.LSTAR_USEEQ()
-        return self.lstar_build_automaton()
+        # return self.lstar_build_automaton()
+        return proposition
