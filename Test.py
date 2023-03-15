@@ -80,8 +80,23 @@ automate = DFA(states={"0", "1", "2", "3"},
                },
                initial_state="0",
                final_states={"0"}
-)
+) # exemple du document L_STAR_ALGO.pdf
 
 angluin = Angluin({"a","b"}, automate)
 resultat = angluin.lstar()
 print("RESULTAT : ", resultat)
+
+automate2 = DFA(states={"0", "1", "2"},
+                input_symbols={"a", "b"},
+                transitions={
+                    "0" : {"a" : "0", "b" : "1"},
+                    "1" : {"a" : "0", "b" : "2"},
+                    "2" : {"a" : "2", "b" : "2"}
+                },
+                initial_state="0",
+                final_states={"1"}
+) # exemple du document Learning_with_Queries.pdf
+
+angluin2 = Angluin({"a", "b"}, automate2)
+resultat2 = angluin2.lstar()
+print("RESULTAT2 : ", resultat2)
