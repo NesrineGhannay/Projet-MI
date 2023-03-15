@@ -14,3 +14,5 @@ QUESTION :
 - [ ] supprimer les print (et commentaires ?) dans union_find et dfa
 - [ ] voir compareOT et ligne dans méthode de kaftar
 - [ ] voir exemple nazrine
+- [ ] faire le ménage dans les imports
+- [ ] voir pour cohérence brouillon test etc
