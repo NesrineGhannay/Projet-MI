@@ -80,6 +80,7 @@ class DFA(fa.FA):
             q_a, q_b = pair_stack.pop() # on récupère la fin de la deque
 
             if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif !!!!!!!!!!!!!!!!!!
+                print("!!!!!!!!! LA ON A", q_a, is_final_state(q_a))
                 if witness :
                     # print("contre-exemple : ", trace[state_sets[q_a]])
                     return trace[state_sets[q_a]]
@@ -94,7 +95,6 @@ class DFA(fa.FA):
                     if witness :
                         trace[state_sets[r_1]] = trace[state_sets[q_a]] + symbol
                     pair_stack.append((r_1, r_2))
-                # print("trace : ", trace)
 
         # print("equivalence")
         return True

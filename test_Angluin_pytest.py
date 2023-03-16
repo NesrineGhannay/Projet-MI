@@ -14,8 +14,6 @@ testA = Angluin({"a", "b"}, A,
                 mq={"" : 0, "a" : 1, "b" : 0, "aa" : 1, "ab" : 0},
                pref={"" : "red", "a" : "red", "b": "blue", "aa": "blue", "ab": "blue"}, exp=[""])
 
-print(testA.lstar_build_automaton())
-
 
 #On teste la méthode lstar_build_automaton() en supposant que l'automate à deviner est B
 B = DFA(states={"0", "1"},
@@ -31,5 +29,8 @@ testB = Angluin({"a", "b"}, B,
                pref={"" : "red", "a" : "red", "b": "blue", "aa": "red", "ab": "blue", "aab" : "red", "aaba" : "blue", "aabb": "blue"},
                 exp=[""])
 
-
-print(testB.lstar_build_automaton())
+def test_lstar_build_automaton():
+    resultA  = testA.lstar_build_automaton()
+    resultB = testB.lstar_build_automaton()
+    assert resultA == A
+    assert resultB == B
