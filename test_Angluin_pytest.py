@@ -126,15 +126,15 @@ angluin2 = Angluin({"a", "b"}, automate2)
 resultat2 = angluin2.lstar()
 print("RESULTAT2 : ", resultat2)
 
-#et qu'avec les méthodes de l'algo d'Angluin, on ait obtenu mq, pref et exp tels que :
+
+#Tables d'observation à tester sur les DFA
+
 testA = Angluin({"a", "b"}, A,
-                mq={"" : 0, "a" : 1, "b" : 0, "aa" : 1, "ab" : 0},
-               pref={"" : "red", "a" : "red", "b": "blue", "aa": "blue", "ab": "blue"}, exp=[""])
+                mq={"" : 0, "a" : 1, "b" : 0, "aa" : 1, "ab" : 0, "aba": 0, "abaa": 0, "abaaa" : 0, "abab" : 0, "ababa" : 0, "aaa" : 1, "ba" : 1},
+               pref={"" : "red", "a" : "red", "b": "blue", "aa": "blue", "ab": "blue", "aba" : "red", "abaa":"blue", "abab":"blue"}, exp=["", "a"])
 
-
-#et qu'avec les méthodes de l'algo d'Angluin, on ait obtenu mq, pref et exp tels que :
 testB = Angluin({"a", "b"}, B,
-                mq={"" : 0, "a" : 0, "b" : 1, "aa" : 0, "ab" : 1, "aab": 1, "aaba": 0, "aabb" : 1, "aaa": 0, "ba" : 0, "aba": 0, "aabaa" : 0, "aabba" :0},
+                mq={"" : 0, "a" : 0, "b" : 1, "aa" : 0, "ab" : 1, "aab": 1, "aaba": 0, "aabb" : 1},
                pref={"" : "red", "a" : "red", "b": "blue", "aa": "red", "ab": "blue", "aab" : "red", "aaba" : "blue", "aabb": "blue"},
                 exp=[""])
 
@@ -146,4 +146,5 @@ def test___init__():
 def test_lstar_build_automaton():
     resultA = testA.lstar_build_automaton()
     resultB = testB.lstar_build_automaton()
+    assert resultA.__eq__(A)
     assert resultB.__eq__(B)
