@@ -127,7 +127,7 @@ resultat2 = angluin2.lstar()
 print("RESULTAT2 : ", resultat2)
 
 
-#Tables d'observation à tester sur les DFA
+#Carla : Tables d'observation à tester sur les DFA
 
 testA = Angluin({"a", "b"}, A,
                 mq={"" : 0, "a" : 1, "b" : 0, "aa" : 1, "ab" : 0, "aba": 0, "abaa": 0, "abaaa" : 0, "abab" : 0, "ababa" : 0, "aaa" : 1, "ba" : 1},

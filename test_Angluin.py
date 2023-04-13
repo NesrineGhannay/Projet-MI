@@ -106,9 +106,8 @@ pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blu
 exp = ['', 'a']
 
 
-table_non_consistente = Angluin({"a", "b"}, A, mq0, pref0, exp0)      #TODO : Quels sont les automates qui pourraient convenir à ces tables ? (Ici j'ai mis A par défaut : n'impacte pas les résultats de compare_OT)
-table_consistente = Angluin({"a", "b"}, A, mq, pref, exp)
-
+table_non_consistente = Angluin({"a", "b"}, automate_test_A2, mq0, pref0, exp0)     #correspond à before_automate de test_Angluin_pytest
+table_consistente = Angluin({"a", "b"}, automate_test_A2, mq, pref, exp)            #correspond à learned_automate de test_Angluin_pytest
 
 def test_fill_the_table():
     angluin_A.fill_the_table("")
@@ -187,11 +186,15 @@ def test_lstar_close():
 
 
 def test_find_consistency_problem():
-    assert False
+    assert table_consistente.find_consistency_problem() == [True]
+    assert table_non_consistente.find_consistency_problem() == [False, ("a", "")] or table_non_consistente.find_consistency_problem() == [False, ("b", "")]
+    #TODO : pour le 2nd assert c'est juste mais voir s'il y a moyen de simplifier
 
 
 def test_is_consistent():
-    assert False
+    assert table_non_consistente.is_consistent() == False       #correspond à ligne 112 de test_Angluin_pytest
+    assert table_consistente.is_consistent() == True
+
 
 
 def test_lstar_consistent():
