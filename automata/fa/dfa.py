@@ -61,7 +61,8 @@ class DFA(fa.FA):
 
         # Get data structures
         state_sets = nx.utils.union_find.UnionFind((initial_state_a, initial_state_b))
-        # en fait non je crois c'est une partition ou on a deux familles qui sont les deux états initiaux
+        # je crois c'est comme une partition ou on a deux familles qui sont les deux états initiaux
+        # et après on les "fusionne"
         pair_stack = deque()
 
         trace = {} # pour associer chaque état de state_sets au mot par lequel on l'a découvert
@@ -70,17 +71,17 @@ class DFA(fa.FA):
 
         # Do union find
         state_sets.union(initial_state_a, initial_state_b) # et là on fusionne
-        pair_stack.append((initial_state_a, initial_state_b)) # on fait une pile avec toutes les paires d'états ?
+        pair_stack.append((initial_state_a, initial_state_b)) # on fait une pile avec toutes les paires d'états
 
         if witness:
-            trace[state_sets[initial_state_a]] = "" # pour arriver à l'état initial on lit le mot epsilon
+            trace[state_sets[initial_state_a]] = "" # pour arriver à l'état initial on doit lire le mot epsilon
 
 
         while pair_stack:
             q_a, q_b = pair_stack.pop() # on récupère la fin de la deque
 
-            if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif !!!!!!!!!!!!!!!!!!
-                print("!!!!!!!!! LA ON A", q_a, is_final_state(q_a))
+            if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif
+                # print("!!!!!!!!! LA ON A", q_a, is_final_state(q_a))
                 if witness :
                     # print("contre-exemple : ", trace[state_sets[q_a]])
                     return trace[state_sets[q_a]]
@@ -99,7 +100,7 @@ class DFA(fa.FA):
         # print("equivalence")
         return True
 
-    def __le__(self, other):
+    def __le__(self, other, witness=False):
         """Return True if this DFA is a subset of (or equal to) another DFA."""
         if isinstance(other, DFA):
             return self.issubset(other)
@@ -552,7 +553,7 @@ class DFA(fa.FA):
             allow_partial=self.allow_partial
         )
 
-    def _cross_product(self, other, state_target_fn, *, should_construct_dfa, retain_names=False):
+    def _cross_product(self, other, state_target_fn, *, should_construct_dfa, retain_names=False, witness=False):
         """
         Search reachable states corresponding to product graph between self and other.
 
@@ -578,15 +579,22 @@ class DFA(fa.FA):
         visited_set = set()
         queue = deque()
 
+        trace = {} # pour associer chaque paire d'états au mot par lequel on l'a découvert
+
         product_initial_state = (self.initial_state, other.initial_state)
         product_initial_state_name = get_name(product_initial_state)
 
         queue.append(product_initial_state)
         visited_set.add(product_initial_state_name)
 
+        if witness:
+            trace[product_initial_state_name] = "" # pour arriver à l'état initial on doit lire le mot epsilon
+            ancienetat = product_initial_state_name
+
         while queue:
             # Get next state in BFS queue
             curr_state = queue.popleft()
+            curr_state_name = get_name(curr_state)
 
             # Add state to the transition dict if constructing DFA
             if should_construct_dfa:
@@ -598,7 +606,13 @@ class DFA(fa.FA):
 
             # Otherwise, just check the target function
             elif state_target_fn(curr_state):
-                return True
+                if witness :
+                    # print("contre-exemple : ", trace[state_sets[q_a]])
+                    contreexemple = trace[curr_state_name]
+                    return True, contreexemple
+                return True # si l'état de A est final et celui de B n'est pas final
+                # i.e. le mot est dans L(A) n Sigma* \ L(B) qui est censé être vide
+                # si on veut l'inclusion
 
             # Unpack state and get transitions
             q_a, q_b = curr_state
@@ -606,8 +620,11 @@ class DFA(fa.FA):
             transitions_b = other.transitions[q_b]
 
             for chr in self.input_symbols:
-                product_state = (transitions_a[chr], transitions_b[chr])
+                product_state = (transitions_a[chr], transitions_b[chr]) # état d'arrivée
                 product_state_name = get_name(product_state)
+
+                if witness:
+                    trace[product_state_name] = trace[ancienetat] + chr
 
                 if should_construct_dfa:
                     state_transitions[chr] = product_state_name
@@ -616,13 +633,16 @@ class DFA(fa.FA):
                 if product_state_name not in visited_set:
                     visited_set.add(product_state_name)
                     queue.append(product_state)
+            ancienetat = curr_state_name
 
         if should_construct_dfa:
             return visited_set, product_transitions, product_initial_state_name, final_states
 
+        if witness:
+            return [False]
         return False
 
-    def issubset(self, other):
+    def issubset(self, other, witness=False):
         """Return True if this DFA is a subset of another DFA."""
 
         def subset_state_fn(state_pair):
@@ -630,7 +650,15 @@ class DFA(fa.FA):
             q_a, q_b = state_pair
             return q_a in self.final_states and q_b not in other.final_states
 
+        if witness:
+            resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True)
+            if resultat[0]:
+                return resultat[1] # le contre exemple
+            else :
+                return False
         return not self._cross_product(other, subset_state_fn, should_construct_dfa=False)
+        # on met should_construct_DFA à faux car on veut juste tester l'inclusion donc on fait
+        # le produit sans construire l'automate
 
     def issuperset(self, other):
         """Return True if this DFA is a superset of another DFA."""
