@@ -78,6 +78,10 @@ class Angluin:
             list.append(self.mq[s + e])
         return list
 
+
+    """
+    Vérifie si la ligne correspondant à s est différente de toutes les lignes correspondantes à red
+    """
     def different(self, s):
         for u in self.red():
             if self.ligne(s) == self.ligne(u):

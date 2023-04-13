@@ -151,13 +151,6 @@ def test_red():
     #même red pour table_consistente
 
 
-def test_is_closed():
-    assert table_non_consistente.is_closed() == True
-    assert table_consistente.is_closed() == True
-    angluin_A.Lstar_Initialise()
-    assert angluin_A.is_closed() == False
-
-
 def test_ligne():
     angluin_A.Lstar_Initialise()
     assert angluin_A.ligne("") == [0]
@@ -165,16 +158,25 @@ def test_ligne():
     assert angluin_A.ligne("b") == [0]
     assert table_consistente.ligne("") == [1, 0]
     assert table_consistente.ligne("a") == [0, 1]
-    assert table_consistente.ligne("ab") == [0, 0]
     assert table_consistente.ligne("b") == [0, 0]
+    assert table_consistente.ligne("ab") == [0, 0]
 
 
 def test_different():
-    assert False
+    angluin_A.Lstar_Initialise()
+    assert angluin_A.different("a") == True     #la ligne correspondante à "a" est différente de toutes les lignes correspondantes à red
+    assert angluin_A.different("b") == False
+    assert table_consistente.different("ab") == False
 
 
 def test_lstar_close():
     assert False
+
+def test_is_closed():
+    assert table_non_consistente.is_closed() == True
+    assert table_consistente.is_closed() == True
+    angluin_A.Lstar_Initialise()
+    assert angluin_A.is_closed() == False
 
 
 def test_find_consistency_problem():
