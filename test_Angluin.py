@@ -152,7 +152,10 @@ def test_red():
 
 
 def test_is_closed():
-    assert False
+    assert table_non_consistente.is_closed() == True
+    assert table_consistente.is_closed() == True
+    angluin_A.Lstar_Initialise()
+    assert angluin_A.is_closed() == False
 
 
 def test_ligne():
