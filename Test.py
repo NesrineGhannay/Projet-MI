@@ -26,3 +26,5 @@ A = DFA(states={"0", "1", "puits"},
         initial_state="0",
         final_states={"1"}
         )
+
+print(AB.__le__(A, True))
