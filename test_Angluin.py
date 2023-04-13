@@ -159,7 +159,14 @@ def test_is_closed():
 
 
 def test_ligne():
-    assert False
+    angluin_A.Lstar_Initialise()
+    assert angluin_A.ligne("") == [0]
+    assert angluin_A.ligne("a") == [1]
+    assert angluin_A.ligne("b") == [0]
+    assert table_consistente.ligne("") == [1, 0]
+    assert table_consistente.ligne("a") == [0, 1]
+    assert table_consistente.ligne("ab") == [0, 0]
+    assert table_consistente.ligne("b") == [0, 0]
 
 
 def test_different():
