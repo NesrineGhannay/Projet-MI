@@ -210,7 +210,9 @@ def test_lstar_consistent():    #TODO : fonctionne une fois sur 2 tout dépend s
 
 
 def test_get_prefixes():
-    assert False
+    angluin_A = Angluin({"a", "b"}, A)
+    mot = "abaabbb"
+    assert angluin_A.get_prefixes(mot) == ["", "a", "ab", "aba", "abaa", "abaab", "abaabb", "abaabbb"]
 
 
 def test_lstar_useeq():
