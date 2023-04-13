@@ -142,11 +142,13 @@ def test_compare_ot():
 
 
 def test_blue():
-    assert False
+    assert table_non_consistente.blue() == ["aa", "ab", "ba", "bba", "bbb"]
+    #même blue pour table_consistente
 
 
 def test_red():
-    assert False
+    assert table_non_consistente.red() == ["", "a", "b", "bb"]
+    #même red pour table_consistente
 
 
 def test_is_closed():
