@@ -4,6 +4,10 @@ from automata.fa.dfa import DFA
 from automata.fa.dfa import DFA
 from Angluin import *
 
+
+#TODO : corriger le problème de lancer le programme de test en entier
+
+
 # Some DFA :
 
 A = DFA(states={"0", "1", "puits"},
@@ -87,7 +91,7 @@ automate2 = DFA(states={"0", "1", "2"},
                 )  # exemple du document Learning_with_Queries.pdf
 
 # List of DFA with whom we test our functions :
-dfa_to_test = [A, B, C, odd_number_of_1, automate_test_A2, automate, automate2]
+dfa_to_test = [A, B, C, automate_test_A2, automate, automate2] #odd_number
 
 
 #Some tables :
@@ -241,4 +245,7 @@ def test_lstar_build_automaton():
 
 
 def test_lstar():
-    assert False
+    for a in dfa_to_test :
+        angluin = Angluin({"a", "b"}, a)
+        assert angluin.lstar().__eq__(a)
+    #TODO : ne pas oublier de le tester sur odd_number_of_1 aussi
