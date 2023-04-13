@@ -188,7 +188,7 @@ def test_lstar_close():
 def test_find_consistency_problem():
     assert table_consistente.find_consistency_problem() == [True]
     assert table_non_consistente.find_consistency_problem() == [False, ("a", "")] or table_non_consistente.find_consistency_problem() == [False, ("b", "")]
-    #TODO : pour le 2nd assert c'est juste mais voir s'il y a moyen de simplifier
+    #pour le 2nd assert c'est juste mais voir s'il y a moyen de simplifier
 
 
 def test_is_consistent():
