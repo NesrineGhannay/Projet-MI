@@ -103,7 +103,7 @@ class DFA(fa.FA):
     def __le__(self, other, witness=False):
         """Return True if this DFA is a subset of (or equal to) another DFA."""
         if isinstance(other, DFA):
-            return self.issubset(other)
+            return self.issubset(other, witness)
         else:
             return NotImplemented
 
@@ -652,6 +652,7 @@ class DFA(fa.FA):
 
         if witness:
             resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True)
+            print(resultat)
             if resultat[0]:
                 return resultat[1] # le contre exemple
             else :
