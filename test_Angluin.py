@@ -169,14 +169,21 @@ def test_different():
     assert table_consistente.different("ab") == False
 
 
-def test_lstar_close():
-    assert False
-
 def test_is_closed():
     assert table_non_consistente.is_closed() == True
     assert table_consistente.is_closed() == True
     angluin_A.Lstar_Initialise()
     assert angluin_A.is_closed() == False
+
+
+def test_lstar_close():
+    angluin_A.Lstar_Initialise()
+    angluin_A.lstar_close()
+    assert angluin_A.alphabet == {"a", "b"}
+    assert angluin_A.automate == A
+    assert angluin_A.mq == {"" : 0, "a": 1, "b" : 0, "ab" : 0, "aa" : 1}
+    assert angluin_A.pref == {"" : "red", "a" : "red", "b" : "blue", "aa" : "blue", "ab" : "blue"}
+    assert angluin_A.exp == [""]
 
 
 def test_find_consistency_problem():
