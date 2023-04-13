@@ -184,24 +184,29 @@ class Angluin:
     def lstar_build_automaton(self):
         states = set()
         red = self.red()
+        classes = []
+        i = 0
         for u in red:
             state = True
-            for v in states:
+            for state in states:
+                v = classes[state]
                 if self.compareOT(u, v):
                     state = False
                     break
             if state:
-                states.add(u)
+                classes.append(u)
+                states.add(i)
+                i += 1
         final_states = set()
         transitions = {}
         for state in states:
-            if self.mq[state] == 1:
+            if self.mq[classes[state]] == 1:
                 final_states.add(state)
             transitions[state] = {}
             for letter in self.alphabet:
-                x = state + letter
+                x = classes[state] + letter
                 for other_state in states:
-                    if self.compareOT(x, other_state):
+                    if self.compareOT(x, classes[other_state]):
                         transitions[state][letter] = other_state
                         break
         return DFA(states=states, input_symbols=self.alphabet, transitions=transitions,

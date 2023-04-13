@@ -139,8 +139,7 @@ testB = Angluin({"a", "b"}, B,
                 exp=[""])
 
 
-def test___init__():
-    assert False
+
 
 
 def test_lstar_build_automaton():
