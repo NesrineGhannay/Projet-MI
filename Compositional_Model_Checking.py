@@ -44,10 +44,11 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
 
 # Produit parallele : Lidia
 def print_transitions(T):
+    print("T ", T)
     for source in T:
         for label in T[source]:
-            for target in T[source][label]:
-                print("Transition from", source, "to", target, "labelled by", label)
+            target = T[source][label]
+            print("Transition from", source, "to", target, "labelled by", label)
 def synchronization(M1, M2):
     T = {}
     T1 = M1.transitions
@@ -59,10 +60,12 @@ def synchronization(M1, M2):
                     if a == b:
                         if not ((q1, q2) in T):
                             T[(q1, q2)] = {}
-                        target = set()
-                        for t1 in T1[q1][a]:
-                            for t2 in T2[q2][b]:
-                                target.add((t1, t2))
+                        target = (T1[q1][a], T2[q2][b])
+                        # for t1 in T1[q1][a]:
+                        #     print("T1[q1][a] ", T1[q1][a])
+                        #     for t2 in T2[q2][b]:
+                        #         print(t1, " ", t2)
+                        #         target.add((t1, t2))
                         T[(q1, q2)][a] = target
     return T
 
@@ -76,17 +79,21 @@ def interleaving(T, M1, M2):
                 if a not in M2.input_symbols:
                     if not ((q1, q2) in T):
                         T[(q1, q2)] = {}
-                    target = set()
-                    for t1 in T1[q1][a]:
-                        target.add((t1, q2))
+                    target = (T1[q1][a], q2)
+                    # target = set()
+                    # for t1 in T1[q1][a]:
+                    #     print("(t1, q2) ", (t1, q2))
+                    #     target.add((t1, q2))
                     T[(q1, q2)][a] = target
             for b in T2[q2]:
                 if b not in M1.input_symbols:
                     if not ((q1, q2) in T):
                         T[(q1, q2)] = {}
-                    target = set()
-                    for t2 in T2[q2][b]:
-                        target.add((q1, t2))
+                    target = (q1, T2[q2][b])
+                    # target = set()
+                    # for t2 in T2[q2][b]:
+                    #     print("(q1, t2) ", (q1, t2))
+                    #     target.add((q1, t2))
                     T[(q1, q2)][b] = target
     return T
 
@@ -121,33 +128,40 @@ def parallel_composition(M1, M2):
     # ATTENTION ETAT FINAL PAS FAIT
     final = recupetatsfinaux(M1.final_states,M2.final_states)
     #return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=M1.final_states)
-    return completedAutomata(Q, aM, T_, q_0, final)
+    print("Q ", Q)
+    print("aM ", aM)
+    print("T_ ", T_)
+    print("q0 ", q_0)
+    print("final ", final)
+    return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=final, allow_partial=True)
 
-A = completedAutomata(
+A = DFA(
         states = {"0", "1", "2"},
-        alphabet = {"in", "send", "ack"},
+        input_symbols = {"in", "send", "ack"},
         transitions = {
             "0": {"in" : "1"},
             "1": {"send" : "2"},
             "2": {"ack" : "0"}
                         },
         initial_state = "0",
-        final_states = {"2"}
+        final_states = {"2"},
+        allow_partial=True
         )
 
-B = completedAutomata(
+B = DFA(
         states = {"a", "b", "c"},
-        alphabet = {"out", "send", "ack"},
+        input_symbols = {"out", "send", "ack"},
         transitions = {
             "a": {"send" : "b"},
             "b": {"out" : "c"},
             "c": {"ack" : "a"}
                         },
         initial_state = "a",
-        final_states = {"c"}
+        final_states = {"c"},
+        allow_partial=True
         )
 
-print_transitions(A.transitions)
-print(A)
-print(B)
+# print_transitions(A.transitions)
+# print(A)
+# print(B)
 print(parallel_composition(A, B))
