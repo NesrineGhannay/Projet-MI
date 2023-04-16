@@ -33,6 +33,7 @@ class Angluin:
     def compareOT(self, u, v):
         for e in self.exp:
             if self.mq[str(u + e)] != self.mq[str(v + e)]:
+                print("# ", str(u + e) , " et ", str(v + e) , "COMPARER")
                 return False
         return True
 
@@ -67,9 +68,12 @@ class Angluin:
         lignes_red = set()
         for u in elts_red :
             lignes_red.add(str(self.ligne(u)))
+        print("Lignes rouges : ",lignes_red )
         for s in elts_blue :
             if not str(self.ligne(s)) in lignes_red:
+                print("NON, closed")
                 return False
+        print("OUI, closed")
         return True
 
     def ligne(self, s):
@@ -103,11 +107,13 @@ class Angluin:
         for s in self.blue():
             if self.different(s):
                 self.pref[s] = "red"
+                print("---> on fait passer ", s, " dans red")
                 for a in self.alphabet:
                     for e in self.exp:
                         # self.mq[s + a + e] = self.fill_the_table(s + a + e)
                         self.fill_the_table(str(s + a + e))
                         self.pref[str(s + a)] = "blue"
+                print("****", self.red(), "\n", "**", self.blue())
 
     """
     Allows to find the example who make the table not consistency if she is not
@@ -216,7 +222,10 @@ class Angluin:
     """
     def lstar(self):
         self.Lstar_Initialise()
-        print("initialisé")
+        print("INITIALISER")
+        print("mq =", self.mq)
+        print("pref =", self.pref)
+        print("exp =", self.exp)
         a = True # pour rentrer dans le while car c'est un do until
         while a or answer != True:
             a = False
