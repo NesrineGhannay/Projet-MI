@@ -6,7 +6,7 @@ from Angluin import *
 
 
 #TODO : corriger le problème de lancer le programme de test en entier
-
+#TODO : utiliser les fixture et parametrize
 
 # Some DFA :
 
@@ -232,7 +232,7 @@ def test_get_prefixes():
 #TODO : on admet que la méthode __eq__ est vérifiée
 
 
-def test_lstar_useeq(): #TODO : à faire
+def test_lstar_useeq():
     angluin_A = Angluin({"a", "b"}, A,
                         mq={"": 0, "a": 1, "b":0, "aa":1, "ab":0},
                         pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
