@@ -40,7 +40,6 @@ C = DFA(states={"0", "1", "2", "puits"},
         final_states={"2"}
         )
 
-# DFA which matches all binary strings ending in an odd number of '1's
 odd_number_of_1 = DFA(
     states={'0', '1', '2'},
     input_symbols={'0', '1'},
@@ -123,7 +122,7 @@ testB = Angluin({"a", "b"}, B,
 
 
 def test_fill_the_table():
-    angluin_A = Angluin({"a", "b"}, A)
+    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     angluin_A.fill_the_table("")
     angluin_A.fill_the_table("a")
     angluin_A.fill_the_table("b")
@@ -133,7 +132,7 @@ def test_fill_the_table():
     angluin_A.fill_the_table("aaa")
     assert angluin_A.mq == {"" : 0, "a" : 1, "b" : 0, "ab" : 0, "ba" : 1, "abba": 0, "aaa" : 1}
 
-def test_lstar_initialise():    #apparemment test_fill_the_table modifie aussi angluin_B... ?
+def test_lstar_initialise():
     angluin_B = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     angluin_B.Lstar_Initialise()
     assert angluin_B.alphabet == {"a","b"}
