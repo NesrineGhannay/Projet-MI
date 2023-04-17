@@ -134,7 +134,7 @@ def test_fill_the_table():
     assert angluin_A.mq == {"" : 0, "a" : 1, "b" : 0, "ab" : 0, "ba" : 1, "abba": 0, "aaa" : 1}
 
 def test_lstar_initialise():    #apparemment test_fill_the_table modifie aussi angluin_B... ?
-    angluin_B = Angluin({"a", "b"}, A)
+    angluin_B = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     angluin_B.Lstar_Initialise()
     assert angluin_B.alphabet == {"a","b"}
     assert angluin_B.automate == A
@@ -234,7 +234,20 @@ def test_get_prefixes():
 
 
 def test_lstar_useeq(): #TODO : à faire
-    assert False
+    angluin_A = Angluin({"a", "b"}, A,
+                        mq={"": 0, "a": 1, "b":0, "aa":1, "ab":0},
+                        pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
+                        exp=[""])
+    answer = "aba"
+    final_A = Angluin({"a", "b"}, A, mq={"": 0, "a": 1, "aba" : 0, "b":0, "aa":1, "ab":0, "abb" : 0, "abaa":0, "abab":0},
+                      pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "red", "aba":"red", "abb":"blue", "abaa": "blue", "abab":"blue"},
+                      exp=[""])
+    angluin_A.LSTAR_USEEQ(answer)
+    assert angluin_A.alphabet == final_A.alphabet
+    assert angluin_A.automate == final_A.automate
+    assert angluin_A.mq == final_A.mq
+    assert angluin_A.pref == final_A.pref
+    assert angluin_A.exp == final_A.exp
 
 
 def test_lstar_build_automaton():
