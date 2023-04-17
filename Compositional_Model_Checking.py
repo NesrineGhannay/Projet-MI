@@ -135,6 +135,39 @@ def parallel_composition(M1, M2):
     print("final ", final)
     return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=final, allow_partial=True)
 
+def assumption_garantee(m1):
+    m1.Lstar_Initialise()
+    while not m1.is_closed():
+        if not m1.is_closed():
+            m1.lstar_close()
+    proposition = m1.lstar_build_automaton()
+    answer = learning(m1, proposition)
+    if answer != True:
+        print("ERROR")
+    else:
+        print("Automate trouvé : ")
+        return proposition
+
+def learning(m1, proposition):
+    answer = False
+    while answer != True :
+        if consequences(parallel_composition(m1, proposition)):
+            proposition = consequences(proposition) # c'est censé etre le contre exemple mise a part ca je sais pas comment on pourrait le recuperer
+            if proposition == True:
+                return True
+            elif real_error(proposition, m1):
+                return False
+    return True
+
+'''
+Les deux méthodes ci dessous sont à implémenter
+'''
+def consequences(m1):
+    return True
+
+def real_error(m1, m2):
+    return False
+
 A = DFA(
         states = {"0", "1", "2"},
         input_symbols = {"in", "send", "ack"},
