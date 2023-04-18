@@ -1,3 +1,5 @@
+import copy
+
 from automata.fa.dfa import DFA
 
 
@@ -168,33 +170,86 @@ def consequences(m1):
 def real_error(m1, m2):
     return False
 
-A = DFA(
-        states = {"0", "1", "2"},
-        input_symbols = {"in", "send", "ack"},
-        transitions = {
-            "0": {"in" : "1"},
-            "1": {"send" : "2"},
-            "2": {"ack" : "0"}
-                        },
-        initial_state = "0",
-        final_states = {"2"},
-        allow_partial=True
-        )
+# A = DFA(
+#         states = {"0", "1", "2"},
+#         input_symbols = {"in", "send", "ack"},
+#         transitions = {
+#             "0": {"in" : "1"},
+#             "1": {"send" : "2"},
+#             "2": {"ack" : "0"}
+#                         },
+#         initial_state = "0",
+#         final_states = {"2"},
+#         allow_partial=True
+#         )
+#
+# B = DFA(
+#         states = {"a", "b", "c"},
+#         input_symbols = {"out", "send", "ack"},
+#         transitions = {
+#             "a": {"send" : "b"},
+#             "b": {"out" : "c"},
+#             "c": {"ack" : "a"}
+#                         },
+#         initial_state = "a",
+#         final_states = {"c"},
+#         allow_partial=True
+#         )
+#
+# # print_transitions(A.transitions)
+# # print(A)
+# # print(B)
+# print(parallel_composition(A, B))
 
-B = DFA(
-        states = {"a", "b", "c"},
-        input_symbols = {"out", "send", "ack"},
-        transitions = {
-            "a": {"send" : "b"},
-            "b": {"out" : "c"},
-            "c": {"ack" : "a"}
-                        },
-        initial_state = "a",
-        final_states = {"c"},
-        allow_partial=True
-        )
+def satisfies(M, P):  # pauline
+    """Renvoie True si ce DFA satisfait un automate d'erreur représentant une propriété P"""
+    restreints = set()
+    for symbol in M.input_symbols :
+        if symbol not in P.input_symbols :
+            restreints.add(symbol)
+    if len(restreints) > 0:
+        P_complete = etendre_alphabet(P, restreints)
+    # P peut maintenant lire des mots de l'aphabet de M
+    return M.__le__(P_complete, witness=True)
 
-# print_transitions(A.transitions)
-# print(A)
-# print(B)
-print(parallel_composition(A, B))
+def etendre_alphabet(A, symboles_a_ajouter):
+    """Ajoute des boucles simples sur tous les états pour transformer l'alphabet et ajoute les lettres manquantes à
+    l'alphabet de A. Cela permet d'avoir un automate qui a le même comportement et qui peut lire les lettres qui
+    n'appartenaient pas à son alphabet"""
+    alphabet_complete = A.input_symbols.copy()
+    transitions_completees = copy.deepcopy(A.transitions)
+    for symbole in symboles_a_ajouter:
+        alphabet_complete.add(symbole)
+        for etat in A.states:
+            transitions_completees[etat][symbole] = etat
+    automate_complete = DFA(states=A.states, input_symbols=alphabet_complete, transitions=transitions_completees, initial_state=A.initial_state, final_states=A.final_states)
+    print(automate_complete)
+    return automate_complete
+
+# tests pauline
+# M = DFA(
+#     states = {"0", "1", "2", "3"},
+#     input_symbols={"i", "o", "s"},
+#     transitions={
+#         "0" : {"i" : "1", "o" : "2", "s" : "2"},
+#         "1" : {"i" : "1", "o" : "0", "s" : "3"},
+#         "2" : {"i" : "0", "o" : "2", "s" : "2"},
+#         "3" : {"i" : "1", "o" : "0", "s" : "2"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "3"}
+# )
+#
+# P = DFA(
+#     states = {"0", "1", "2"},
+#     input_symbols={"i", "o"},
+#     transitions={
+#         "0" : {"i" : "1", "o" : "2"},
+#         "1" : {"i" : "2", "o" : "0"},
+#         "2" : {"i" : "2", "o" : "2"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1"}
+# )
+#
+# print(satisfies(M,P))
