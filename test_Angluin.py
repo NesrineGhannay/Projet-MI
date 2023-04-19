@@ -105,9 +105,15 @@ mq = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'ba': 0, 'bb': 1, 'bba': 0, 'aaa': 0, 'ab'
 pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue', 'bbb': 'blue'}
 exp = ['', 'a']
 
+# TABLE QUI DEVIENT CONSISTENTE AVEC L'APPEL DE lstar_consistent() en choisissant le contre exemple avec b
+mqb = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0,'bba': 0, 'bbb': 0, "aab" : 0, "abb" : 1, "bab" : 1, "bbab" : 0, "bbbb" : 1}
+prefb = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue', 'bbb': 'blue'}
+expb = ['', 'b']
+
 
 table_non_consistente = Angluin({"a", "b"}, automate_test_A2, mq0, pref0, exp0)     #correspond à before_automate de test_Angluin_pytest
 table_consistente = Angluin({"a", "b"}, automate_test_A2, mq, pref, exp)            #correspond à learned_automate de test_Angluin_pytest
+table_consistente_b = Angluin({"a", "b"}, automate_test_A2, mqb, prefb, expb)
 
 
 testA = Angluin({"a", "b"}, A,
@@ -164,7 +170,7 @@ def test_red():
 
 
 def test_ligne():
-    angluin_A = Angluin({"a", "b"}, A)
+    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     angluin_A.Lstar_Initialise()
     assert angluin_A.ligne("") == [0]
     assert angluin_A.ligne("a") == [1]
@@ -176,7 +182,7 @@ def test_ligne():
 
 
 def test_different():
-    angluin_A = Angluin({"a", "b"}, A)
+    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     angluin_A.Lstar_Initialise()
     assert angluin_A.different("a") == True     #la ligne correspondante à "a" est différente de toutes les lignes correspondantes à red
     assert angluin_A.different("b") == False
@@ -184,7 +190,7 @@ def test_different():
 
 
 def test_is_closed():
-    angluin_A = Angluin({"a", "b"}, A)
+    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     assert table_non_consistente.is_closed() == True
     assert table_consistente.is_closed() == True
     angluin_A.Lstar_Initialise()
@@ -192,7 +198,7 @@ def test_is_closed():
 
 
 def test_lstar_close():
-    angluin_A = Angluin({"a", "b"}, A)
+    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     angluin_A.Lstar_Initialise()
     angluin_A.lstar_close()
     assert angluin_A.alphabet == {"a", "b"}
@@ -211,20 +217,21 @@ def test_find_consistency_problem():
 def test_is_consistent():
     assert table_non_consistente.is_consistent() == False       #correspond à ligne 112 de test_Angluin_pytest
     assert table_consistente.is_consistent() == True
+    assert table_consistente_b.is_consistent() == True
 
 
 
-def test_lstar_consistent():    #TODO : fonctionne une fois sur 2 tout dépend s'il prend le contre-exemple a ou b
+def test_lstar_consistent():
     table_non_consistente.lstar_consistent()
     assert table_non_consistente.alphabet == table_consistente.alphabet
     assert table_non_consistente.automate == table_consistente.automate
-    assert table_non_consistente.mq == table_consistente.mq
+    assert table_non_consistente.mq == table_consistente.mq or table_non_consistente.mq == table_consistente_b.mq
     assert table_non_consistente.pref == table_consistente.pref
-    assert table_non_consistente.exp == table_consistente.exp
+    assert table_non_consistente.exp == table_consistente.exp or table_non_consistente.exp == table_consistente_b.exp
 
 
 def test_get_prefixes():
-    angluin_A = Angluin({"a", "b"}, A)
+    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
     mot = "abaabbb"
     assert angluin_A.get_prefixes(mot) == ["", "a", "ab", "aba", "abaa", "abaab", "abaabb", "abaabbb"]
 
