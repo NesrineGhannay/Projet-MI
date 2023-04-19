@@ -1,16 +1,20 @@
+import pytest
+
 from Angluin import *
 from automata.fa.dfa import DFA
 
 from automata.fa.dfa import DFA
 from Angluin import *
 
-
-#TODO : corriger le problème de lancer le programme de test en entier
 #TODO : utiliser les fixture et parametrize
 
-# Some DFA :
+alphabet = {"a", "b"}
 
-A = DFA(states={"0", "1", "puits"},
+# Quelques DFA initialisés avec Angluin:
+
+@pytest.fixture
+def A():
+    automate = DFA(states={"0", "1", "puits"},
         input_symbols={"b", "a"},
         transitions={
             "0": {"a": "1", "b": "0"},
@@ -19,8 +23,12 @@ A = DFA(states={"0", "1", "puits"},
         initial_state="0",
         final_states={"1"}
         )
+    return Angluin(alphabet, automate)
 
-B = DFA(states={"0", "1"},
+
+@pytest.fixture
+def B():
+    automate = DFA(states={"0", "1"},
         input_symbols={"b", "a"},
         transitions={
             "0": {"a": "0", "b": "1"},
@@ -28,8 +36,11 @@ B = DFA(states={"0", "1"},
         initial_state="0",
         final_states={"1"}
         )
+    return Angluin(alphabet, automate)
 
-C = DFA(states={"0", "1", "2", "puits"},
+@pytest.fixture
+def C():
+    a = DFA(states={"0", "1", "2", "puits"},
         input_symbols={"b", "a"},
         transitions={
             "0": {"a": "1", "b": "0"},
@@ -39,8 +50,11 @@ C = DFA(states={"0", "1", "2", "puits"},
         initial_state="0",
         final_states={"2"}
         )
+    return Angluin(alphabet, a)
 
-odd_number_of_1 = DFA(
+@pytest.fixture
+def odd_number_of_1():
+    a = DFA(
     states={'0', '1', '2'},
     input_symbols={'0', '1'},
     transitions={
@@ -49,10 +63,12 @@ odd_number_of_1 = DFA(
         '2': {'0': '2', '1': '1'}
     },
     initial_state='0',
-    final_states={'1'}
-)
+    final_states={'1'})
+    return Angluin({"0", "1"}, a)
 
-automate_test_A2 = DFA(
+@pytest.fixture
+def automate_test_A2():
+    a = DFA(
     states={'0', '1', '2', '3'},
     input_symbols={'a', 'b'},
     transitions={
@@ -62,11 +78,13 @@ automate_test_A2 = DFA(
         '3': {'a': '3', 'b': '2'}
     },
     initial_state='0',
-    final_states={'0', '2'}
-)
+    final_states={'0', '2'})
+    return Angluin(alphabet, a)
 
 # AUTOMATE LSTAR
-automate = DFA(states={"0", "1", "2", "3"},
+@pytest.fixture
+def automate():
+    a = DFA(states={"0", "1", "2", "3"},
                input_symbols={"a", "b"},
                transitions={
                    "0": {"a": "1", "b": "3"},
@@ -77,8 +95,11 @@ automate = DFA(states={"0", "1", "2", "3"},
                initial_state="0",
                final_states={"0"}
                )  # exemple du document L_STAR_ALGO.pdf
+    return Angluin(alphabet, a)
 
-automate2 = DFA(states={"0", "1", "2"},
+@pytest.fixture
+def automate2():
+    a = DFA(states={"0", "1", "2"},
                 input_symbols={"a", "b"},
                 transitions={
                     "0": {"a": "0", "b": "1"},
@@ -88,9 +109,12 @@ automate2 = DFA(states={"0", "1", "2"},
                 initial_state="0",
                 final_states={"1"}
                 )  # exemple du document Learning_with_Queries.pdf
+    return Angluin(alphabet, a)
 
 # List of DFA with whom we test our functions :
-dfa_to_test = [A, B, C, automate_test_A2, automate, automate2] #odd_number
+@pytest.fixture
+def liste(A, B, C, automate_test_A2, automate, automate2): #TODO : faire fonction odd_number aussi !!!
+    return [A, B, C, automate_test_A2, automate, automate2]
 
 
 #Some tables :
@@ -128,15 +152,14 @@ testB = Angluin({"a", "b"}, B,
 
 
 def test_fill_the_table():
-    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
-    angluin_A.fill_the_table("")
-    angluin_A.fill_the_table("a")
-    angluin_A.fill_the_table("b")
-    angluin_A.fill_the_table("ab")
-    angluin_A.fill_the_table("ba")
-    angluin_A.fill_the_table("abba")
-    angluin_A.fill_the_table("aaa")
-    assert angluin_A.mq == {"" : 0, "a" : 1, "b" : 0, "ab" : 0, "ba" : 1, "abba": 0, "aaa" : 1}
+    A.fill_the_table("")
+    A.fill_the_table("a")
+    A.fill_the_table("b")
+    A.fill_the_table("ab")
+    A.fill_the_table("ba")
+    A.fill_the_table("abba")
+    A.fill_the_table("aaa")
+    assert A.mq == {"" : 0, "a" : 1, "b" : 0, "ab" : 0, "ba" : 1, "abba": 0, "aaa" : 1}
 
 def test_lstar_initialise():
     angluin_B = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
@@ -263,8 +286,7 @@ def test_lstar_build_automaton():
     assert resultB.__eq__(B)
 
 
-def test_lstar():
-    for a in dfa_to_test :
-        angluin = Angluin({"a", "b"}, a)
-        assert angluin.lstar().__eq__(a)
+def test_lstar(liste):
+    for a in liste:
+        assert a.lstar().__eq__(a.automate)
     #TODO : ne pas oublier de le tester sur odd_number_of_1 aussi
