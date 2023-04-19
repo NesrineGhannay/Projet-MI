@@ -6,7 +6,17 @@ from automata.fa.dfa import DFA
 from automata.fa.dfa import DFA
 from Angluin import *
 
+# TODO :
+# 1 : faire fonctionner lstar_consistent
+# 2 : simplifier le code un maximum avec les fixture
+# 3 : Utiliser parametrize
+# 4 : comprendre le beug avec le mq, exp, pref
+# 5 : l'appliquer aussi avec odd_number
+
 #TODO : utiliser les fixture et parametrize
+# Là on a fait le test seulement pour A.
+# Or on veut le faire pour tous les autres.
+# On va donc faire des tests paramétriques
 
 alphabet = {"a", "b"}
 
