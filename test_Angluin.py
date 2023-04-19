@@ -23,7 +23,7 @@ def A():
         initial_state="0",
         final_states={"1"}
         )
-    return Angluin(alphabet, automate)
+    return Angluin(alphabet, automate, mq={}, pref={}, exp=[])
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def B():
         initial_state="0",
         final_states={"1"}
         )
-    return Angluin(alphabet, automate)
+    return Angluin(alphabet, automate, mq={}, pref={}, exp=[])
 
 @pytest.fixture
 def C():
@@ -50,7 +50,7 @@ def C():
         initial_state="0",
         final_states={"2"}
         )
-    return Angluin(alphabet, a)
+    return Angluin(alphabet, a, mq={}, pref={}, exp=[])
 
 @pytest.fixture
 def odd_number_of_1():
@@ -64,7 +64,7 @@ def odd_number_of_1():
     },
     initial_state='0',
     final_states={'1'})
-    return Angluin({"0", "1"}, a)
+    return Angluin({"0", "1"}, a,  mq={}, pref={}, exp=[])
 
 @pytest.fixture
 def automate_test_A2():
@@ -79,7 +79,7 @@ def automate_test_A2():
     },
     initial_state='0',
     final_states={'0', '2'})
-    return Angluin(alphabet, a)
+    return Angluin(alphabet, a, mq={}, pref={}, exp=[])
 
 # AUTOMATE LSTAR
 @pytest.fixture
@@ -95,7 +95,7 @@ def automate():
                initial_state="0",
                final_states={"0"}
                )  # exemple du document L_STAR_ALGO.pdf
-    return Angluin(alphabet, a)
+    return Angluin(alphabet, a, mq={}, pref={}, exp=[])
 
 @pytest.fixture
 def automate2():
@@ -109,7 +109,7 @@ def automate2():
                 initial_state="0",
                 final_states={"1"}
                 )  # exemple du document Learning_with_Queries.pdf
-    return Angluin(alphabet, a)
+    return Angluin(alphabet, a,  mq={}, pref={}, exp=[])
 
 # List of DFA with whom we test our functions :
 @pytest.fixture
@@ -135,8 +135,9 @@ prefb = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'bl
 expb = ['', 'b']
 
 
-table_non_consistente = Angluin({"a", "b"}, automate_test_A2, mq0, pref0, exp0)     #correspond à before_automate de test_Angluin_pytest
-table_consistente = Angluin({"a", "b"}, automate_test_A2, mq, pref, exp)            #correspond à learned_automate de test_Angluin_pytest
+#TODO : trouver la solution pour accéder à l'automate de automate_test_A2
+table_non_consistente = Angluin({"a", "b"}, automate_test_A2, mq0, pref0, exp0)     #correspond à before_automate de test_pytest
+table_consistente = Angluin({"a", "b"}, automate_test_A2, mq, pref, exp)            #correspond à learned_automate de test_pytest
 table_consistente_b = Angluin({"a", "b"}, automate_test_A2, mqb, prefb, expb)
 
 
@@ -151,7 +152,7 @@ testB = Angluin({"a", "b"}, B,
                 exp=[""])
 
 
-def test_fill_the_table():
+def test_fill_the_table(A):
     A.fill_the_table("")
     A.fill_the_table("a")
     A.fill_the_table("b")
@@ -161,14 +162,21 @@ def test_fill_the_table():
     A.fill_the_table("aaa")
     assert A.mq == {"" : 0, "a" : 1, "b" : 0, "ab" : 0, "ba" : 1, "abba": 0, "aaa" : 1}
 
-def test_lstar_initialise():
-    angluin_B = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
-    angluin_B.Lstar_Initialise()
-    assert angluin_B.alphabet == {"a","b"}
-    assert angluin_B.automate == A
-    assert angluin_B.mq == {"" : 0, "a": 1, "b" : 0}
-    assert angluin_B.pref == {"" : "red", "a" : "blue", "b" : "blue"}
-    assert angluin_B.exp == [""]
+def test_lstar_initialise(A):
+    A.Lstar_Initialise()
+    assert A.alphabet == {"a","b"}
+    assert A.automate == DFA(states={"0", "1", "puits"},
+        input_symbols={"b", "a"},
+        transitions={
+            "0": {"a": "1", "b": "0"},
+            "1": {"a": "1", "b": "puits"},
+            "puits": {"a": "puits", "b": "puits"}},
+        initial_state="0",
+        final_states={"1"}
+        )
+    assert A.mq == {"" : 0, "a": 1, "b" : 0}
+    assert A.pref == {"" : "red", "a" : "blue", "b" : "blue"}
+    assert A.exp == [""]
 
 
 def test_compare_ot():
@@ -192,43 +200,47 @@ def test_red():
     #même red pour table_consistente
 
 
-def test_ligne():
-    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
-    angluin_A.Lstar_Initialise()
-    assert angluin_A.ligne("") == [0]
-    assert angluin_A.ligne("a") == [1]
-    assert angluin_A.ligne("b") == [0]
+def test_ligne(A):
+    A.Lstar_Initialise()
+    assert A.ligne("") == [0]
+    assert A.ligne("a") == [1]
+    assert A.ligne("b") == [0]
     assert table_consistente.ligne("") == [1, 0]
     assert table_consistente.ligne("a") == [0, 1]
     assert table_consistente.ligne("b") == [0, 0]
     assert table_consistente.ligne("ab") == [0, 0]
 
 
-def test_different():
-    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
-    angluin_A.Lstar_Initialise()
-    assert angluin_A.different("a") == True     #la ligne correspondante à "a" est différente de toutes les lignes correspondantes à red
-    assert angluin_A.different("b") == False
+def test_different(A):
+    A.Lstar_Initialise()
+    assert A.different("a") == True     #la ligne correspondante à "a" est différente de toutes les lignes correspondantes à red
+    assert A.different("b") == False
     assert table_consistente.different("ab") == False
 
 
-def test_is_closed():
-    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
+def test_is_closed(A):
     assert table_non_consistente.is_closed() == True
     assert table_consistente.is_closed() == True
-    angluin_A.Lstar_Initialise()
-    assert angluin_A.is_closed() == False
+    A.Lstar_Initialise()
+    assert A.is_closed() == False
 
 
-def test_lstar_close():
-    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
-    angluin_A.Lstar_Initialise()
-    angluin_A.lstar_close()
-    assert angluin_A.alphabet == {"a", "b"}
-    assert angluin_A.automate == A
-    assert angluin_A.mq == {"" : 0, "a": 1, "b" : 0, "ab" : 0, "aa" : 1}
-    assert angluin_A.pref == {"" : "red", "a" : "red", "b" : "blue", "aa" : "blue", "ab" : "blue"}
-    assert angluin_A.exp == [""]
+def test_lstar_close(A):
+    A.Lstar_Initialise()
+    A.lstar_close()
+    assert A.alphabet == {"a", "b"}
+    assert A.automate == DFA(states={"0", "1", "puits"},
+        input_symbols={"b", "a"},
+        transitions={
+            "0": {"a": "1", "b": "0"},
+            "1": {"a": "1", "b": "puits"},
+            "puits": {"a": "puits", "b": "puits"}},
+        initial_state="0",
+        final_states={"1"}
+        )
+    assert A.mq == {"" : 0, "a": 1, "b" : 0, "ab" : 0, "aa" : 1}
+    assert A.pref == {"" : "red", "a" : "red", "b" : "blue", "aa" : "blue", "ab" : "blue"}
+    assert A.exp == [""]
 
 
 def test_find_consistency_problem():
@@ -238,7 +250,7 @@ def test_find_consistency_problem():
 
 
 def test_is_consistent():
-    assert table_non_consistente.is_consistent() == False       #correspond à ligne 112 de test_Angluin_pytest
+    assert table_non_consistente.is_consistent() == False       #correspond à ligne 112 de test_pytest
     assert table_consistente.is_consistent() == True
     assert table_consistente_b.is_consistent() == True
 
@@ -253,30 +265,48 @@ def test_lstar_consistent():
     assert table_non_consistente.exp == table_consistente.exp or table_non_consistente.exp == table_consistente_b.exp
 
 
-def test_get_prefixes():
-    angluin_A = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
+def test_get_prefixes(A):
     mot = "abaabbb"
-    assert angluin_A.get_prefixes(mot) == ["", "a", "ab", "aba", "abaa", "abaab", "abaabb", "abaabbb"]
+    assert A.get_prefixes(mot) == ["", "a", "ab", "aba", "abaa", "abaab", "abaabb", "abaabbb"]
 
 
 #TODO : on admet que la méthode __eq__ est vérifiée
 
 
 def test_lstar_useeq():
-    angluin_A = Angluin({"a", "b"}, A,
-                        mq={"": 0, "a": 1, "b":0, "aa":1, "ab":0},
-                        pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
-                        exp=[""])
+    A_apres = Angluin({"a", "b"},
+                DFA(states={"0", "1", "puits"},
+                    input_symbols={"b", "a"},
+                    transitions=
+                    {
+                    "0": {"a": "1", "b": "0"},
+                    "1": {"a": "1", "b": "puits"},
+                    "puits": {"a": "puits", "b": "puits"}},
+                    initial_state="0",
+                    final_states={"1"}),
+                mq={"": 0, "a": 1, "b":0, "aa":1, "ab":0},
+                pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
+                exp=[""])
     answer = "aba"
-    final_A = Angluin({"a", "b"}, A, mq={"": 0, "a": 1, "aba" : 0, "b":0, "aa":1, "ab":0, "abb" : 0, "abaa":0, "abab":0},
+    final_A = Angluin({"a", "b"},
+                      DFA(states={"0", "1", "puits"},
+                          input_symbols={"b", "a"},
+                          transitions=
+                          {
+                              "0": {"a": "1", "b": "0"},
+                              "1": {"a": "1", "b": "puits"},
+                              "puits": {"a": "puits", "b": "puits"}},
+                          initial_state="0",
+                          final_states={"1"}),
+                      mq={"": 0, "a": 1, "aba" : 0, "b":0, "aa":1, "ab":0, "abb" : 0, "abaa":0, "abab":0},
                       pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "red", "aba":"red", "abb":"blue", "abaa": "blue", "abab":"blue"},
                       exp=[""])
-    angluin_A.LSTAR_USEEQ(answer)
-    assert angluin_A.alphabet == final_A.alphabet
-    assert angluin_A.automate == final_A.automate
-    assert angluin_A.mq == final_A.mq
-    assert angluin_A.pref == final_A.pref
-    assert angluin_A.exp == final_A.exp
+    A_apres.LSTAR_USEEQ(answer)
+    assert A_apres.alphabet == final_A.alphabet
+    assert A_apres.automate == final_A.automate
+    assert A_apres.mq == final_A.mq
+    assert A_apres.pref == final_A.pref
+    assert A_apres.exp == final_A.exp
 
 
 def test_lstar_build_automaton():
