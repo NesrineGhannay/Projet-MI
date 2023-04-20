@@ -1,22 +1,8 @@
 import pytest
-
-from Angluin import *
-from automata.fa.dfa import DFA
-
-from automata.fa.dfa import DFA
 from Angluin import *
 
 # TODO :
-# 2 : simplifier le code un maximum avec les fixture
-# 3 : Utiliser parametrize
-# 4 : comprendre le beug avec le mq, exp, pref
-# 5 : l'appliquer aussi avec odd_number
-# 6 : comprendre l'avantage des fixture
-
-#TODO : utiliser les fixture et parametrize
-# Là on a fait le test seulement pour A.
-# Or on veut le faire pour tous les autres.
-# On va donc faire des tests paramétriques
+# Voir comment peut-on utiliser parametrize
 
 alphabet = {"a", "b"}
 
@@ -112,8 +98,8 @@ def automate2():
 
 # List of DFA with whom we test our functions :
 @pytest.fixture
-def liste(A, B, C, automate_test_A2, automate, automate2): #TODO : faire fonction odd_number aussi !!!
-    return [A, B, C, automate_test_A2, automate, automate2]
+def liste(A, B, C, odd_number_of_1, automate_test_A2, automate, automate2):
+    return [A, B, C, odd_number_of_1, automate_test_A2, automate, automate2]
 
 
 #Some tables :
@@ -329,4 +315,3 @@ def test_lstar_build_automaton():
 def test_lstar(liste):
     for a in liste:
         assert a.lstar().__eq__(a.automate)
-    #TODO : ne pas oublier de le tester sur odd_number_of_1 aussi
