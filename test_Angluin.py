@@ -7,7 +7,6 @@ from automata.fa.dfa import DFA
 from Angluin import *
 
 # TODO :
-# 1 : faire fonctionner lstar_consistent
 # 2 : simplifier le code un maximum avec les fixture
 # 3 : Utiliser parametrize
 # 4 : comprendre le beug avec le mq, exp, pref
@@ -144,11 +143,23 @@ mqb = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0,'bba': 0, 'bbb'
 prefb = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue', 'bbb': 'blue'}
 expb = ['', 'b']
 
+t = DFA(
+    states={'0', '1', '2', '3'},
+    input_symbols={'a', 'b'},
+    transitions={
+        '0': {'a': '1', 'b': '3'},
+        '1': {'a': '2', 'b': '3'},
+        '2': {'a': '1', 'b': '3'},
+        '3': {'a': '3', 'b': '2'}
+    },
+    initial_state='0',
+    final_states={'0', '2'})
 
-#TODO : trouver la solution pour accéder à l'automate de automate_test_A2
-table_non_consistente = Angluin({"a", "b"}, automate_test_A2, mq0, pref0, exp0)     #correspond à before_automate de test_pytest
-table_consistente = Angluin({"a", "b"}, automate_test_A2, mq, pref, exp)            #correspond à learned_automate de test_pytest
-table_consistente_b = Angluin({"a", "b"}, automate_test_A2, mqb, prefb, expb)
+
+#TODO : trouver la solution pour accéder à l'automate de automate_test_A2 sans copier deux fois...
+table_non_consistente = Angluin({"a", "b"}, t, mq0, pref0, exp0)     #correspond à before_automate de test_pytest
+table_consistente = Angluin({"a", "b"}, t, mq, pref, exp)            #correspond à learned_automate de test_pytest
+table_consistente_b = Angluin({"a", "b"}, t, mqb, prefb, expb)
 
 
 testA = Angluin({"a", "b"}, A,
