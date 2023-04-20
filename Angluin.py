@@ -13,6 +13,15 @@ class Angluin:
     def set_automate(self, automate):   #si on veut changer l'automate
         self.automate = automate
 
+    def set_mq(self, mq):
+        self.mq = mq
+
+    def set_pref(self, pref):
+        self.pref = pref
+
+    def set_exp(self, exp):
+        self.exp = exp
+
     def Lstar_Initialise(self):
         red = []
         red.append("")
