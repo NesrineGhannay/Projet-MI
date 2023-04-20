@@ -253,7 +253,7 @@ def etendre_alphabet(A, symboles_a_ajouter):
             transitions_completees[etat][symbole] = etat
     automate_complete = DFA(states=A.states.copy(), input_symbols=alphabet_complete, transitions=transitions_completees,
                             initial_state=A.initial_state, final_states=A.final_states.copy())
-    print("automate_complete", automate_complete)
+    # print("automate_complete", automate_complete)
     return automate_complete
 
 

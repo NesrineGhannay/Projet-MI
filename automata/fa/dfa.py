@@ -594,7 +594,7 @@ class DFA(fa.FA):
         while queue:
             # Get next state in BFS queue
             curr_state = queue.popleft()
-            print("curr_state", curr_state)
+            # print("curr_state", curr_state)
             # curr_state_name = get_name(curr_state)
 
             # Add state to the transition dict if constructing DFA
@@ -621,14 +621,14 @@ class DFA(fa.FA):
             transitions_b = other.transitions[q_b]
 
             for chr in self.input_symbols:
-                print("chr", chr)
+                # print("chr", chr)
                 product_state = (transitions_a[chr], transitions_b[chr]) # état d'arrivée
                 product_state_name = get_name(product_state)
 
                 if witness:
                     # trace[product_state_name] = trace[ancienetat] + chr
                     trace[product_state] = trace[curr_state] + chr
-                    print("trace", trace)
+                    # print("trace", trace)
 
                 if should_construct_dfa:
                     state_transitions[chr] = product_state_name
@@ -656,7 +656,7 @@ class DFA(fa.FA):
 
         if witness:
             resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True)
-            print(resultat)
+            # print(resultat)
             if resultat[0]:
                 return resultat[1] # le contre exemple
             else :
