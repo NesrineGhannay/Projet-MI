@@ -10,6 +10,9 @@ class Angluin:
         self.pref = pref
         self.exp = exp
 
+    def set_automate(self, automate):   #si on veut changer l'automate
+        self.automate = automate
+
     def Lstar_Initialise(self):
         red = []
         red.append("")

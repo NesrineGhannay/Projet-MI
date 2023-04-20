@@ -11,6 +11,7 @@ from Angluin import *
 # 3 : Utiliser parametrize
 # 4 : comprendre le beug avec le mq, exp, pref
 # 5 : l'appliquer aussi avec odd_number
+# 6 : comprendre l'avantage des fixture
 
 #TODO : utiliser les fixture et parametrize
 # Là on a fait le test seulement pour A.
@@ -77,18 +78,7 @@ def odd_number_of_1():
 
 @pytest.fixture
 def automate_test_A2():
-    a = DFA(
-    states={'0', '1', '2', '3'},
-    input_symbols={'a', 'b'},
-    transitions={
-        '0': {'a': '1', 'b': '3'},
-        '1': {'a': '2', 'b': '3'},
-        '2': {'a': '1', 'b': '3'},
-        '3': {'a': '3', 'b': '2'}
-    },
-    initial_state='0',
-    final_states={'0', '2'})
-    return Angluin(alphabet, a, mq={}, pref={}, exp=[])
+    return Angluin(alphabet, t, mq={}, pref={}, exp=[])
 
 # AUTOMATE LSTAR
 @pytest.fixture
@@ -156,7 +146,6 @@ t = DFA(
     final_states={'0', '2'})
 
 
-#TODO : trouver la solution pour accéder à l'automate de automate_test_A2 sans copier deux fois...
 table_non_consistente = Angluin({"a", "b"}, t, mq0, pref0, exp0)     #correspond à before_automate de test_pytest
 table_consistente = Angluin({"a", "b"}, t, mq, pref, exp)            #correspond à learned_automate de test_pytest
 table_consistente_b = Angluin({"a", "b"}, t, mqb, prefb, expb)
