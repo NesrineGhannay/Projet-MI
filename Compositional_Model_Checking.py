@@ -258,29 +258,60 @@ def etendre_alphabet(A, symboles_a_ajouter):
 
 
 # tests pauline
-M = DFA(
-    states={"0", "1", "2", "3"},
-    input_symbols={"i", "o", "s"},
-    transitions={
-        "0": {"i": "1", "o": "2", "s": "2"},
-        "1": {"i": "1", "o": "0", "s": "3"},
-        "2": {"i": "0", "o": "2", "s": "2"},
-        "3": {"i": "1", "o": "0", "s": "2"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "3"}
-)
-
-P = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"i", "o"},
-    transitions={
-        "0": {"i": "1", "o": "2"},
-        "1": {"i": "2", "o": "0"},
-        "2": {"i": "2", "o": "2"}
-    },
-    initial_state="0",
-    final_states={"0", "1"}
-)
-
-print("ok?", satisfies(M, P))
+# M = DFA(
+#     states={"0", "1", "2", "3"},
+#     input_symbols={"i", "o", "s"},
+#     transitions={
+#         "0": {"i": "1", "o": "2", "s": "2"},
+#         "1": {"i": "1", "o": "0", "s": "3"},
+#         "2": {"i": "0", "o": "2", "s": "2"},
+#         "3": {"i": "1", "o": "0", "s": "2"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "3"}
+# )
+#
+# # exemple diapo 28 doit satisfaire P
+# IO_ok = completedAutomata(
+#     states={"0", "1", "2", "3"},
+#     alphabet={"i", "s", "o", "a"},
+#     transitions={
+#         "0": {"i": "1"},
+#         "1": {"s": "2"},
+#         "2": {"o": "3"},
+#         "3": {"a": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2", "3"}
+# )
+#
+# # exemple diapo 29 ne doit pas satisfaire P
+# IO_pas_ok = completedAutomata(
+#     states={"0", "1", "2", "3"},
+#     alphabet={"i", "s", "o", "a"},
+#     transitions={
+#         "0": {"i": "1"},
+#         "1": {"s": "2", "i": "3"},
+#         "2": {"o": "3"},
+#         "3": {"a": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2", "3"}
+# )
+#
+# # automate Order_err dans le diapo
+# P = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"i", "o"},
+#     transitions={
+#         "0": {"i": "1", "o": "2"},
+#         "1": {"i": "2", "o": "0"},
+#         "2": {"i": "2", "o": "2"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1"}
+# )
+#
+# print("ok?", satisfies(M, P)) # False
+# print("ok?", satisfies(IO_ok, P)) # True
+# print("ok?", satisfies(IO_pas_ok, P)) # False
