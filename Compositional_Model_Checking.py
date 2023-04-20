@@ -16,8 +16,9 @@ On complète l'automate de base par un état puits qui est un état d'erreur (P_
 input = Automate de la propriété à compléter P
 output = Automate P dans lequel on a ajouté l'état d'erreur = P_err.
 """
-def completedAutomata(states, alphabet, transitions, initial_state, final_states):
 
+
+def completedAutomata(states, alphabet, transitions, initial_state, final_states):
     ajouter_pi = False
     for dico in transitions:
         for char in alphabet:
@@ -26,11 +27,12 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
                 ajouter_pi = True
                 if "pi" not in states:
                     states.add("pi")
-    if ajouter_pi :
+    if ajouter_pi:
         transitions["pi"] = {}
-        for char in alphabet :
+        for char in alphabet:
             transitions["pi"][char] = "pi"
-    return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=initial_state, final_states=final_states)
+    return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=initial_state,
+               final_states=final_states)
 
 
 # TEST
@@ -51,6 +53,8 @@ def print_transitions(T):
         for label in T[source]:
             target = T[source][label]
             print("Transition from", source, "to", target, "labelled by", label)
+
+
 def synchronization(M1, M2):
     T = {}
     T1 = M1.transitions
@@ -99,12 +103,14 @@ def interleaving(T, M1, M2):
                     T[(q1, q2)][b] = target
     return T
 
-def recupetatsfinaux(etats1, etats2):           #METHODE TEMPORAIRE !!!
-  etats = set()
-  for etat1 in etats1 :
-    for etat2 in etats2 :
-      etats.add((etat1, etat2))
-  return etats
+
+def recupetatsfinaux(etats1, etats2):  # METHODE TEMPORAIRE !!!
+    etats = set()
+    for etat1 in etats1:
+        for etat2 in etats2:
+            etats.add((etat1, etat2))
+    return etats
+
 
 def parallel_composition(M1, M2):
     # Q : les etats (states)
@@ -128,14 +134,15 @@ def parallel_composition(M1, M2):
     # si lettre existante dans un seul des alphabet
     T_ = interleaving(T, M1, M2)
     # ATTENTION ETAT FINAL PAS FAIT
-    final = recupetatsfinaux(M1.final_states,M2.final_states)
-    #return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=M1.final_states)
+    final = recupetatsfinaux(M1.final_states, M2.final_states)
+    # return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=M1.final_states)
     print("Q ", Q)
     print("aM ", aM)
     print("T_ ", T_)
     print("q0 ", q_0)
     print("final ", final)
     return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=final, allow_partial=True)
+
 
 def assumption_garantee(m1):
     m1.Lstar_Initialise()
@@ -150,25 +157,32 @@ def assumption_garantee(m1):
         print("Automate trouvé : ")
         return proposition
 
+
 def learning(m1, proposition):
     answer = False
-    while answer != True :
+    while answer != True:
         if consequences(parallel_composition(m1, proposition)):
-            proposition = consequences(proposition) # c'est censé etre le contre exemple mise a part ca je sais pas comment on pourrait le recuperer
+            proposition = consequences(
+                proposition)  # c'est censé etre le contre exemple mise a part ca je sais pas comment on pourrait le recuperer
             if proposition == True:
                 return True
             elif real_error(proposition, m1):
                 return False
     return True
 
+
 '''
 Les deux méthodes ci dessous sont à implémenter
 '''
+
+
 def consequences(m1):
     return True
 
+
 def real_error(m1, m2):
     return False
+
 
 # A = DFA(
 #         states = {"0", "1", "2"},
@@ -204,52 +218,69 @@ def real_error(m1, m2):
 def satisfies(M, P):  # pauline
     """Renvoie True si ce DFA satisfait un automate d'erreur représentant une propriété P"""
     restreints = set()
-    for symbol in M.input_symbols :
-        if symbol not in P.input_symbols :
+    for symbol in M.input_symbols:
+        if symbol not in P.input_symbols:
             restreints.add(symbol)
     if len(restreints) > 0:
         P_complete = etendre_alphabet(P, restreints)
+        P = P_complete
     # P peut maintenant lire des mots de l'aphabet de M
-    return M.__le__(P_complete, witness=True)
+    return M.__le__(P, witness=True)
+
 
 def etendre_alphabet(A, symboles_a_ajouter):
     """Ajoute des boucles simples sur tous les états pour transformer l'alphabet et ajoute les lettres manquantes à
     l'alphabet de A. Cela permet d'avoir un automate qui a le même comportement et qui peut lire les lettres qui
     n'appartenaient pas à son alphabet"""
-    alphabet_complete = A.input_symbols.copy()
-    transitions_completees = copy.deepcopy(A.transitions)
+
+    # récupération de l'alphabet original
+    # on utilise pas la fonction copy() car l'alphabet original est représenté par un frozenset (immutable)
+    alphabet_complete = set()
+    for symbol in A.input_symbols:
+        alphabet_complete.add(symbol)
+
+    # récupération des transitions originales
+    # on utilise pas la fonction copy() car les transitions originales sont représentées par un frozenset (immutable)
+    transitions_completees = {}
+    for state in A.transitions:
+        transitions_completees[state] = {}
+        for symbol in A.transitions[state]:
+            transitions_completees[state][symbol] = A.transitions[state][symbol]
+
     for symbole in symboles_a_ajouter:
         alphabet_complete.add(symbole)
         for etat in A.states:
             transitions_completees[etat][symbole] = etat
-    automate_complete = DFA(states=A.states, input_symbols=alphabet_complete, transitions=transitions_completees, initial_state=A.initial_state, final_states=A.final_states)
-    print(automate_complete)
+    automate_complete = DFA(states=A.states.copy(), input_symbols=alphabet_complete, transitions=transitions_completees,
+                            initial_state=A.initial_state, final_states=A.final_states.copy())
+    print("automate_complete", automate_complete)
     return automate_complete
 
+
 # tests pauline
-# M = DFA(
-#     states = {"0", "1", "2", "3"},
-#     input_symbols={"i", "o", "s"},
-#     transitions={
-#         "0" : {"i" : "1", "o" : "2", "s" : "2"},
-#         "1" : {"i" : "1", "o" : "0", "s" : "3"},
-#         "2" : {"i" : "0", "o" : "2", "s" : "2"},
-#         "3" : {"i" : "1", "o" : "0", "s" : "2"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1", "3"}
-# )
-#
-# P = DFA(
-#     states = {"0", "1", "2"},
-#     input_symbols={"i", "o"},
-#     transitions={
-#         "0" : {"i" : "1", "o" : "2"},
-#         "1" : {"i" : "2", "o" : "0"},
-#         "2" : {"i" : "2", "o" : "2"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1"}
-# )
-#
-# print(satisfies(M,P))
+M = DFA(
+    states={"0", "1", "2", "3"},
+    input_symbols={"i", "o", "s"},
+    transitions={
+        "0": {"i": "1", "o": "2", "s": "2"},
+        "1": {"i": "1", "o": "0", "s": "3"},
+        "2": {"i": "0", "o": "2", "s": "2"},
+        "3": {"i": "1", "o": "0", "s": "2"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "3"}
+)
+
+P = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"i", "o"},
+    transitions={
+        "0": {"i": "1", "o": "2"},
+        "1": {"i": "2", "o": "0"},
+        "2": {"i": "2", "o": "2"}
+    },
+    initial_state="0",
+    final_states={"0", "1"}
+)
+
+print("ok?", satisfies(M, P))
