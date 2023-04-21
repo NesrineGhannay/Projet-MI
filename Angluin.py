@@ -42,7 +42,7 @@ class Angluin:
     def compareOT(self, u, v):
         for e in self.exp:
             if self.mq[str(u + e)] != self.mq[str(v + e)]:
-                print("# ", str(u + e) , " et ", str(v + e) , "COMPARER")
+                #print("# ", str(u + e) , " et ", str(v + e) , "COMPARER")
                 return False
         return True
 
@@ -77,12 +77,12 @@ class Angluin:
         lignes_red = set()
         for u in elts_red :
             lignes_red.add(str(self.ligne(u)))
-        print("Lignes rouges : ",lignes_red )
+        #print("Lignes rouges : ",lignes_red )
         for s in elts_blue :
             if not str(self.ligne(s)) in lignes_red:
-                print("NON, closed")
+                #print("NON, closed")
                 return False
-        print("OUI, closed")
+        #print("OUI, closed")
         return True
 
     def ligne(self, s):
@@ -116,13 +116,13 @@ class Angluin:
         for s in self.blue():
             if self.different(s):
                 self.pref[s] = "red"
-                print("---> on fait passer ", s, " dans red")
+                #print("---> on fait passer ", s, " dans red")
                 for a in self.alphabet:
                     for e in self.exp:
                         # self.mq[s + a + e] = self.fill_the_table(s + a + e)
                         self.fill_the_table(str(s + a + e))
                         self.pref[str(s + a)] = "blue"
-                print("****", self.red(), "\n", "**", self.blue())
+                #print("****", self.red(), "\n", "**", self.blue())
 
     """
     Allows to find the example who make the table not consistency if she is not
@@ -231,32 +231,32 @@ class Angluin:
     """
     def lstar(self):
         self.Lstar_Initialise()
-        print("INITIALISER")
-        print("mq =", self.mq)
-        print("pref =", self.pref)
-        print("exp =", self.exp)
+        #print("INITIALISER")
+        #print("mq =", self.mq)
+        #print("pref =", self.pref)
+        #print("exp =", self.exp)
         a = True # pour rentrer dans le while car c'est un do until
         while a or answer != True:
             a = False
-            print("BOUCLE WHILE  1")
+            #print("BOUCLE WHILE  1")
             while not self.is_closed() or not self.is_consistent():
-                print("BOUCLE WHILE 2 : ", "clos : ",self.is_closed(), " consistent : ", self.is_consistent())
+                #print("BOUCLE WHILE 2 : ", "clos : ",self.is_closed(), " consistent : ", self.is_consistent())
                 # print("avant")
                 # print("mq : ", self.mq)
                 # print("pref : ", self.pref)
                 # print("exp : ", self.exp)
                 if not self.is_closed():
-                    print("pas fermé")
+                    #print("pas fermé")
                     self.lstar_close()
-                    print("fermé ?", self.is_closed())
+                    #print("fermé ?", self.is_closed())
                     # print("mq : ", self.mq)
                     # print("pref : ", self.pref)
                     # print("exp : ", self.exp)
 
                 if not self.is_consistent():
-                    print("pas consistant")
+                    #print("pas consistant")
                     self.lstar_consistent()
-                    print("consistent ? ", self.is_consistent())
+                    #print("consistent ? ", self.is_consistent())
                     # print("mq : ", self.mq)
                     # print("pref : ", self.pref)
                     # print("exp : ", self.exp)
@@ -264,17 +264,17 @@ class Angluin:
             # answer = self.equivalence_test()
             proposition = self.lstar_build_automaton() # automate construit par l'algo
             answer = proposition.__eq__(self.automate, witness=True) # test d'équivalence
-            print("answer: ", answer)
+            #print("answer: ", answer)
 
             if answer != True:
-                print("l'automate n'est pas bon")
+                #print("l'automate n'est pas bon")
                 self.LSTAR_USEEQ(answer)
                 # print("mq : ", self.mq)
                 # print("pref : ", self.pref)
                 # print("exp : ", self.exp)
 
             else:
-                print("Automate trouvé : ")
+                #print("Automate trouvé : ")
                 return proposition
         # return self.lstar_build_automaton()
         return proposition
