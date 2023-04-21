@@ -131,6 +131,7 @@ def test_is_closed(non_consistent_A2):
                          [(samples.A, {"" : 0, "a" : 1, "b" : 0}, {"" : "red", "a": "blue", "b" : "blue"}, [""],
                            {"" : 0, "a" : 1, "b" : 0, "aa" : 1, "ab" : 0},
                            {"" : "red", "a": "red", "b" : "blue", "aa":"blue", "ab":"blue"}),
+
                           (samples.B, {"": 0, "a": 0, "b": 1}, {"": "red", "a": "blue", "b": "blue"},[""],
                            {"": 0, "a": 0, "b": 1, "ba": 0, "bb": 1},
                            {"": "red", "b": "red", "a": "blue", "ba": "blue", "bb": "blue"})
@@ -138,8 +139,6 @@ def test_is_closed(non_consistent_A2):
 def test_lstar_close(nom, mq0, pref0, exp0, expected_mq, expected_pref):
     a = Angluin(alphabet, nom, mq0, pref0, exp0.copy())
     a.lstar_close()
-    assert a.alphabet == {"a", "b"}
-    assert a.automate == nom
     assert a.mq == expected_mq
     assert a.pref == expected_pref
     assert a.exp == exp0
@@ -176,32 +175,50 @@ def test_get_prefixes():
 
 #TODO : on admet que la méthode __eq__ est vérifiée
 
+@pytest.mark.parametrize("nom, mq0, pref0, exp0, answer, expected_mq, expected_pref",
+                         [(samples.A, {"": 0, "a": 1, "b":0, "aa":1, "ab":0},
+                           {"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
+                           [""], "aba",
+                           {"": 0, "a": 1, "aba" : 0, "b":0, "aa":1, "ab":0, "abb" : 0, "abaa":0, "abab":0},
+                           {"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "red", "aba": "red", "abb": "blue",
+                            "abaa": "blue", "abab": "blue"}),
 
-def test_lstar_useeq():
-    A_apres = Angluin({"a", "b"},
-                samples.A,
-                mq={"": 0, "a": 1, "b":0, "aa":1, "ab":0},
-                pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
-                exp=[""])
-    answer = "aba"
-    final_A = Angluin({"a", "b"},
-                      samples.A,
-                      mq={"": 0, "a": 1, "aba" : 0, "b":0, "aa":1, "ab":0, "abb" : 0, "abaa":0, "abab":0},
-                      pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "red", "aba":"red", "abb":"blue", "abaa": "blue", "abab":"blue"},
-                      exp=[""])
-    A_apres.LSTAR_USEEQ(answer)
-    assert A_apres.alphabet == final_A.alphabet
-    assert A_apres.automate == final_A.automate
-    assert A_apres.mq == final_A.mq
-    assert A_apres.pref == final_A.pref
-    assert A_apres.exp == final_A.exp
+                          (samples.A, {"": 0, "a": 1, "b":0, "aa":1, "ab":0, "aba": 0, "abaa" : 0, "abab":0, "ba" : 0,
+                                       "aaa" : 1, "abaaa" : 0, "ababa" : 0, "abb" : 0},
+                           {"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "red", "aba":"red", "abaa" : "blue",
+                            "abab": "blue", "abb" : "blue"},
+                           ["", "a"], "ba",
+                           {"": 0, "a": 1, "aba" : 0, "b":0, "aa":1, "aaa" : 1, "abaaa" : 0, "ab":0, "ba" : 0, "bb" : 0,
+                            "abb" : 0, "abaa":0, "abab":0, "baa":1, "bab" :0, "ababa":0, "bba" : 1, "baaa":1, "baba": 0,
+                            "abba":0},
+                           {"": "red", "a": "red", "b": "red", "ab" : "red", "aba": "red", "ba" : "red",
+                            "aa": "blue", "abb": "blue", "abaa": "blue", "abab": "blue", "bb" : "blue", "baa" : "blue",
+                            "bab" : "blue"})
+                          ])
+def test_lstar_useeq(nom, mq0, pref0, exp0, answer, expected_mq, expected_pref):
+    a = Angluin(alphabet, nom, mq0, pref0, exp0.copy())
+    a.LSTAR_USEEQ(answer)
+    assert a.mq == expected_mq
+    assert a.pref == expected_pref
+    assert a.exp == exp0
 
+@pytest.mark.parametrize("nom, mq, pref, exp",
+                         [(samples.A,
+                           {"": 0, "a": 1, "b": 0, "aa": 1, "ab": 0, "aba": 0, "abaa": 0, "abaaa": 0, "abab": 0,
+                            "ababa": 0, "aaa": 1, "ba": 1},
+                           {"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue", "aba": "red",
+                            "abaa": "blue", "abab": "blue"},
+                           ["", "a"]),
 
-def test_lstar_build_automaton():
-    resultA = samples.testA.lstar_build_automaton()
-    resultB = samples.testB.lstar_build_automaton()
-    assert resultA.__eq__(samples.A)
-    assert resultB.__eq__(samples.B)
+                          (samples.B,
+                           {"": 0, "a": 0, "b": 1, "aa": 0, "ab": 1, "aab": 1, "aaba": 0, "aabb": 1},
+                           {"": "red", "a": "red", "b": "blue", "aa": "red", "ab": "blue", "aab": "red", "aaba": "blue",
+                            "aabb": "blue"},
+                           [""])
+                            ])
+def test_lstar_build_automaton(nom, mq, pref, exp):
+    a = Angluin(alphabet, nom, mq, pref, exp)
+    assert a.lstar_build_automaton().__eq__(nom)
 
 
 def test_lstar(liste_angluin):

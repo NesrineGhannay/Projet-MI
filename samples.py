@@ -83,17 +83,3 @@ automate2 = DFA(states={"0", "1", "2"},
 
 # List of DFA with whom we test our functions :
 liste = [A, B, C, odd, A2, automate, automate2]
-
-
-testA = Angluin({"a", "b"}, A,
-                mq={"": 0, "a": 1, "b": 0, "aa": 1, "ab": 0, "aba": 0, "abaa": 0, "abaaa": 0, "abab": 0, "ababa": 0,
-                    "aaa": 1, "ba": 1},
-                pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue", "aba": "red", "abaa": "blue",
-                      "abab": "blue"},
-                exp=["", "a"])
-
-testB = Angluin({"a", "b"}, B,
-                mq={"": 0, "a": 0, "b": 1, "aa": 0, "ab": 1, "aab": 1, "aaba": 0, "aabb": 1},
-                pref={"": "red", "a": "red", "b": "blue", "aa": "red", "ab": "blue", "aab": "red", "aaba": "blue",
-                      "aabb": "blue"},
-                exp=[""])
