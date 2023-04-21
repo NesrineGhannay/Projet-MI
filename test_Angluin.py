@@ -179,29 +179,13 @@ def test_get_prefixes():
 
 def test_lstar_useeq():
     A_apres = Angluin({"a", "b"},
-                DFA(states={"0", "1", "puits"},
-                    input_symbols={"b", "a"},
-                    transitions=
-                    {
-                    "0": {"a": "1", "b": "0"},
-                    "1": {"a": "1", "b": "puits"},
-                    "puits": {"a": "puits", "b": "puits"}},
-                    initial_state="0",
-                    final_states={"1"}),
+                samples.A,
                 mq={"": 0, "a": 1, "b":0, "aa":1, "ab":0},
                 pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
                 exp=[""])
     answer = "aba"
     final_A = Angluin({"a", "b"},
-                      DFA(states={"0", "1", "puits"},
-                          input_symbols={"b", "a"},
-                          transitions=
-                          {
-                              "0": {"a": "1", "b": "0"},
-                              "1": {"a": "1", "b": "puits"},
-                              "puits": {"a": "puits", "b": "puits"}},
-                          initial_state="0",
-                          final_states={"1"}),
+                      samples.A,
                       mq={"": 0, "a": 1, "aba" : 0, "b":0, "aa":1, "ab":0, "abb" : 0, "abaa":0, "abab":0},
                       pref={"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "red", "aba":"red", "abb":"blue", "abaa": "blue", "abab":"blue"},
                       exp=[""])
