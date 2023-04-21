@@ -142,12 +142,13 @@ def parallel_composition(M1, M2):
     print("q0 ", q_0)
     print("final ", final)
     return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=final, allow_partial=True)
+#Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
 
 
 def assumption_garantee(m1):
     m1.Lstar_Initialise()
     while not m1.is_closed():
-        if not m1.is_closed():
+        if not m1.is_closed(): #Carla : C'est la même chose que while not m1.is_closed() ?
             m1.lstar_close()
     proposition = m1.lstar_build_automaton()
     answer = learning(m1, proposition)
