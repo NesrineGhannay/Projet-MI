@@ -92,15 +92,15 @@ def test_compare_ot(non_consistent_A2):
     assert non_consistent_A2.compareOT("ab", "bb") == False
 
 
-def test_blue():
+def test_blue(non_consistent_A2):
     assert non_consistent_A2.blue() == ["aa", "ab", "ba", "bba", "bbb"]
 
 
-def test_red():
+def test_red(non_consistent_A2):
     assert non_consistent_A2.red() == ["", "a", "b", "bb"]
 
 
-def test_ligne():
+def test_ligne(consistent_a_A2):
     A = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
     A.Lstar_Initialise()
     assert A.ligne("") == [0]
@@ -112,7 +112,7 @@ def test_ligne():
     assert consistent_a_A2.ligne("ab") == [0, 0]
 
 
-def test_different():
+def test_different(consistent_a_A2):
     A = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
     A.Lstar_Initialise()
     assert A.different("a") == True     #la ligne correspondante à "a" est différente de toutes les lignes correspondantes à red
@@ -120,11 +120,12 @@ def test_different():
     assert consistent_a_A2.different("ab") == False
 
 
-def test_is_closed():
+def test_is_closed(non_consistent_A2):
     A = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
     A.Lstar_Initialise()
     assert A.is_closed() == False
     assert non_consistent_A2.is_closed() == True
+
 
 @pytest.mark.parametrize("nom, mq0, pref0, exp0, expected_mq, expected_pref",
                          [(samples.A, {"" : 0, "a" : 1, "b" : 0}, {"" : "red", "a": "blue", "b" : "blue"}, [""],
@@ -144,27 +145,27 @@ def test_lstar_close(nom, mq0, pref0, exp0, expected_mq, expected_pref):
     assert a.exp == exp0
 
 
+
 #TODO
-def test_find_consistency_problem():
+def test_find_consistency_problem(non_consistent_A2, consistent_a_A2):
     assert consistent_a_A2.find_consistency_problem() == [True]
-    assert samples.table_non_consistente.find_consistency_problem() == [False, ("a", "")] or samples.table_non_consistente.find_consistency_problem() == [False, ("b", "")]
-    #pour le 2nd assert c'est juste mais voir s'il y a moyen de simplifier
+    result = non_consistent_A2.find_consistency_problem()
+    assert result == [False, ("a", "")] or result == [False, ("b", "")]
 
 
-def test_is_consistent():
-    assert samples.table_non_consistente.is_consistent() == False       #correspond à ligne 112 de test_pytest
+def test_is_consistent(non_consistent_A2, consistent_a_A2, consistent_b_A2):
+    assert non_consistent_A2.is_consistent() == False
     assert consistent_a_A2.is_consistent() == True
-    assert samples.table_consistente_b.is_consistent() == True
+    assert consistent_b_A2.is_consistent() == True
 
 
-
-def test_lstar_consistent():
-    samples.table_non_consistente.lstar_consistent()
-    assert samples.table_non_consistente.alphabet == samples.table_consistente.alphabet
-    assert samples.table_non_consistente.automate == samples.table_consistente.automate
-    assert samples.table_non_consistente.mq == samples.table_consistente.mq or samples.table_non_consistente.mq == samples.table_consistente_b.mq
-    assert samples.table_non_consistente.pref == samples.table_consistente.pref
-    assert samples.table_non_consistente.exp == samples.table_consistente.exp or samples.table_non_consistente.exp == samples.table_consistente_b.exp
+def test_lstar_consistent(non_consistent_A2, consistent_a_A2, consistent_b_A2):
+    non_consistent_A2.lstar_consistent()
+    assert non_consistent_A2.alphabet == consistent_a_A2.alphabet
+    assert non_consistent_A2.automate == samples.A2
+    assert non_consistent_A2.mq == consistent_a_A2.mq or non_consistent_A2.mq == consistent_b_A2.mq
+    assert non_consistent_A2.pref == consistent_a_A2.pref
+    assert non_consistent_A2.exp == consistent_a_A2.exp or non_consistent_A2.exp == consistent_b_A2.exp
 
 
 def test_get_prefixes():
