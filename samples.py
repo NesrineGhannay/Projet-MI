@@ -85,36 +85,6 @@ automate2 = DFA(states={"0", "1", "2"},
 liste = [A, B, C, odd, A2, automate, automate2]
 
 
-#Instances de tables pour tester la consistence
-
-# Pour A2 :
-# TABLE NON CONSISTENTE correspond au dfa automate_test_A2
-mq0 = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0, 'bba': 0, 'bbb': 0}
-pref0 = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
-         'bbb': 'blue'}
-exp0 = ['']
-
-# TABLE QUI DEVIENT CONSISTENTE AVEC L'APPEL DE lstar_consistent()
-mq = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'ba': 0, 'bb': 1, 'bba': 0, 'aaa': 0, 'ab': 0, 'aba': 0, 'baa': 0, 'bbaa': 1,
-      'bbb': 0, 'bbba': 0}
-pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
-        'bbb': 'blue'}
-exp = ['', 'a']
-
-# TABLE QUI DEVIENT CONSISTENTE AVEC L'APPEL DE lstar_consistent() en choisissant le contre exemple avec b
-mqb = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0, 'bba': 0, 'bbb': 0, "aab": 0, "abb": 1, "bab": 1,
-       "bbab": 0, "bbbb": 1}
-prefb = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
-         'bbb': 'blue'}
-expb = ['', 'b']
-
-table_non_consistente = Angluin({"a", "b"}, A2, mq0, pref0, exp0)  # correspond à before_automate de test_pytest
-table_consistente = Angluin({"a", "b"}, A2, mq, pref, exp)  # correspond à learned_automate de test_pytest
-table_consistente_b = Angluin({"a", "b"}, A2, mqb, prefb, expb)
-
-
-
-
 testA = Angluin({"a", "b"}, A,
                 mq={"": 0, "a": 1, "b": 0, "aa": 1, "ab": 0, "aba": 0, "abaa": 0, "abaaa": 0, "abab": 0, "ababa": 0,
                     "aaa": 1, "ba": 1},

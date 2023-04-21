@@ -16,6 +16,37 @@ def liste_angluin():
     return result
 
 
+#Instances de tables pour tester la consistence
+
+# Pour A2 :
+@pytest.fixture
+def non_consistent_A2():
+    mq0 = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0, 'bba': 0, 'bbb': 0}
+    pref0 = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
+             'bbb': 'blue'}
+    exp0 = ['']
+    return Angluin(alphabet, samples.A2, mq0, pref0, exp0)
+
+
+@pytest.fixture
+def consistent_a_A2():
+    mq = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'ba': 0, 'bb': 1, 'bba': 0, 'aaa': 0, 'ab': 0, 'aba': 0, 'baa': 0, 'bbaa': 1,
+      'bbb': 0, 'bbba': 0}
+    pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
+        'bbb': 'blue'}
+    exp = ['', 'a']
+    return Angluin(alphabet, samples.A2, mq, pref, exp)
+
+
+@pytest.fixture
+def consistent_b_A2():
+    mq = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0, 'bba': 0, 'bbb': 0, "aab": 0, "abb": 1, "bab": 1,
+       "bbab": 0, "bbbb": 1}
+    pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
+         'bbb': 'blue'}
+    exp = ['', 'b']
+    return Angluin(alphabet, samples.A2, mq, pref, exp)
+
 
 @pytest.mark.parametrize("nom, expected",
                          [(samples.A, {"" : 0, "a" : 1, "b" : 0, "ab" : 0, "ba" : 1, "abba": 0, "aaa" : 1}),
@@ -52,26 +83,21 @@ def test_lstar_initialise(nom, expected_mq):
     assert a.pref == {"" : "red", "a" : "blue", "b" : "blue"}
     assert a.exp == [""]
 
-#TODO
-def test_compare_ot():
-    assert samples.table_non_consistente.compareOT("", "a") == False
-    assert samples.table_non_consistente.compareOT("", "b") == False
-    assert samples.table_non_consistente.compareOT("a", "b") == True
-    assert samples.table_non_consistente.compareOT("aa", "ab") == False
-    assert samples.table_non_consistente.compareOT("", "aa") == True
-    assert samples.table_consistente.compareOT("", "a") == False
-    assert samples.table_consistente.compareOT("a", "b") == False
-    assert samples.table_non_consistente.compareOT("", "aa") == True
+
+def test_compare_ot(non_consistent_A2):
+    assert non_consistent_A2.compareOT("", "a") == False
+    assert non_consistent_A2.compareOT("", "b") == False
+    assert non_consistent_A2.compareOT("a", "b") == True
+    assert non_consistent_A2.compareOT("aa", "ba") == False
+    assert non_consistent_A2.compareOT("ab", "bb") == False
 
 
 def test_blue():
-    assert samples.table_non_consistente.blue() == ["aa", "ab", "ba", "bba", "bbb"]
-    #même blue pour samples.table_consistente
+    assert non_consistent_A2.blue() == ["aa", "ab", "ba", "bba", "bbb"]
 
 
 def test_red():
-    assert samples.table_non_consistente.red() == ["", "a", "b", "bb"]
-    #même red pour samples.table_consistente
+    assert non_consistent_A2.red() == ["", "a", "b", "bb"]
 
 
 def test_ligne():
@@ -80,10 +106,10 @@ def test_ligne():
     assert A.ligne("") == [0]
     assert A.ligne("a") == [1]
     assert A.ligne("b") == [0]
-    assert samples.table_consistente.ligne("") == [1, 0]
-    assert samples.table_consistente.ligne("a") == [0, 1]
-    assert samples.table_consistente.ligne("b") == [0, 0]
-    assert samples.table_consistente.ligne("ab") == [0, 0]
+    assert consistent_a_A2.ligne("") == [1, 0]
+    assert consistent_a_A2.ligne("a") == [0, 1]
+    assert consistent_a_A2.ligne("b") == [0, 0]
+    assert consistent_a_A2.ligne("ab") == [0, 0]
 
 
 def test_different():
@@ -91,15 +117,14 @@ def test_different():
     A.Lstar_Initialise()
     assert A.different("a") == True     #la ligne correspondante à "a" est différente de toutes les lignes correspondantes à red
     assert A.different("b") == False
-    assert samples.table_consistente.different("ab") == False
+    assert consistent_a_A2.different("ab") == False
 
 
 def test_is_closed():
     A = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
-    assert samples.table_non_consistente.is_closed() == True
-    assert samples.table_consistente.is_closed() == True
     A.Lstar_Initialise()
     assert A.is_closed() == False
+    assert non_consistent_A2.is_closed() == True
 
 @pytest.mark.parametrize("nom, mq0, pref0, exp0, expected_mq, expected_pref",
                          [(samples.A, {"" : 0, "a" : 1, "b" : 0}, {"" : "red", "a": "blue", "b" : "blue"}, [""],
@@ -121,14 +146,14 @@ def test_lstar_close(nom, mq0, pref0, exp0, expected_mq, expected_pref):
 
 #TODO
 def test_find_consistency_problem():
-    assert samples.table_consistente.find_consistency_problem() == [True]
+    assert consistent_a_A2.find_consistency_problem() == [True]
     assert samples.table_non_consistente.find_consistency_problem() == [False, ("a", "")] or samples.table_non_consistente.find_consistency_problem() == [False, ("b", "")]
     #pour le 2nd assert c'est juste mais voir s'il y a moyen de simplifier
 
 
 def test_is_consistent():
     assert samples.table_non_consistente.is_consistent() == False       #correspond à ligne 112 de test_pytest
-    assert samples.table_consistente.is_consistent() == True
+    assert consistent_a_A2.is_consistent() == True
     assert samples.table_consistente_b.is_consistent() == True
 
 
