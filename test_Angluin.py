@@ -56,18 +56,29 @@ def consistent_b_a2():
                          [(samples.A, {"": 0, "a": 1, "b": 0, "ab": 0, "ba": 1, "abba": 0, "aaa": 1}),
                           (samples.B, {"": 0, "a": 0, "b": 1, "ab": 1, "ba": 0, "abba": 0, "aaa": 0}),
                           (samples.C, {"": 0, "a": 0, "b": 0, "ab": 0, "ba": 0, "abba": 0, "aaa": 1}),
+                          (samples.odd, {"": 0, "0": 0, "1": 1, "00": 0, "01" : 1, "10": 1, "11": 0}),
                           (samples.A2, {"": 1, "a": 0, "b": 0, "ab": 0, "ba": 0, "abba": 0, "aaa": 0}),
                           (samples.automate, {"": 1, "a": 0, "b": 0, "ab": 0, "ba": 0, "abba": 1, "aaa": 0}),
                           (samples.automate2, {"": 0, "a": 0, "b": 1, "ab": 1, "ba": 0, "abba": 0, "aaa": 0})])
 def test_fill_the_table(nom, expected):
-    a = Angluin(alphabet_ab, nom, mq={}, pref={}, exp=[])
-    a.fill_the_table("")
-    a.fill_the_table("a")
-    a.fill_the_table("b")
-    a.fill_the_table("ab")
-    a.fill_the_table("ba")
-    a.fill_the_table("abba")
-    a.fill_the_table("aaa")
+    if nom == samples.odd:
+        a = Angluin(alphabet_01, nom, mq={}, pref={}, exp=[])
+        a.fill_the_table("")
+        a.fill_the_table("0")
+        a.fill_the_table("1")
+        a.fill_the_table("00")
+        a.fill_the_table("01")
+        a.fill_the_table("10")
+        a.fill_the_table("11")
+    else :
+        a = Angluin(alphabet_ab, nom, mq={}, pref={}, exp=[])
+        a.fill_the_table("")
+        a.fill_the_table("a")
+        a.fill_the_table("b")
+        a.fill_the_table("ab")
+        a.fill_the_table("ba")
+        a.fill_the_table("abba")
+        a.fill_the_table("aaa")
     assert a.mq == expected
 
 
