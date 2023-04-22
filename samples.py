@@ -1,4 +1,3 @@
-import pytest
 from Angluin import *
 
 alphabet = {"a", "b"}

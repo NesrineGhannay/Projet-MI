@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Classes and methods for working with deterministic finite automata."""
-
 from collections import defaultdict, deque
 from itertools import chain, count
 from random import Random

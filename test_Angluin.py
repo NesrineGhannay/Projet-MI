@@ -1,19 +1,22 @@
+import copy
+
 import pytest
 from Angluin import *
 import samples
 
-alphabet = {"a", "b"}
+alphabet_ab = {"a", "b"}
+alphabet_01 = {"0", "1"}
 
 
-# List of DFA with whom we test our functions :
+# Liste de tous les Angluins formées avec les DFA de sample :
 @pytest.fixture
 def liste_angluin():
     result = []
     for a in samples.liste:
         if a == samples.odd:
-            result.append(Angluin({"0", "1"}, a, mq={}, pref={}, exp=[]))
+            result.append(Angluin(alphabet_01, a, mq={}, pref={}, exp=[]))
         else:
-            result.append(Angluin(alphabet, a, mq={}, pref={}, exp=[]))
+            result.append(Angluin(alphabet_ab, a, mq={}, pref={}, exp=[]))
     return result
 
 
@@ -26,7 +29,7 @@ def non_consistent_a2():
     pref0 = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
              'bbb': 'blue'}
     exp0 = ['']
-    return Angluin(alphabet, samples.A2, mq0, pref0, exp0)
+    return Angluin(alphabet_ab, samples.A2, mq0, pref0, exp0)
 
 
 @pytest.fixture
@@ -36,7 +39,7 @@ def consistent_a_a2():
     pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
             'bbb': 'blue'}
     exp = ['', 'a']
-    return Angluin(alphabet, samples.A2, mq, pref, exp)
+    return Angluin(alphabet_ab, samples.A2, mq, pref, exp)
 
 
 @pytest.fixture
@@ -46,7 +49,7 @@ def consistent_b_a2():
     pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
             'bbb': 'blue'}
     exp = ['', 'b']
-    return Angluin(alphabet, samples.A2, mq, pref, exp)
+    return Angluin(alphabet_ab, samples.A2, mq, pref, exp)
 
 
 @pytest.mark.parametrize("nom, expected",
@@ -57,7 +60,7 @@ def consistent_b_a2():
                           (samples.automate, {"": 1, "a": 0, "b": 0, "ab": 0, "ba": 0, "abba": 1, "aaa": 0}),
                           (samples.automate2, {"": 0, "a": 0, "b": 1, "ab": 1, "ba": 0, "abba": 0, "aaa": 0})])
 def test_fill_the_table(nom, expected):
-    a = Angluin(alphabet, nom, mq={}, pref={}, exp=[])
+    a = Angluin(alphabet_ab, nom, mq={}, pref={}, exp=[])
     a.fill_the_table("")
     a.fill_the_table("a")
     a.fill_the_table("b")
@@ -76,10 +79,10 @@ def test_fill_the_table(nom, expected):
                           (samples.automate, {"": 1, "a": 0, "b": 0}),
                           (samples.automate2, {"": 0, "a": 0, "b": 1})])
 def test_lstar_initialise(nom, expected_mq):
-    a = Angluin(alphabet, nom, mq={}, pref={}, exp=[])
+    a = Angluin(copy.deepcopy(alphabet_ab), nom.copy(), mq={}, pref={}, exp=[])
     a.Lstar_Initialise()
-    assert a.alphabet == {"a", "b"}
-    assert a.automate == a.automate
+    assert a.alphabet == alphabet_ab
+    assert a.automate == nom
     assert a.mq == expected_mq
     assert a.pref == {"": "red", "a": "blue", "b": "blue"}
     assert a.exp == [""]
@@ -102,7 +105,7 @@ def test_red(non_consistent_a2):
 
 
 def test_ligne(consistent_a_a2):
-    A = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
+    A = Angluin(alphabet_ab, samples.A, mq={}, pref={}, exp=[])
     A.Lstar_Initialise()
     assert A.ligne("") == [0]
     assert A.ligne("a") == [1]
@@ -114,7 +117,7 @@ def test_ligne(consistent_a_a2):
 
 
 def test_different(consistent_a_a2):
-    A = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
+    A = Angluin(alphabet_ab, samples.A, mq={}, pref={}, exp=[])
     A.Lstar_Initialise()
     assert A.different(
         "a") == True  # la ligne correspondante à "a" est différente de toutes les lignes correspondantes à red
@@ -123,7 +126,7 @@ def test_different(consistent_a_a2):
 
 
 def test_is_closed(non_consistent_a2):
-    A = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
+    A = Angluin(alphabet_ab, samples.A, mq={}, pref={}, exp=[])
     A.Lstar_Initialise()
     assert A.is_closed() == False
     assert non_consistent_a2.is_closed() == True
@@ -139,14 +142,13 @@ def test_is_closed(non_consistent_a2):
                            {"": "red", "b": "red", "a": "blue", "ba": "blue", "bb": "blue"})
                           ])
 def test_lstar_close(nom, mq0, pref0, exp0, expected_mq, expected_pref):
-    a = Angluin(alphabet, nom, mq0, pref0, exp0.copy())
+    a = Angluin(alphabet_ab, nom, mq0, pref0, exp0.copy())
     a.lstar_close()
     assert a.mq == expected_mq
     assert a.pref == expected_pref
     assert a.exp == exp0
 
 
-# TODO
 def test_find_consistency_problem(non_consistent_a2, consistent_a_a2):
     assert consistent_a_a2.find_consistency_problem() == [True]
     result = non_consistent_a2.find_consistency_problem()
@@ -169,7 +171,7 @@ def test_lstar_consistent(non_consistent_a2, consistent_a_a2, consistent_b_a2):
 
 
 def test_get_prefixes():
-    a = Angluin(alphabet, samples.A, mq={}, pref={}, exp=[])
+    a = Angluin(alphabet_ab, samples.A, mq={}, pref={}, exp=[])
     mot = "abaabbb"
     assert a.get_prefixes(mot) == ["", "a", "ab", "aba", "abaa", "abaab", "abaabb", "abaabbb"]
 
@@ -198,7 +200,7 @@ def test_get_prefixes():
                             "bab": "blue"})
                           ])
 def test_lstar_useeq(nom, mq0, pref0, exp0, answer, expected_mq, expected_pref):
-    a = Angluin(alphabet, nom, mq0, pref0, exp0.copy())
+    a = Angluin(alphabet_ab, nom, mq0, pref0, exp0.copy())
     a.LSTAR_USEEQ(answer)
     assert a.mq == expected_mq
     assert a.pref == expected_pref
@@ -220,10 +222,14 @@ def test_lstar_useeq(nom, mq0, pref0, exp0, answer, expected_mq, expected_pref):
                            [""])
                           ])
 def test_lstar_build_automaton(nom, mq, pref, exp):
-    a = Angluin(alphabet, nom, mq, pref, exp)
+    a = Angluin(alphabet_ab, nom, mq, pref, exp)
     assert a.lstar_build_automaton().__eq__(nom)
 
 
 def test_lstar(liste_angluin):
     for a in liste_angluin:
-        assert a.lstar().__eq__(a.automate)
+        automate_a_deviner = a.automate.copy()
+        a.lstar()
+        assert a.automate == automate_a_deviner
+        assert a.__eq__(a.automate)
+        assert a.__eq__(automate_a_deviner)
