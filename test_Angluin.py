@@ -86,17 +86,27 @@ def test_fill_the_table(nom, expected):
                          [(samples.A, {"": 0, "a": 1, "b": 0}),
                           (samples.B, {"": 0, "a": 0, "b": 1}),
                           (samples.C, {"": 0, "a": 0, "b": 0}),
+                          (samples.odd, {"": 0, "0": 0, "1": 1}),
                           (samples.A2, {"": 1, "a": 0, "b": 0}),
                           (samples.automate, {"": 1, "a": 0, "b": 0}),
                           (samples.automate2, {"": 0, "a": 0, "b": 1})])
 def test_lstar_initialise(nom, expected_mq):
-    a = Angluin(copy.deepcopy(alphabet_ab), nom.copy(), mq={}, pref={}, exp=[])
-    a.Lstar_Initialise()
-    assert a.alphabet == alphabet_ab
-    assert a.automate == nom
-    assert a.mq == expected_mq
-    assert a.pref == {"": "red", "a": "blue", "b": "blue"}
-    assert a.exp == [""]
+    if nom == samples.odd:
+        a = Angluin(copy.deepcopy(alphabet_01), nom.copy(), mq={}, pref={}, exp=[])
+        a.Lstar_Initialise()
+        assert a.alphabet == alphabet_01
+        assert a.automate == nom
+        assert a.mq == expected_mq
+        assert a.pref == {"": "red", "0": "blue", "1": "blue"}
+        assert a.exp == [""]
+    else:
+        a = Angluin(copy.deepcopy(alphabet_ab), nom.copy(), mq={}, pref={}, exp=[])
+        a.Lstar_Initialise()
+        assert a.alphabet == alphabet_ab
+        assert a.automate == nom
+        assert a.mq == expected_mq
+        assert a.pref == {"": "red", "a": "blue", "b": "blue"}
+        assert a.exp == [""]
 
 
 def test_compare_ot(non_consistent_a2):
