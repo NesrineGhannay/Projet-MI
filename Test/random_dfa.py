@@ -13,7 +13,7 @@ def rendre_accessible(alphabet, liste_states):
     Ouvert.remove(0)
     Ferme = [0]
     while Ouvert:  # Pour que l'automate soit déterministe fini et tous les états sont accessibles depuis la source
-        target = Ouvert.pop()  # On peut prendre n'importe quel élément de Ouvert car tous les états isolés sont équivalents
+        target = Ouvert.pop(0)  # On peut prendre n'importe quel élément de Ouvert car tous les états isolés sont équivalents
         letter = random.choice(liste_letters)
         source = random.choice(Ferme)
         while letter in transitions[source]:
@@ -50,6 +50,4 @@ def random_dfa(alphabet, number_states):
 def test_random_dfa(nombre):
     number_states = random.randint(1, 100000)
     result = random_dfa({"a", "b"}, number_states)
-    print(len(result._compute_reachable_states()))
-    print(number_states)
     assert len(result._compute_reachable_states()) == number_states

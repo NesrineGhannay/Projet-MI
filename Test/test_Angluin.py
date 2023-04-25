@@ -2,7 +2,7 @@ import copy
 
 import pytest
 from Angluin import *
-import samples
+from samples import samples
 
 alphabet_ab = {"a", "b"}
 alphabet_01 = {"0", "1"}
@@ -50,6 +50,9 @@ def consistent_b_a2():
             'bbb': 'blue'}
     exp = ['', 'b']
     return Angluin(alphabet_ab, samples.A2, mq, pref, exp)
+
+odd_number_of_1_version2 = DFA(input_symbols= alphabet_01, states= {0, 1},
+                               transitions={0: {"0" : 0, "1" : 1}, 1:{"0" : 1, "1" : 0}}, initial_state=0, final_states={1})
 
 
 @pytest.mark.parametrize("nom, expected",
@@ -197,7 +200,8 @@ def test_get_prefixes():
     assert a.get_prefixes(mot) == ["", "a", "ab", "aba", "abaa", "abaab", "abaabb", "abaabbb"]
 
 
-# TODO : on admet que la méthode __eq__ est vérifiée
+#TODO : faire le test de __eq__
+
 
 @pytest.mark.parametrize("nom, mq0, pref0, exp0, answer, expected_mq, expected_pref",
                          [(samples.A, {"": 0, "a": 1, "b": 0, "aa": 1, "ab": 0},
