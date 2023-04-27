@@ -1,3 +1,5 @@
+import time
+
 from automata.fa.dfa import DFA
 
 
@@ -229,14 +231,18 @@ class Angluin:
     """
     Programme principal
     """
-    def lstar(self):
+    def lstar(self, echec = False):
         self.Lstar_Initialise()
         #print("INITIALISER")
         #print("mq =", self.mq)
         #print("pref =", self.pref)
         #print("exp =", self.exp)
         a = True # pour rentrer dans le while car c'est un do until
+        cpt = 0
         while a or answer != True:
+            if echec:
+                if cpt == 10:
+                    return False
             a = False
             #print("BOUCLE WHILE  1")
             while not self.is_closed() or not self.is_consistent():
@@ -276,5 +282,6 @@ class Angluin:
             else:
                 #print("Automate trouvé : ")
                 return proposition
+            cpt += 1
         # return self.lstar_build_automaton()
         return proposition
