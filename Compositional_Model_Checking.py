@@ -1,5 +1,6 @@
 import copy
 
+from Angluin import Angluin
 from automata.fa.dfa import DFA
 
 
@@ -145,44 +146,55 @@ def parallel_composition(M1, M2):
 #Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
 
 
-def assumption_garantee(m1):
-    m1.Lstar_Initialise()
-    while not m1.is_closed():
-        if not m1.is_closed(): #Carla : C'est la même chose que while not m1.is_closed() ?
-            m1.lstar_close()
-    proposition = m1.lstar_build_automaton()
-    answer = learning(m1, proposition)
-    if answer != True:
+def assumption_garantee(alphabet, m1, m2, propriete):
+    prop = Angluin(alphabet, m2)
+    proposition = prop.Lstar_Initialise()
+    while not proposition.is_closed(): #Carla : C'est la même chose que while not m1.is_closed() ? Réponse : Oui c'est vrai
+        proposition.lstar_close()
+    proposition = proposition.lstar_build_automaton()
+    answer = learning(m1,m2, proposition, propriete, prop)
+    if answer == False:
         print("ERROR")
     else:
         print("Automate trouvé : ")
-        return proposition
+        return answer
 
 
-def learning(m1, proposition):
+def learning(m1, m2, proposition, propriete, prop, alphabet):
     answer = False
     while answer != True:
-        if consequences(parallel_composition(m1, proposition)):
-            proposition = consequences(
-                proposition)  # c'est censé etre le contre exemple mise a part ca je sais pas comment on pourrait le recuperer
-            if proposition == True:
-                return True
-            elif real_error(proposition, m1):
+        if satisfies(parallel_composition(m1, proposition), propriete):
+            cex = satisfies(m2, proposition)
+            if cex == True:
+                answers = True
+            elif real_error(cex, m2, propriete, alphabet):
                 return False
-    return True
-
+            else :
+                proposition = prop.LSTAR_USEEQ()
+    return proposition
 
 '''
 Les deux méthodes ci dessous sont à implémenter
 '''
 
-
-def consequences(m1):
+def real_error(m1, cex, propriete, alphabet):
+    cex = trace(cex, alphabet)
+    if satisfies(parallel_composition(m1, cex), propriete):
+        return False
     return True
 
+def trace(cex, alphabet):
+    states = {""}
+    transition = {}
+    state = ""
+    for i in cex:
+        state_avant = state
+        state += str(i)
+        transition[state_avant] = {}
+        transition[state_avant][i] = state
+        states.add(state)
+    return DFA(states, alphabet, transition, "", state, True)
 
-def real_error(m1, m2):
-    return False
 
 
 # A = DFA(
