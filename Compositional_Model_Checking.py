@@ -17,8 +17,6 @@ On complète l'automate de base par un état puits qui est un état d'erreur (P_
 input = Automate de la propriété à compléter P
 output = Automate P dans lequel on a ajouté l'état d'erreur = P_err.
 """
-
-
 def completedAutomata(states, alphabet, transitions, initial_state, final_states):
     ajouter_pi = False
     for dico in transitions:

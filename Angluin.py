@@ -103,12 +103,16 @@ class Angluin:
                 return False
         return True
 
-    """
-    Allows to fill the table's automat with a membership test for all empty gaps
-    input = the table corresponding to the actual automaton
-    output = the updating table corresponding to the same automaton but filled
-    """
+
     def fill_the_table(self, u):
+        """
+        Allows to fill the table's automat with a membership test for all empty gaps
+
+        :param u: the word whose belonging to the language of the self automaton is tested
+        :return : the updating table corresponding to the same automaton but filled
+
+        -- uses function accepts_input
+        """
         if self.automate.accepts_input(u):
             self.mq[u] = 1
         else:
@@ -128,9 +132,11 @@ class Angluin:
 
     """
     Allows to find the example who make the table not consistency if she is not
-    input = the table corresponding to the actual automaton
-    output = [False, (a,e)] if the word (a+e) make the table not consistent
-             [True] if the table is consistent
+    
+    :return : [False, (a,e)] if the word (a+e) make the table not consistent
+              [True] if the table is consistent
+              
+    -- uses function compareOT 
     """
     def find_consistency_problem(self):
         for s1 in self.red():
@@ -143,25 +149,28 @@ class Angluin:
         return [True]
 
 
-    """
-    Allows to know if the table is consistent or not, thanks to find_consistency_problem
-    input = the table corresponding to the actual automaton
-    output = False (if find_consistency_problem return [False, (a,e)] the table is not consistent)
-             True  (if find_consistency_problem return only [True] the table is consistent)
-    """
+
     def is_consistent(self):
+        """
+        Allows to know if the table is consistent or not, thanks to find_consistency_problem
+
+        :return: False (if find_consistency_problem return [False, (a,e)] the table is not consistent)
+        True  (if find_consistency_problem return only [True] the table is consistent)
+        """
         res = self.find_consistency_problem()
         if res[0]:
             return True
         return False
 
-    """
-    Allows to make our automaton's table consistent 
-    input = the table corresponding to the actual automaton
-    output = the updating table corresponding to the new actual automaton
-    -- uses function membership_test
-    """
+
     def lstar_consistent(self):
+        """
+        Allows to make our automaton's table consistent
+
+        :return : the updating table corresponding to the new actual automaton
+
+        -- uses function find_consistency_problem & fill_the_table
+        """
         a, e = self.find_consistency_problem()[1]
         self.exp.append(str(a + e))
         for line in self.pref:
@@ -229,7 +238,12 @@ class Angluin:
                    initial_state="", final_states=final_states)
 
     """
-    Programme principal
+    Main program: Uses Angluin’s algorithm (L*) to learn a regular language
+    
+    :param echec : optional variable to check how often the algorithm is wrong (parameters needed for tests)
+    :return : the automaton guessed at the end of learning with Angluin
+    
+    -- uses functions Lstar_Initialise, is_closed, is_consistent, lstar_close, lstar_consistent, lstar_build_automaton, __eq__, LSTAR_USEEQ
     """
     def lstar(self, echec = False):
         self.Lstar_Initialise()
