@@ -139,13 +139,13 @@ class Angluin:
     -- uses function compareOT 
     """
     def find_consistency_problem(self):
-        for s1 in self.red():
-            for s2 in self.red():
-                if self.compareOT(s1, s2):
+        for word1 in self.red():
+            for word2 in self.red():
+                if self.compareOT(word1, word2):
                     for e in self.exp:
-                        for a in self.alphabet:
-                            if self.mq[str(s1 + a + e)] != self.mq[str(s2 + a + e)]:
-                                return [False, (a, e)]
+                        for letter in self.alphabet:
+                            if self.mq[str(word1 + letter + e)] != self.mq[str(word2 + letter + e)]:
+                                return [False, (letter, e)]
         return [True]
 
 
@@ -171,15 +171,12 @@ class Angluin:
 
         -- uses function find_consistency_problem & fill_the_table
         """
-        a, e = self.find_consistency_problem()[1]
-        self.exp.append(str(a + e))
+        letter, e = self.find_consistency_problem()[1]
+        self.exp.append(str(letter + e))
         for line in self.pref:
             for e in self.exp:
                 if str(line + e) not in self.mq:
                     self.fill_the_table(str(line + e))
-
-    # def equivalence_test(self):
-    #     return True
 
     """
     Renvoie les préfixes d'un mot sous forme de liste. dsl je sais pas faire la documentation python propre je regarde après, j'ai mis ça pour pas oublier
