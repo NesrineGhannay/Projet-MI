@@ -4,12 +4,12 @@ from Angluin import Angluin
 from automata.fa.dfa import DFA
 
 
-def restriction(mot, alphabet):
-    motRestreint = ""
-    for caractere in mot:
-        if caractere in alphabet:
-            motRestreint += caractere
-    return motRestreint
+# def restriction(mot, alphabet):
+#     motRestreint = ""
+#     for caractere in mot:
+#         if caractere in alphabet:
+#             motRestreint += caractere
+#     return motRestreint
 
 
 """
@@ -144,13 +144,13 @@ def parallel_composition(M1, M2):
 #Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
 
 
-def assumption_garantee(alphabet, m1, m2, propriete):
+def assumption_garantee(alphabet, m1, m2, property):
     prop = Angluin(alphabet, m2)
     proposition = prop.Lstar_Initialise()
     while not proposition.is_closed(): #Carla : C'est la même chose que while not m1.is_closed() ? Réponse : Oui c'est vrai
         proposition.lstar_close()
     proposition = proposition.lstar_build_automaton()
-    answer = learning(m1,m2, proposition, propriete, prop)
+    answer = learning(m1, m2, proposition, property, prop)
     if answer == False:
         print("ERROR")
     else:
@@ -158,14 +158,14 @@ def assumption_garantee(alphabet, m1, m2, propriete):
         return answer
 
 
-def learning(m1, m2, proposition, propriete, prop, alphabet):
+def learning(m1, m2, proposition, property, prop, alphabet):
     answer = False
     while answer != True:
-        if satisfies(parallel_composition(m1, proposition), propriete):
+        if satisfies(parallel_composition(m1, proposition), property):
             cex = satisfies(m2, proposition)
             if cex == True:
                 answers = True
-            elif real_error(cex, m2, propriete, alphabet):
+            elif real_error(cex, m2, property, alphabet):
                 return False
             else :
                 proposition = prop.LSTAR_USEEQ()
@@ -226,45 +226,50 @@ def trace(cex, alphabet):
 # # print(B)
 # print(parallel_composition(A, B))
 
-def satisfies(M, P):  # pauline
-    """Renvoie True si ce DFA satisfait un automate d'erreur représentant une propriété P"""
-    restreints = set()
+def satisfies(M, P):
+    """
+    Returns True if the system M satisfies property P.
+    :param M: DFA representing the system
+    :param P: error LTS representing the property
+    :return: True if M satisfies P, False if not
+    """
+    restricted_symbols = set()
     for symbol in M.input_symbols:
         if symbol not in P.input_symbols:
-            restreints.add(symbol)
-    if len(restreints) > 0:
-        P_complete = etendre_alphabet(P, restreints)
+            restricted_symbols.add(symbol)
+    if len(restricted_symbols) > 0:
+        P_complete = extend_alphabet(P, restricted_symbols)
         P = P_complete
-    # P peut maintenant lire des mots de l'aphabet de M
+    # P is now able to read words from the M alphabet
     return M.__le__(P, witness=True)
 
-
-def etendre_alphabet(A, symboles_a_ajouter):
-    """Ajoute des boucles simples sur tous les états pour transformer l'alphabet et ajoute les lettres manquantes à
-    l'alphabet de A. Cela permet d'avoir un automate qui a le même comportement et qui peut lire les lettres qui
-    n'appartenaient pas à son alphabet"""
-
-    # récupération de l'alphabet original
-    # on utilise pas la fonction copy() car l'alphabet original est représenté par un frozenset (immutable)
-    alphabet_complete = set()
+def extend_alphabet(A, symbols_to_add):
+    """
+    Extends the alphabet and adds a simple transition loop on each state for each symbol to add. It produces a DFA
+    with the same behaviour, but which will be able to read words from its alphabet extended with the symbols given
+    in parameter.
+    :param A: DFA to which the symbols will be added
+    :param symbols_to_add: list of symbols to be added to the DFA
+    :return: the completed DFA
+    """
+    # we are not using copy() to get the original alphabet because it is represented by a frozenset (immutable)
+    completed_alphabet = set()
     for symbol in A.input_symbols:
-        alphabet_complete.add(symbol)
+        completed_alphabet.add(symbol)
 
-    # récupération des transitions originales
-    # on utilise pas la fonction copy() car les transitions originales sont représentées par un frozenset (immutable)
-    transitions_completees = {}
+    # we are not using copy() to get the original transition set because it is represented by a frozendict (immutable)
+    completed_transitions = {}
     for state in A.transitions:
-        transitions_completees[state] = {}
+        completed_transitions[state] = {}
         for symbol in A.transitions[state]:
-            transitions_completees[state][symbol] = A.transitions[state][symbol]
+            completed_transitions[state][symbol] = A.transitions[state][symbol]
 
-    for symbole in symboles_a_ajouter:
-        alphabet_complete.add(symbole)
-        for etat in A.states:
-            transitions_completees[etat][symbole] = etat
-    automate_complete = DFA(states=A.states.copy(), input_symbols=alphabet_complete, transitions=transitions_completees,
+    for symbol in symbols_to_add:
+        completed_alphabet.add(symbol)
+        for state in A.states:
+            completed_transitions[state][symbol] = state
+    automate_complete = DFA(states=A.states.copy(), input_symbols=completed_alphabet, transitions=completed_transitions,
                             initial_state=A.initial_state, final_states=A.final_states.copy())
-    # print("automate_complete", automate_complete)
     return automate_complete
 
 
