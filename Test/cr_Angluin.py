@@ -4,12 +4,13 @@ from Angluin import *
 import matplotlib.pyplot as plt
 
 
-abscisse = []
-ordonnee = []
+abscissa = []
+ordinate = []
 
-def add_abs_ord(debut, fin, pas):
-    for i in range(debut, fin, pas):
-        abscisse.append(i)
+
+def add_abs_ord(beginning, ending, step):
+    for i in range(beginning, ending, step):
+        abscissa.append(i)
         result = 0
         print(i)
         for j in range(100):
@@ -19,12 +20,12 @@ def add_abs_ord(debut, fin, pas):
             angluin.lstar()
             b = time.time()
             result += b-a
-        ordonnee.append(result/100)
+        ordinate.append(result/100)
 
 add_abs_ord(1, 100002, 10000)
 
 plt.figure()
-plt.plot(abscisse, ordonnee)
+plt.plot(abscissa, ordinate)
 plt.xlabel("Nombre d\'états")
 plt.ylabel('Temps')
 plt.title('Complexité de temps d\'Angluin')
