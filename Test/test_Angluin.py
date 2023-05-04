@@ -252,5 +252,8 @@ def test_lstar(list_angluin):
     for a in list_angluin:
         automaton_to_guess = a.automate.copy()
         assert a.automate == automaton_to_guess
-        assert a.lstar().__eq__(a.automate)
+        p = a.lstar()
+        print(p)
+        print(a.automate)
+        assert p.__eq__(a.automate)
         #en revanche assert a.__eq__(a.automate) fonctionne...

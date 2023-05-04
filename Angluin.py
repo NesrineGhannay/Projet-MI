@@ -241,7 +241,7 @@ class Angluin:
         return DFA(states=states, input_symbols=self.alphabet, transitions=transitions,
                    initial_state="", final_states=final_states)
 
-    def lstar(self, count_failures = False):
+    def lstar(self):
         """
         Main program: Uses Angluin’s algorithm (L*) to learn a regular language.
 
@@ -252,11 +252,7 @@ class Angluin:
         """
         self.Lstar_Initialise()
         first_iteration = True # to enter the while loop
-        count = 0
         while first_iteration or not answer :
-            if count_failures:
-                if count == 10:
-                    return False
             first_iteration = False
             while not self.is_closed() or not self.is_consistent():
                 if not self.is_closed():
@@ -268,9 +264,8 @@ class Angluin:
             assumption = self.lstar_build_automaton()
             answer = assumption.__eq__(self.automate, witness=True) # equivalence query
 
-            if not answer :
-                self.LSTAR_USEEQ(answer)
+            if not answer[0] :  #TODO : l'erreur était ici !!!
+                self.LSTAR_USEEQ(answer[1])
             else:
                 return assumption
-            count += 1
         return assumption

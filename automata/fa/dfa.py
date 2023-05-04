@@ -83,8 +83,8 @@ class DFA(fa.FA):
                 # print("!!!!!!!!! LA ON A", q_a, is_final_state(q_a))
                 if witness :
                     # print("contre-exemple : ", trace[state_sets[q_a]])
-                    return trace[state_sets[q_a]]
-                return False
+                    return [False, trace[state_sets[q_a]]]
+                return [False, False]
 
             for symbol in self.input_symbols:
                 r_1 = state_sets[transition(q_a, symbol)]
@@ -97,7 +97,7 @@ class DFA(fa.FA):
                     pair_stack.append((r_1, r_2))
 
         # print("equivalence")
-        return True
+        return [True, True]
 
     def __le__(self, other, witness=False):
         """Return True if this DFA is a subset of (or equal to) another DFA."""
