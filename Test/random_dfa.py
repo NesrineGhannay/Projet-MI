@@ -6,25 +6,25 @@ import pytest
 from automata.fa.dfa import DFA
 
 
-def rendre_accessible(alphabet, liste_states):
-    liste_letters = list(alphabet)
+def get_accessible(alphabet, liste_states):
+    list_letters = list(alphabet)
     transitions = {0: {}}
-    Ouvert = copy.copy(liste_states)
-    Ouvert.remove(0)
-    Ferme = [0]
-    for target in Ouvert :  # On peut prendre n'importe quel élément de Ouvert car tous les états isolés sont équivalents
-        letter = random.choice(liste_letters)
-        source = random.choice(Ferme)
-        while letter in transitions[source]:
-            letter = random.choice(liste_letters)
-            source = random.choice(Ferme)
-        transitions[source][letter] = target
-        Ferme.append(target)
+    waited_list = copy.copy(liste_states)
+    waited_list.remove(0)
+    closed = [0]
+    for target in waited_list :  # On peut prendre n'importe quel élément de Ouvert car tous les états isolés sont équivalents
+        letter = random.choice(list_letters)
+        root = random.choice(closed)
+        while letter in transitions[root]:
+            letter = random.choice(list_letters)
+            root = random.choice(closed)
+        transitions[root][letter] = target
+        closed.append(target)
         transitions[target] = {}  # On initialise les transitions du nouvel état ajouté à Fermé
     return transitions
 
 
-def complete_alea(transitions, alphabet, liste_states):
+def complete_randomly(transitions, alphabet, liste_states):
     for source in liste_states:  # Pour que l'automate soit complet
         for letter in alphabet:
             if not letter in transitions[source]:
@@ -34,15 +34,15 @@ def complete_alea(transitions, alphabet, liste_states):
 
 
 # construit un automate déterministe fini complet aléatoirement
-def random_dfa(alphabet, number_states, tous_finaux = False):
-    liste_states = [i for i in range(number_states)]
-    states = set(copy.copy(liste_states))
-    transitions = rendre_accessible(alphabet, liste_states)
-    transitions = complete_alea(transitions, alphabet, liste_states)
-    if tous_finaux :
+def random_dfa(alphabet, number_states, all_final = False):
+    list_states = [i for i in range(number_states)]
+    states = set(copy.copy(list_states))
+    transitions = get_accessible(alphabet, list_states)
+    transitions = complete_randomly(transitions, alphabet, list_states)
+    if all_final :
         final = copy.deepcopy(states)
     else :
-        final = set(random.sample(liste_states, random.randint(1, number_states)))
+        final = set(random.sample(list_states, random.randint(1, number_states)))
     return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=0, final_states=final)
 
 
