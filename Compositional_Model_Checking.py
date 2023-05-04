@@ -103,14 +103,6 @@ def interleaving(T, M1, M2):
     return T
 
 
-def recupetatsfinaux(etats1, etats2):  # METHODE TEMPORAIRE !!!
-    etats = set()
-    for etat1 in etats1:
-        for etat2 in etats2:
-            etats.add((etat1, etat2))
-    return etats
-
-
 def parallel_composition(M1, M2):
     # Q : les etats (states)
     Q = set()
@@ -132,15 +124,15 @@ def parallel_composition(M1, M2):
     T = synchronization(M1, M2)
     # si lettre existante dans un seul des alphabet
     T_ = interleaving(T, M1, M2)
-    # ATTENTION ETAT FINAL PAS FAIT
-    final = recupetatsfinaux(M1.final_states, M2.final_states)
+    # F : final and accepted states
+    F = Q
     # return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=M1.final_states)
     print("Q ", Q)
     print("aM ", aM)
     print("T_ ", T_)
     print("q0 ", q_0)
-    print("final ", final)
-    return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=final, allow_partial=True)
+    print("final ", F)
+    return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=F, allow_partial=True)
 #Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
 
 
