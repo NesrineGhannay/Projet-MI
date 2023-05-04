@@ -9,11 +9,10 @@ from automata.fa.dfa import DFA
 def rendre_accessible(alphabet, liste_states):
     liste_letters = list(alphabet)
     transitions = {0: {}}
-    Ouvert = copy.deepcopy(liste_states)
+    Ouvert = copy.copy(liste_states)
     Ouvert.remove(0)
     Ferme = [0]
-    while Ouvert:  # Pour que l'automate soit déterministe fini et tous les états sont accessibles depuis la source
-        target = Ouvert.pop(0)  # On peut prendre n'importe quel élément de Ouvert car tous les états isolés sont équivalents
+    for target in Ouvert :  # On peut prendre n'importe quel élément de Ouvert car tous les états isolés sont équivalents
         letter = random.choice(liste_letters)
         source = random.choice(Ferme)
         while letter in transitions[source]:
@@ -35,14 +34,15 @@ def complete_alea(transitions, alphabet, liste_states):
 
 
 # construit un automate déterministe fini complet aléatoirement
-def random_dfa(alphabet, number_states):
-    states = set()
-    for i in range(number_states):
-        states.add(i)
-    liste_states = list(copy.deepcopy(states))
+def random_dfa(alphabet, number_states, tous_finaux = False):
+    liste_states = [i for i in range(number_states)]
+    states = set(copy.copy(liste_states))
     transitions = rendre_accessible(alphabet, liste_states)
     transitions = complete_alea(transitions, alphabet, liste_states)
-    final = set(random.sample(liste_states, random.randint(1, number_states)))
+    if tous_finaux :
+        final = copy.deepcopy(states)
+    else :
+        final = set(random.sample(liste_states, random.randint(1, number_states)))
     return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=0, final_states=final)
 
 

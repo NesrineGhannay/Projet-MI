@@ -10,14 +10,18 @@ ordonnee = []
 def add_abs_ord(debut, fin, pas):
     for i in range(debut, fin, pas):
         abscisse.append(i)
-        a = time.time()
-        A = random_dfa({"a", "b"}, i)
-        angluin = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
-        angluin.lstar()
-        b = time.time()
-        ordonnee.append(b-a)
+        result = 0
+        print(i)
+        for j in range(100):
+            A = random_dfa({"a", "b"}, i)
+            a = time.time()
+            angluin = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
+            angluin.lstar()
+            b = time.time()
+            result += b-a
+        ordonnee.append(result/100)
 
-add_abs_ord(1, 10001, 1000)
+add_abs_ord(1, 100002, 10000)
 
 plt.figure()
 plt.plot(abscisse, ordonnee)
