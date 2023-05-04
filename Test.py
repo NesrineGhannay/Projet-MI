@@ -27,4 +27,13 @@ A = DFA(states={"0", "1", "puits"},
         final_states={"1"}
         )
 
-print(AB.__le__(A, True))
+# print(AB.__le__(A, True))
+
+# TEST
+# etats ={"0", "1"}
+# input_symbols={"b", "a"}
+# transition={"0" : {"b" : "1"}, "1" : {"a" : "0", "b" : "1"}}
+# ini_state="0"
+# fin_states={"1"}
+#
+# print(completedAutomata(etats, input_symbols, transition, ini_state, fin_states))
