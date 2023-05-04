@@ -194,18 +194,14 @@ class Angluin:
     def LSTAR_USEEQ(self, answer):
         """
         Modifies the observation table in order to correct the false assumption, by using the counter-example returned.
-        :param answer: the counter-example return after the equivalence query
+        :param answer: the counter-example returned after the equivalence query
         """
         prefixes = self.get_prefixes(answer)
         for p in prefixes:
             self.pref[p] = "red"
             for a in self.alphabet:
-                # if str(p + a) not in prefixes :
                 if str(p + a) not in prefixes and str(p + a) not in self.pref:
                     self.pref[str(p + a)] = "blue"
-        # for line in pref.keys():
-        # for line in list(pref.keys()):
-        # for line in [*self.pref]:
         for line in self.pref:
             for e in self.exp:
                 if str(line + e) not in self.mq:
