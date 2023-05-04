@@ -12,38 +12,35 @@ from automata.fa.dfa import DFA
 #     return motRestreint
 
 
-"""
-On complète l'automate de base par un état puits qui est un état d'erreur (P_err = nouvel automate)
-input = Automate de la propriété à compléter P
-output = Automate P dans lequel on a ajouté l'état d'erreur = P_err.
-"""
+
 def completedAutomata(states, alphabet, transitions, initial_state, final_states):
-    ajouter_pi = False
-    for dico in transitions:
+    """
+    The automaton P (of property) is completed by a well state which is an error state (P_err = new automaton)
+
+    :param states : the states of the automaton P
+    :param alphabet: the alphabet of the automaton P
+    :param transitions: the transitions of the automaton P
+    :param initial_state: the initial states of the automaton P
+    :param final_states: the finals states of the automaton P
+
+    :return: DFA P in which the error status was added = P_err.
+
+    """
+    add_pi = False
+    for dictionnary in transitions:
         for char in alphabet:
-            if char not in transitions[dico]:
-                transitions[dico][char] = "pi"
-                ajouter_pi = True
+            if char not in transitions[dictionnary]:
+                transitions[dictionnary][char] = "pi"
+                add_pi = True
                 if "pi" not in states:
                     states.add("pi")
-    if ajouter_pi:
+    if add_pi:
         transitions["pi"] = {}
         for char in alphabet:
             transitions["pi"][char] = "pi"
     return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=initial_state,
                final_states=final_states)
 
-
-# TEST
-# etats ={"0", "1"}
-# input_symbols={"b", "a"}
-# transition={"0" : {"b" : "1"}, "1" : {"a" : "0", "b" : "1"}}
-# ini_state="0"
-# fin_states={"1"}
-#
-# print(completedAutomata(etats, input_symbols, transition, ini_state, fin_states))
-
-# Modele Cheking
 
 # Produit parallele : Lidia
 """

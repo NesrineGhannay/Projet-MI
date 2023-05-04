@@ -116,7 +116,6 @@ class Angluin:
         """
         Fills the empty gaps in the observation table with membership tests.
         :param u : the word whose belonging to the language of the self automaton is tested
-        :return: the updated table corresponding to the same automaton but filled
 
         -- uses function accepts_input
         """
@@ -173,8 +172,6 @@ class Angluin:
         """
         Makes the automaton's table consistent.
 
-        :return : the updated table corresponding to the new actual automaton
-
         -- uses function find_consistency_problem & fill_the_table
         """
         letter, e = self.find_consistency_problem()[1]
@@ -198,18 +195,14 @@ class Angluin:
     def LSTAR_USEEQ(self, answer):
         """
         Modifies the observation table in order to correct the false assumption, by using the counter-example returned.
-        :param answer: the counter-example return after the equivalence query
+        :param answer: the counter-example returned after the equivalence query
         """
         prefixes = self.get_prefixes(answer)
         for p in prefixes:
             self.pref[p] = "red"
             for a in self.alphabet:
-                # if str(p + a) not in prefixes :
                 if str(p + a) not in prefixes and str(p + a) not in self.pref:
                     self.pref[str(p + a)] = "blue"
-        # for line in pref.keys():
-        # for line in list(pref.keys()):
-        # for line in [*self.pref]:
         for line in self.pref:
             for e in self.exp:
                 if str(line + e) not in self.mq:
