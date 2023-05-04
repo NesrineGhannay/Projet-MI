@@ -211,7 +211,10 @@ class Angluin:
     def lstar_build_automaton(self):
         """
         Build the automaton thanks mq, pref and exp.
+
         :return: the automaton built
+
+        -- uses functions red, compareOT
         """
         states = set()
         red = self.red()

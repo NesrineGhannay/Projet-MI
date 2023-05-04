@@ -32,7 +32,7 @@ C = DFA(states={"0", "1", "2", "puits"},
         final_states={"2"}
         )
 
-odd = DFA(
+odd_number_of_1 = DFA(
     states={'0', '1', '2'},
     input_symbols={'0', '1'},
     transitions={
@@ -78,5 +78,11 @@ automate2 = DFA(states={"0", "1", "2"},
                 final_states={"1"}
                 )  # exemple du document Learning_with_Queries.pdf
 
+odd_number_of_1_version2 = DFA(states={0, 1},
+                               input_symbols={"0", "1"},
+                               transitions={0: {"0": 0, "1": 1}, 1: {"0": 1, "1": 0}},
+                               initial_state=0,
+                               final_states={1})
+
 # List of DFA with whom we test our functions :
-liste = [A, B, C, odd, A2, automate, automate2]
+liste = [A, B, C, odd_number_of_1, A2, automate, automate2]
