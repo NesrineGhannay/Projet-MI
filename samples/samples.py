@@ -1,8 +1,6 @@
 from Angluin import *
 
-alphabet = {"a", "b"}
-
-# Quelques DFA initialisés avec Angluin:
+# Some DFA :
 
 A = DFA(states={"0", "1", "puits"},
         input_symbols={"b", "a"},
