@@ -253,7 +253,7 @@ class Angluin:
         self.Lstar_Initialise()
         first_iteration = True # to enter the while loop
         count = 0
-        while first_iteration or answer != True:
+        while first_iteration or not answer :
             if count_failures:
                 if count == 10:
                     return False
@@ -268,7 +268,7 @@ class Angluin:
             assumption = self.lstar_build_automaton()
             answer = assumption.__eq__(self.automate, witness=True) # equivalence query
 
-            if answer != True:
+            if not answer :
                 self.LSTAR_USEEQ(answer)
             else:
                 return assumption

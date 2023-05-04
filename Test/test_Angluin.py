@@ -131,13 +131,13 @@ def test_red(non_consistent_a2):
 def test_ligne(consistent_a_a2):
     A = Angluin(alphabet_ab, samples.A, mq={}, pref={}, exp=[])
     A.Lstar_Initialise()
-    assert A.ligne("") == [0]
-    assert A.ligne("a") == [1]
-    assert A.ligne("b") == [0]
-    assert consistent_a_a2.ligne("") == [1, 0]
-    assert consistent_a_a2.ligne("a") == [0, 1]
-    assert consistent_a_a2.ligne("b") == [0, 0]
-    assert consistent_a_a2.ligne("ab") == [0, 0]
+    assert A.line("") == [0]
+    assert A.line("a") == [1]
+    assert A.line("b") == [0]
+    assert consistent_a_a2.line("") == [1, 0]
+    assert consistent_a_a2.line("a") == [0, 1]
+    assert consistent_a_a2.line("b") == [0, 0]
+    assert consistent_a_a2.line("ab") == [0, 0]
 
 
 def test_different(consistent_a_a2):
