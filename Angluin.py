@@ -210,8 +210,8 @@ class Angluin:
 
     def lstar_build_automaton(self):
         """
-        Builds the automaton according to the actual observation table.
-        :return: the automaton corresponding to the table
+        Build the automaton thanks mq, pref and exp.
+        :return: the automaton built
         """
         states = set()
         red = self.red()
