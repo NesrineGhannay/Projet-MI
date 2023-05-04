@@ -123,12 +123,20 @@ def parallel_composition(M1, M2):
 
 
 def assumption_garantee(alphabet, m1, m2, property):
+    """
+    Main program: Uses Compositional Model Checking approach to learn regular language
+    :param alphabet: System alphabet
+    :param m1:  First system component
+    :param m2: Second system component
+    :param property: Property to be verified
+    :return: Return the automaton if the property is satisfied
+    """
     prop = Angluin(alphabet, m2)
-    proposition = prop.Lstar_Initialise()
-    while not proposition.is_closed(): #Carla : C'est la même chose que while not m1.is_closed() ? Réponse : Oui c'est vrai
-        proposition.lstar_close()
-    proposition = proposition.lstar_build_automaton()
-    answer = learning(m1, m2, proposition, property, prop)
+    assumption = prop.Lstar_Initialise()
+    while not assumption.is_closed():
+        assumption.lstar_close()
+    assumption = assumption.lstar_build_automaton()
+    answer = learning(m1, m2, assumption, property, prop)
     if answer == False:
         print("ERROR")
     else:
@@ -136,30 +144,51 @@ def assumption_garantee(alphabet, m1, m2, property):
         return answer
 
 
-def learning(m1, m2, proposition, property, prop, alphabet):
+def learning(m1, m2, assumption, property, prop, alphabet):
+    """
+    Model Checking Program
+    :param m1: First system component
+    :param m2: Second sustem component
+    :param assumption: The determined automaton
+    :param property: Property to be verified
+    :param prop: Input that allows to retrieve the methods of Angluin
+    :param alphabet: System aphabet
+    :return: the correct assumption or False if it's not possible to generate it
+
+    """
     answer = False
     while answer != True:
-        if satisfies(parallel_composition(m1, proposition), property):
-            cex = satisfies(m2, proposition)
+        if satisfies(parallel_composition(m1, assumption), property):
+            cex = satisfies(m2, assumption)
             if cex == True:
                 answers = True
             elif real_error(cex, m2, property, alphabet):
                 return False
             else :
-                proposition = prop.LSTAR_USEEQ()
-    return proposition
+                assumption = prop.LSTAR_USEEQ()
+    return assumption
 
-'''
-Les deux méthodes ci dessous sont à implémenter
-'''
-
-def real_error(m1, cex, propriete, alphabet):
+def real_error(m1, cex, proprety, alphabet):
+    """
+    Determine if the property is satisfable
+    :param m1: First system component
+    :param cex: Conter-example
+    :param proprety: Proprety that we want to satisfy
+    :param alphabet:
+    :return
+    """
     cex = trace(cex, alphabet)
-    if satisfies(parallel_composition(m1, cex), propriete):
+    if satisfies(parallel_composition(m1, cex), proprety):
         return False
     return True
 
 def trace(cex, alphabet):
+    """
+    Determine the trace of a word
+    :param cex: The word tha we want to determine the trace
+    :param alphabet: Conter-example alphabet
+    :return: Return the trace
+    """
     states = {""}
     transition = {}
     state = ""
@@ -169,7 +198,7 @@ def trace(cex, alphabet):
         transition[state_avant] = {}
         transition[state_avant][i] = state
         states.add(state)
-    return DFA(states, alphabet, transition, "", state, True)
+    return DFA(states=states, input_symbols=alphabet, transitions=transition, initial_state="", final_states=state, allow_partial=True)
 
 
 

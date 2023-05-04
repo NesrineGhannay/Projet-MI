@@ -72,35 +72,41 @@ class Angluin:
         return red
 
     def is_closed(self):
-        # for s in self.blue():
-        #     for u in self.red():
-        #         if not self.compareOT(s, u):
-        #             return False
-        # return True
+        """
+        Determine if the table is closed
+        :return: True if it's closed
+        -- uses function blue
+        -- uses function red
+        """
         elts_blue = self.blue()
         elts_red = self.red()
         lignes_red = set()
         for u in elts_red :
             lignes_red.add(str(self.line(u)))
-        #print("Lignes rouges : ",lignes_red )
         for s in elts_blue :
             if not str(self.line(s)) in lignes_red:
-                #print("NON, closed")
                 return False
-        #print("OUI, closed")
         return True
 
     def line(self, s):
+        """
+        Retrieve the values of a line from the table
+        :param s:  The word for which we want to retrieve the line
+        :return: Return the values in a list
+        """
         values = []
         for e in self.exp:
             values.append(self.mq[s + e])
         return values
 
-
-    """
-    Vérifie si la ligne correspondant à s est différente de toutes les lignes correspondantes à red
-    """
     def different(self, s):
+        """
+        Check if the line s is different from all lines of red
+        :param s: Line of the table we want to compare
+        :return: True if there's different False else
+        -- uses function red
+        -- uses function line
+        """
         for u in self.red():
             if self.line(s) == self.line(u):
                 return False
@@ -122,19 +128,17 @@ class Angluin:
     def lstar_close(self):
         """
         Updates the observation table to make it closed.
-        -- uses function membership_test
+        -- uses function blue
+        -- uses function different
+        -- uses function fill_the_table
         """
         for s in self.blue():
             if self.different(s):
                 self.pref[s] = "red"
-                #print("---> on fait passer ", s, " dans red")
                 for a in self.alphabet:
                     for e in self.exp:
-                        # self.mq[s + a + e] = self.fill_the_table(s + a + e)
                         self.fill_the_table(str(s + a + e))
                         self.pref[str(s + a)] = "blue"
-                #print("****", self.red(), "\n", "**", self.blue())
-
     def find_consistency_problem(self):
         """
         Finds the example making the table not consistent if it is not.
