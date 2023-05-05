@@ -3,9 +3,9 @@ from automata.fa.dfa import DFA
 
 class Angluin:
 
-    def __init__(self, alphabet, automate_a_apprendre, mq={}, pref={}, exp=[]):
+    def __init__(self, alphabet, DFA_to_learn, mq={}, pref={}, exp=[]):
         self.alphabet = alphabet
-        self.automate = automate_a_apprendre
+        self.automate = DFA_to_learn
         self.mq = mq
         self.pref = pref
         self.exp = exp

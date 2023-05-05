@@ -16,7 +16,7 @@ for i in range(0, 2000001, 250000):
     abscissa.append(i+2)
     automaton = DFA(states=states, input_symbols= alphabet, transitions=transitions, initial_state=initial_state, final_states=final_states)
     a = time.time()
-    angluin = Angluin(alphabet=alphabet, automate_a_apprendre=automaton, mq={}, pref={}, exp=[])
+    angluin = Angluin(alphabet=alphabet, DFA_to_learn=automaton, mq={}, pref={}, exp=[])
     angluin.lstar()
     b = time.time()
     ordinate.append(b-a)
