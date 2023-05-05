@@ -1,4 +1,3 @@
-import time
 from automata.fa.dfa import DFA
 
 class Angluin:
@@ -245,7 +244,6 @@ class Angluin:
         """
         Main program: Uses Angluin’s algorithm (L*) to learn a regular language.
 
-        :param count_failures: optional variable to check how often the algorithm is wrong (used for tests)
         :return: the automaton guessed at the end of learning with Angluin
 
         -- uses functions Lstar_Initialise, is_closed, is_consistent, lstar_close, lstar_consistent, lstar_build_automaton, dfa.__eq__, LSTAR_USEEQ
