@@ -1,1 +1,6 @@
 pytest
+matplotlib
+chardet
+setuptools
+pyparsing
+numpy
