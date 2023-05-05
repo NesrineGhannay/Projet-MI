@@ -342,3 +342,81 @@ def extend_alphabet(A, symbols_to_add):
 # print("ok?", satisfies(M, P)) # False
 # print("ok?", satisfies(IO_ok, P)) # True
 # print("ok?", satisfies(IO_pas_ok, P)) # False
+
+
+
+
+# Exemple doc 2
+M1 = DFA(
+    states={"0", "1", "2", "3", "4"},
+    input_symbols={"a", "b", "c", "d"},
+    transitions={
+        "0": {"a": "1", "c": "3"},
+        "1": {"b": "2", "c": "1"},
+        "3": {"d": "4"},
+        "4": {"a": "1"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2", "3", "4"}
+)
+
+M2 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b", "c"},
+    transitions={
+        "0": {"c": "1"},
+        "1": {"a": "2"},
+        "2": {"b": "1"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
+
+"Après un nombre impair de a, il est possible de faire un b"
+P_1_2 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b"},
+    transitions={
+        "0": {"a": "1"},
+        "1": {"a": "2"},
+        "2": {"a": "1", "b": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
+
+# Exemple crane de Nazrine : Vérifier que tout b est suivi d'un c
+M3 = DFA(
+    states={"0", "1"},
+    input_symbols={"b", "c"},
+    transitions={
+        "0": {"b": "1"},
+        "1": {"c": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1"}
+)
+
+M4 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b", "c"},
+    transitions={
+        "0": {"a": "1", "c": "1"},
+        "1": {"b": "2"},
+        "2": {"c": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
+
+P_3_4 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b", "c"},
+    transitions={
+        "0" : {"a": "0", "c": "0", "b": "0"},
+        "1" : {"c": "1"},
+        "2": {"b": "1", "a": "0", "c": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
