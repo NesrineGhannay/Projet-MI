@@ -34,8 +34,10 @@ class DFA(fa.FA):
 
     def __eq__(self, other, witness=False):
         """
-        Return True if two DFAs are equivalent. Uses an optimized version of
-        the Hopcroft-Karp algorithm. See https://arxiv.org/abs/0907.5058
+        Return True if two DFAs are equivalent. Uses an optimized version of the Hopcroft-Karp algorithm. See
+        https://arxiv.org/abs/0907.5058 :param witness: If set to True, a counter-example is returned :return: True
+        if two DFAs are equivalent, False if not. If witness is set to True and the DFAs are not equivalent,
+        a counter-example is returned.
         """
 
         # Must be another DFA and have equal alphabets
