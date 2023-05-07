@@ -169,8 +169,12 @@ def learning(m1, m2, assumption, property, angluin, alphabet):
     """
     answer = False
     while answer != True:
-        print("parallel_composition(m1, assumption) ", parallel_composition(m1, assumption))
+        print("m1", m1)
+        print("m2", m2)
+        print("assumption", assumption)
         print("property", property)
+        print("parallel_composition(m1, assumption) ", parallel_composition(m1, assumption))
+        # if satisfies(parallel_composition(m1, assumption), property):
         compo = parallel_composition(m1, assumption)
         if satisfies(completedAutomata(compo.states, compo.input_symbols, compo.transitions, compo.initial_state, compo.final_states), property):
             cex = satisfies(m2, assumption)
@@ -266,9 +270,22 @@ def satisfies(M, P):
     if len(restricted_symbols) > 0:
         P_complete = extend_alphabet(P, restricted_symbols)
         P = P_complete
-        print("aaaaa ", P.input_symbols)
     # P is now able to read words from the M alphabet
     return M.__le__(P, witness=True)
+
+def copy_set(s):
+    result = set()
+    for element in s:
+        result.add(element)
+    return result
+
+def copy_transitions(transitions):
+    result = {}
+    for state in transitions:
+        result[state] = {}
+        for symbol in transitions[state]:
+            result[state][symbol] = transitions[state][symbol]
+    return result
 
 def extend_alphabet(A, symbols_to_add):
     """
@@ -280,16 +297,10 @@ def extend_alphabet(A, symbols_to_add):
     :return: the completed DFA
     """
     # we are not using copy() to get the original alphabet because it is represented by a frozenset (immutable)
-    completed_alphabet = set()
-    for symbol in A.input_symbols:
-        completed_alphabet.add(symbol)
+    completed_alphabet = copy_set(A.input_symbols)
 
     # we are not using copy() to get the original transition set because it is represented by a frozendict (immutable)
-    completed_transitions = {}
-    for state in A.transitions:
-        completed_transitions[state] = {}
-        for symbol in A.transitions[state]:
-            completed_transitions[state][symbol] = A.transitions[state][symbol]
+    completed_transitions = completed_alphabet(A.transitions)
 
     for symbol in symbols_to_add:
         completed_alphabet.add(symbol)
@@ -394,87 +405,82 @@ P = completedAutomata(
     initial_state="0",
     final_states={"0", "1"}
 )
-#alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
+# alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
 alphabet = Output.input_symbols
 assumption_garantee(alphabet, Input, Output, P)
 
 
 # Exemple doc 2
-# M1 = DFA(
-#     states={"0", "1", "2", "3", "4"},
-#     input_symbols={"a", "b", "c", "d"},
-#     transitions={
-#         "0": {"a": "1", "c": "3"},
-#         "1": {"b": "2", "c": "1"},
-#         "3": {"d": "4"},
-#         "4": {"a": "1"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1", "2", "3", "4"},
-#     allow_partial=True
-# )
-#
-# M2 = DFA(
-#     states={"0", "1", "2"},
-#     input_symbols={"a", "b", "c"},
-#     transitions={
-#         "0": {"c": "1"},
-#         "1": {"a": "2"},
-#         "2": {"b": "1"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1", "2"},
-#     allow_partial=True
-# )
-#
-# "Après un nombre impair de a, il est possible de faire un b"
-# P_1_2 = DFA(
-#     states={"0", "1", "2"},
-#     input_symbols={"a", "b"},
-#     transitions={
-#         "0": {"a": "1"},
-#         "1": {"a": "2"},
-#         "2": {"a": "1", "b": "0"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1", "2"},
-#     allow_partial=True
-# )
+M1 = DFA(
+    states={"0", "1", "2", "3", "4"},
+    input_symbols={"a", "b", "c", "d"},
+    transitions={
+        "0": {"a": "1", "c": "3"},
+        "1": {"b": "2", "c": "1"},
+        "3": {"d": "4"},
+        "4": {"a": "1"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2", "3", "4"}
+)
+
+M2 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b", "c"},
+    transitions={
+        "0": {"c": "1"},
+        "1": {"a": "2"},
+        "2": {"b": "1"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
+
+"Après un nombre impair de a, il est possible de faire un b"
+P_1_2 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b"},
+    transitions={
+        "0": {"a": "1"},
+        "1": {"a": "2"},
+        "2": {"a": "1", "b": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
 
 # Exemple crane de Nazrine : Vérifier que tout b est suivi d'un c
-# M3 = DFA(
-#     states={"0", "1"},
-#     input_symbols={"b", "c"},
-#     transitions={
-#         "0": {"b": "1"},
-#         "1": {"c": "0"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1"}
-# )
-#
-# M4 = DFA(
-#     states={"0", "1", "2"},
-#     input_symbols={"a", "b", "c"},
-#     transitions={
-#         "0": {"a": "1", "c": "1"},
-#         "1": {"b": "2"},
-#         "2": {"c": "0"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1", "2"}
-# )
-#
-# P_3_4 = DFA(
-#     states={"0", "1", "2"},
-#     input_symbols={"a", "b", "c"},
-#     transitions={
-#         "0" : {"a": "0", "c": "0", "b": "0"},
-#         "1" : {"c": "1"},
-#         "2": {"b": "1", "a": "0", "c": "0"}
-#     },
-#     initial_state="0",
-#     final_states={"0", "1", "2"}
-# )
+M3 = DFA(
+    states={"0", "1"},
+    input_symbols={"b", "c"},
+    transitions={
+        "0": {"b": "1"},
+        "1": {"c": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1"}
+)
 
-assumption_garantee({"a", "b", "c", "d"}, M1, M2, P_1_2)
+M4 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b", "c"},
+    transitions={
+        "0": {"a": "1", "c": "1"},
+        "1": {"b": "2"},
+        "2": {"c": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
+
+P_3_4 = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "b", "c"},
+    transitions={
+        "0" : {"a": "0", "c": "0", "b": "0"},
+        "1" : {"c": "1"},
+        "2": {"b": "1", "a": "0", "c": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"}
+)
