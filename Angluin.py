@@ -38,8 +38,9 @@ class Angluin:
 
     def compareOT(self, word1, word2):
         """
-        Compares the lines in the Observation Table given two words belonging to RED or BLUE.
-        :param word1: first word to compare
+        Compares the lines in the Observation Table given two words belonging to RED or BLUE
+
+        param word1: first word to compare
         :param word2: second word to compare
         :return: True if the lines are equals, False if not
         """
@@ -51,6 +52,7 @@ class Angluin:
     def blue(self):
         """
         Returns all the words from BLUE, representing the current states' successors which are not in RED.
+
         :return: a list containing prefixes from the BLUE category
         """
         blue = []
@@ -62,6 +64,7 @@ class Angluin:
     def red(self):
         """
         Returns all the words from RED, representing the current DFA set of states.
+
         :return: a list containing prefixes from the RED category
         """
         red = []
@@ -73,24 +76,28 @@ class Angluin:
     def is_closed(self):
         """
         Determine if the table is closed
+
         :return: True if it's closed
+
         -- uses function blue
         -- uses function red
         """
         elts_blue = self.blue()
         elts_red = self.red()
-        lignes_red = set()
+        lines_red = set()
         for u in elts_red :
-            lignes_red.add(str(self.line(u)))
+            lines_red.add(str(self.line(u)))
         for s in elts_blue :
-            if not str(self.line(s)) in lignes_red:
+            if not str(self.line(s)) in lines_red:
                 return False
         return True
 
     def line(self, s):
         """
         Retrieve the values of a line from the table
+
         :param s:  The word for which we want to retrieve the line
+
         :return: Return the values in a list
         """
         values = []
@@ -101,8 +108,10 @@ class Angluin:
     def different(self, s):
         """
         Check if the line s is different from all lines of red
+
         :param s: Line of the table we want to compare
         :return: True if there's different False else
+
         -- uses function red
         -- uses function line
         """

@@ -96,7 +96,7 @@ def get_final_states(etats1, etats2):
     Returns the final states set for the parallel composition of two DFAs.
     :param etats1: final states set for the first DFA
     :param etats2: final states set for the second DFA
-    :return: A set of final states composed of 
+    :return: A set of final states composed of
     """
     etats = set()
     for etat1 in etats1:
@@ -142,15 +142,11 @@ def assumption_garantee(alphabet, m1, m2, property):
     :return: Return the automaton if the property is satisfied
     """
     angluin = Angluin(alphabet, m2)
-    # assumption = prop.Lstar_Initialise()
     angluin.Lstar_Initialise()
-    # while not assumption.is_closed():
     while not angluin.is_closed():
-        # assumption.lstar_close()
         angluin.lstar_close()
-    # assumption = assumption.lstar_build_automaton()
-    assumption = angluin.lstar_build_automaton()
-    # answer = learning(m1, m2, assumption, property, prop)
+    assump = angluin.lstar_build_automaton()
+    assumption = completedAutomata(assump.states, assump.input_symbols, assump.transitions, assump.initial_state, assump.final_states)
     answer = learning(m1, m2, assumption, property, angluin, alphabet)
     if answer == False:
         print("ERROR")
@@ -175,10 +171,11 @@ def learning(m1, m2, assumption, property, angluin, alphabet):
     while answer != True:
         print("parallel_composition(m1, assumption) ", parallel_composition(m1, assumption))
         print("property", property)
-        if satisfies(parallel_composition(m1, assumption), property):
+        compo = parallel_composition(m1, assumption)
+        if satisfies(completedAutomata(compo.states, compo.input_symbols, compo.transitions, compo.initial_state, compo.final_states), property):
             cex = satisfies(m2, assumption)
             if cex == True:
-                answers = True
+                answer = True
             elif real_error(cex, m2, property, alphabet):
                 return False
             else :
@@ -188,11 +185,16 @@ def learning(m1, m2, assumption, property, angluin, alphabet):
 def real_error(m1, cex, proprety, alphabet):
     """
     Determine if the property is satisfable
+
     :param m1: First system component
     :param cex: Conter-example
     :param proprety: Proprety that we want to satisfy
-    :param alphabet:
-    :return
+    :param alphabet: Conter-example alphabet
+    :return: True if the conter_example not satisfies the property
+
+    -- uses function trace
+    -- uses function satisfies
+    -- uses function parallel_composition
     """
     cex = trace(cex, alphabet)
     if satisfies(parallel_composition(m1, cex), proprety):
@@ -264,6 +266,7 @@ def satisfies(M, P):
     if len(restricted_symbols) > 0:
         P_complete = extend_alphabet(P, restricted_symbols)
         P = P_complete
+        print("aaaaa ", P.input_symbols)
     # P is now able to read words from the M alphabet
     return M.__le__(P, witness=True)
 
@@ -391,82 +394,87 @@ P = completedAutomata(
     initial_state="0",
     final_states={"0", "1"}
 )
-# alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
+#alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
 alphabet = Output.input_symbols
 assumption_garantee(alphabet, Input, Output, P)
 
 
 # Exemple doc 2
-M1 = DFA(
-    states={"0", "1", "2", "3", "4"},
-    input_symbols={"a", "b", "c", "d"},
-    transitions={
-        "0": {"a": "1", "c": "3"},
-        "1": {"b": "2", "c": "1"},
-        "3": {"d": "4"},
-        "4": {"a": "1"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2", "3", "4"}
-)
-
-M2 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b", "c"},
-    transitions={
-        "0": {"c": "1"},
-        "1": {"a": "2"},
-        "2": {"b": "1"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
-
-"Après un nombre impair de a, il est possible de faire un b"
-P_1_2 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b"},
-    transitions={
-        "0": {"a": "1"},
-        "1": {"a": "2"},
-        "2": {"a": "1", "b": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
+# M1 = DFA(
+#     states={"0", "1", "2", "3", "4"},
+#     input_symbols={"a", "b", "c", "d"},
+#     transitions={
+#         "0": {"a": "1", "c": "3"},
+#         "1": {"b": "2", "c": "1"},
+#         "3": {"d": "4"},
+#         "4": {"a": "1"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2", "3", "4"},
+#     allow_partial=True
+# )
+#
+# M2 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b", "c"},
+#     transitions={
+#         "0": {"c": "1"},
+#         "1": {"a": "2"},
+#         "2": {"b": "1"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"},
+#     allow_partial=True
+# )
+#
+# "Après un nombre impair de a, il est possible de faire un b"
+# P_1_2 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b"},
+#     transitions={
+#         "0": {"a": "1"},
+#         "1": {"a": "2"},
+#         "2": {"a": "1", "b": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"},
+#     allow_partial=True
+# )
 
 # Exemple crane de Nazrine : Vérifier que tout b est suivi d'un c
-M3 = DFA(
-    states={"0", "1"},
-    input_symbols={"b", "c"},
-    transitions={
-        "0": {"b": "1"},
-        "1": {"c": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1"}
-)
+# M3 = DFA(
+#     states={"0", "1"},
+#     input_symbols={"b", "c"},
+#     transitions={
+#         "0": {"b": "1"},
+#         "1": {"c": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1"}
+# )
+#
+# M4 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b", "c"},
+#     transitions={
+#         "0": {"a": "1", "c": "1"},
+#         "1": {"b": "2"},
+#         "2": {"c": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"}
+# )
+#
+# P_3_4 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b", "c"},
+#     transitions={
+#         "0" : {"a": "0", "c": "0", "b": "0"},
+#         "1" : {"c": "1"},
+#         "2": {"b": "1", "a": "0", "c": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"}
+# )
 
-M4 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b", "c"},
-    transitions={
-        "0": {"a": "1", "c": "1"},
-        "1": {"b": "2"},
-        "2": {"c": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
-
-P_3_4 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b", "c"},
-    transitions={
-        "0" : {"a": "0", "c": "0", "b": "0"},
-        "1" : {"c": "1"},
-        "2": {"b": "1", "a": "0", "c": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
+assumption_garantee({"a", "b", "c", "d"}, M1, M2, P_1_2)
