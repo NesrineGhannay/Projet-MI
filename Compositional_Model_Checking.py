@@ -27,18 +27,20 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
 
     """
     add_pi = False
-    for dictionnary in transitions:
+    new_states = copy_set(states)
+    new_transitions = copy_transitions(transitions)
+    for dictionnary in new_transitions:
         for char in alphabet:
-            if char not in transitions[dictionnary]:
-                transitions[dictionnary][char] = "pi"
+            if char not in new_transitions[dictionnary]:
+                new_transitions[dictionnary][char] = "pi"
                 add_pi = True
-                if "pi" not in states:
-                    states.add("pi")
+                if "pi" not in new_states:
+                    new_states.add("pi")
     if add_pi:
-        transitions["pi"] = {}
+        new_transitions["pi"] = {}
         for char in alphabet:
-            transitions["pi"][char] = "pi"
-    return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=initial_state,
+            new_transitions["pi"][char] = "pi"
+    return DFA(states=new_states, input_symbols=alphabet, transitions=new_transitions, initial_state=initial_state,
                final_states=final_states)
 
 
@@ -300,7 +302,7 @@ def extend_alphabet(A, symbols_to_add):
     completed_alphabet = copy_set(A.input_symbols)
 
     # we are not using copy() to get the original transition set because it is represented by a frozendict (immutable)
-    completed_transitions = completed_alphabet(A.transitions)
+    completed_transitions = copy_transitions(A.transitions)
 
     for symbol in symbols_to_add:
         completed_alphabet.add(symbol)
