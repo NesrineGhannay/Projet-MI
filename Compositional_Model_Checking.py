@@ -29,14 +29,21 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
     add_pi = False
     new_states = copy_set(states)
     new_transitions = copy_transitions(transitions)
-    for dictionnary in new_transitions:
+    # for dictionary in new_transitions:
+    for state in new_states:
+        if state not in new_transitions:
+            new_transitions[state] = {}
         for char in alphabet:
-            if char not in new_transitions[dictionnary]:
-                new_transitions[dictionnary][char] = "pi"
+            # if char not in new_transitions[dictionary]:
+            if char not in new_transitions[state]:
+                # new_transitions[dictionary][char] = "pi"
+                new_transitions[state][char] = "pi"
                 add_pi = True
-                if "pi" not in new_states:
-                    new_states.add("pi")
+                # if "pi" not in new_states:
+                #     new_states.add("pi")
     if add_pi:
+        # if "pi" not in new_states : JSP SI ON DOIT LE METTRE
+        new_states.add("pi")
         new_transitions["pi"] = {}
         for char in alphabet:
             new_transitions["pi"][char] = "pi"
@@ -130,7 +137,17 @@ def parallel_composition(M1, M2):
     T_ = interleaving(T, M1, M2)
     # F : final and accepted states
     F = get_final_states(M1.final_states, M2.final_states)
-    return DFA(states=Q, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=F, allow_partial=True)
+    # suppression des états sans transitions
+    reachable_states = {q_0}
+    for start_state in T_:
+        #reachable_states.add(start_state)
+        for char in T_[start_state]:
+            reachable_states.add(T_[start_state][char])
+    reachable_final_states = copy_set(F)
+    for state in F:
+        if state not in reachable_states:
+            reachable_final_states.remove(state)
+    return DFA(states=reachable_states, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=reachable_final_states, allow_partial=True)
 #Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
 
 
@@ -161,57 +178,60 @@ def learning(m1, m2, assumption, property, angluin, alphabet):
     """
     Model Checking Program
     :param m1: First system component
-    :param m2: Second sustem component
+    :param m2: Second system component
     :param assumption: The determined automaton
     :param property: Property to be verified
     :param angluin: Input that allows to retrieve the methods of Angluin
-    :param alphabet: System aphabet
+    :param alphabet: System alphabet
     :return: the correct assumption or False if it's not possible to generate it
-
     """
     answer = False
-    while answer != True:
-        print("m1", m1)
-        print("m2", m2)
-        print("assumption", assumption)
-        print("property", property)
-        print("parallel_composition(m1, assumption) ", parallel_composition(m1, assumption))
+    while not answer :
         # if satisfies(parallel_composition(m1, assumption), property):
         compo = parallel_composition(m1, assumption)
-        if satisfies(completedAutomata(compo.states, compo.input_symbols, compo.transitions, compo.initial_state, compo.final_states), property):
-            cex = satisfies(m2, assumption)
+        completed_compo = completedAutomata(compo.states, compo.input_symbols, compo.transitions, compo.initial_state, compo.final_states)
+        if satisfies(completed_compo, property):
+            completed_m2 = completedAutomata(m2.states, m2.input_symbols, m2.transitions, m2.initial_state, m2.final_states) # TODO rajouter une surcharge qui transforme l'automate
+            cex = satisfies(completed_m2, assumption)
             if cex == True:
                 answer = True
-            elif real_error(cex, m2, property, alphabet):
+            # elif real_error(cex, m2, property, alphabet):
+            elif real_error(m2, cex, property, alphabet):
                 return False
             else :
-                assumption = angluin.LSTAR_USEEQ()
+                assumption = angluin.LSTAR_USEEQ() # on entre jamais dedans ? il y a un paramètre normalement
     return assumption
 
-def real_error(m1, cex, proprety, alphabet):
+def real_error(m1, cex, property, alphabet):
     """
     Determine if the property is satisfable
 
     :param m1: First system component
-    :param cex: Conter-example
-    :param proprety: Proprety that we want to satisfy
-    :param alphabet: Conter-example alphabet
-    :return: True if the conter_example not satisfies the property
+    :param cex: Counter-example
+    :param property: Property that we want to satisfy
+    :param alphabet: Counter-example alphabet
+    :return: True if the counter_example not satisfies the property
 
     -- uses function trace
     -- uses function satisfies
     -- uses function parallel_composition
     """
-    cex = trace(cex, alphabet)
-    if satisfies(parallel_composition(m1, cex), proprety):
-        return False
-    return True
+    composition = parallel_composition(m1, property)
+    return not composition.accepts_input(cex)
+    # cex_trace_dfa = trace(cex, alphabet)
+    # print("cex_trace_dfa", cex_trace_dfa)
+    # compo = parallel_composition(m1, cex_trace_dfa)
+    # print("compo", compo)
+    # completed_compo = completedAutomata(compo.states, compo.input_symbols, compo.transitions, compo.initial_state, compo.final_states)
+    # if satisfies(completed_compo, property):
+    #     return False
+    # return True
 
-def trace(cex, alphabet):
+def trace(cex, alphabet): # TODO voir si on peut pas juste simuler cex sur M_1 || P_err
     """
     Determine the trace of a word
     :param cex: The word tha we want to determine the trace
-    :param alphabet: Conter-example alphabet
+    :param alphabet: Counter-example alphabet
     :return: Return the trace
     """
     states = {""}
@@ -223,7 +243,7 @@ def trace(cex, alphabet):
         transition[state_avant] = {}
         transition[state_avant][i] = state
         states.add(state)
-    return DFA(states=states, input_symbols=alphabet, transitions=transition, initial_state="", final_states=state, allow_partial=True)
+    return DFA(states=states, input_symbols=alphabet, transitions=transition, initial_state="", final_states={state}, allow_partial=True)
 
 
 
@@ -413,76 +433,76 @@ assumption_garantee(alphabet, Input, Output, P)
 
 
 # Exemple doc 2
-M1 = DFA(
-    states={"0", "1", "2", "3", "4"},
-    input_symbols={"a", "b", "c", "d"},
-    transitions={
-        "0": {"a": "1", "c": "3"},
-        "1": {"b": "2", "c": "1"},
-        "3": {"d": "4"},
-        "4": {"a": "1"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2", "3", "4"}
-)
-
-M2 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b", "c"},
-    transitions={
-        "0": {"c": "1"},
-        "1": {"a": "2"},
-        "2": {"b": "1"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
-
-"Après un nombre impair de a, il est possible de faire un b"
-P_1_2 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b"},
-    transitions={
-        "0": {"a": "1"},
-        "1": {"a": "2"},
-        "2": {"a": "1", "b": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
-
-# Exemple crane de Nazrine : Vérifier que tout b est suivi d'un c
-M3 = DFA(
-    states={"0", "1"},
-    input_symbols={"b", "c"},
-    transitions={
-        "0": {"b": "1"},
-        "1": {"c": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1"}
-)
-
-M4 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b", "c"},
-    transitions={
-        "0": {"a": "1", "c": "1"},
-        "1": {"b": "2"},
-        "2": {"c": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
-
-P_3_4 = DFA(
-    states={"0", "1", "2"},
-    input_symbols={"a", "b", "c"},
-    transitions={
-        "0" : {"a": "0", "c": "0", "b": "0"},
-        "1" : {"c": "1"},
-        "2": {"b": "1", "a": "0", "c": "0"}
-    },
-    initial_state="0",
-    final_states={"0", "1", "2"}
-)
+# M1 = DFA(
+#     states={"0", "1", "2", "3", "4"},
+#     input_symbols={"a", "b", "c", "d"},
+#     transitions={
+#         "0": {"a": "1", "c": "3"},
+#         "1": {"b": "2", "c": "1"},
+#         "3": {"d": "4"},
+#         "4": {"a": "1"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2", "3", "4"}
+# )
+#
+# M2 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b", "c"},
+#     transitions={
+#         "0": {"c": "1"},
+#         "1": {"a": "2"},
+#         "2": {"b": "1"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"}
+# )
+#
+# "Après un nombre impair de a, il est possible de faire un b"
+# P_1_2 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b"},
+#     transitions={
+#         "0": {"a": "1"},
+#         "1": {"a": "2"},
+#         "2": {"a": "1", "b": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"}
+# )
+#
+# # Exemple crane de Nazrine : Vérifier que tout b est suivi d'un c
+# M3 = DFA(
+#     states={"0", "1"},
+#     input_symbols={"b", "c"},
+#     transitions={
+#         "0": {"b": "1"},
+#         "1": {"c": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1"}
+# )
+#
+# M4 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b", "c"},
+#     transitions={
+#         "0": {"a": "1", "c": "1"},
+#         "1": {"b": "2"},
+#         "2": {"c": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"}
+# )
+#
+# P_3_4 = DFA(
+#     states={"0", "1", "2"},
+#     input_symbols={"a", "b", "c"},
+#     transitions={
+#         "0" : {"a": "0", "c": "0", "b": "0"},
+#         "1" : {"c": "1"},
+#         "2": {"b": "1", "a": "0", "c": "0"}
+#     },
+#     initial_state="0",
+#     final_states={"0", "1", "2"}
+# )
