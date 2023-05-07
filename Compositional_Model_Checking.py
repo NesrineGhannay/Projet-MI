@@ -92,6 +92,12 @@ def interleaving(T, M1, M2):
     return T
 
 def get_final_states(etats1, etats2):
+    """
+    Returns the final states set for the parallel composition of two DFAs.
+    :param etats1: final states set for the first DFA
+    :param etats2: final states set for the second DFA
+    :return: A set of final states composed of 
+    """
     etats = set()
     for etat1 in etats1:
         for etat2 in etats2:
@@ -135,12 +141,17 @@ def assumption_garantee(alphabet, m1, m2, property):
     :param property: Property to be verified
     :return: Return the automaton if the property is satisfied
     """
-    prop = Angluin(alphabet, m2)
-    assumption = prop.Lstar_Initialise()
-    while not assumption.is_closed():
-        assumption.lstar_close()
-    assumption = assumption.lstar_build_automaton()
-    answer = learning(m1, m2, assumption, property, prop)
+    angluin = Angluin(alphabet, m2)
+    # assumption = prop.Lstar_Initialise()
+    angluin.Lstar_Initialise()
+    # while not assumption.is_closed():
+    while not angluin.is_closed():
+        # assumption.lstar_close()
+        angluin.lstar_close()
+    # assumption = assumption.lstar_build_automaton()
+    assumption = angluin.lstar_build_automaton()
+    # answer = learning(m1, m2, assumption, property, prop)
+    answer = learning(m1, m2, assumption, property, angluin, alphabet)
     if answer == False:
         print("ERROR")
     else:
@@ -148,20 +159,22 @@ def assumption_garantee(alphabet, m1, m2, property):
         return answer
 
 
-def learning(m1, m2, assumption, property, prop, alphabet):
+def learning(m1, m2, assumption, property, angluin, alphabet):
     """
     Model Checking Program
     :param m1: First system component
     :param m2: Second sustem component
     :param assumption: The determined automaton
     :param property: Property to be verified
-    :param prop: Input that allows to retrieve the methods of Angluin
+    :param angluin: Input that allows to retrieve the methods of Angluin
     :param alphabet: System aphabet
     :return: the correct assumption or False if it's not possible to generate it
 
     """
     answer = False
     while answer != True:
+        print("parallel_composition(m1, assumption) ", parallel_composition(m1, assumption))
+        print("property", property)
         if satisfies(parallel_composition(m1, assumption), property):
             cex = satisfies(m2, assumption)
             if cex == True:
@@ -169,7 +182,7 @@ def learning(m1, m2, assumption, property, prop, alphabet):
             elif real_error(cex, m2, property, alphabet):
                 return False
             else :
-                assumption = prop.LSTAR_USEEQ()
+                assumption = angluin.LSTAR_USEEQ()
     return assumption
 
 def real_error(m1, cex, proprety, alphabet):
@@ -343,7 +356,44 @@ def extend_alphabet(A, symbols_to_add):
 # print("ok?", satisfies(IO_ok, P)) # True
 # print("ok?", satisfies(IO_pas_ok, P)) # False
 
-
+# exemple diapo assume guarantee
+Input = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "i", "s"},
+    transitions={
+        "0" : {"i" : "1"},
+        "1" : {"s" : "2"},
+        "2" : {"a" : "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"},
+    allow_partial=True
+)
+Output = DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "o", "s"},
+    transitions={
+        "0" : {"s" : "1"},
+        "1" : {"o" : "2"},
+        "2" : {"a" : "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"},
+    allow_partial=True
+)
+P = completedAutomata(
+    states={"0", "1"},
+    alphabet={"i", "o"},
+    transitions={
+        "0" : {"i" : "1"},
+        "1" : {"o" : "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1"}
+)
+# alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
+alphabet = Output.input_symbols
+assumption_garantee(alphabet, Input, Output, P)
 
 
 # Exemple doc 2
