@@ -200,7 +200,7 @@ class Angluin:
             prefixes.append(word[0:i])
         return prefixes
 
-    def LSTAR_USEEQ(self, answer):
+    def Lstar_use_eq(self, answer):
         """
         Modifies the observation table in order to correct the false assumption, by using the counter-example returned.
         :param answer: the counter-example returned after the equivalence query
@@ -255,7 +255,7 @@ class Angluin:
 
         :return: the automaton guessed at the end of learning with Angluin
 
-        -- uses functions Lstar_Initialise, is_closed, is_consistent, lstar_close, lstar_consistent, lstar_build_automaton, dfa.__eq__, LSTAR_USEEQ
+        -- uses functions Lstar_Initialise, is_closed, is_consistent, lstar_close, lstar_consistent, lstar_build_automaton, dfa.__eq__, lstar_use_eq
         """
         self.Lstar_Initialise()
         first_iteration = True # to enter the while loop
@@ -272,7 +272,7 @@ class Angluin:
             answer = assumption.__eq__(self.automate, witness=True) # equivalence query
 
             if not answer[0] :  #TODO : l'erreur était ici !!!
-                self.LSTAR_USEEQ(answer[1])
+                self.Lstar_use_eq(answer[1])
             else:
                 return assumption
         return assumption
