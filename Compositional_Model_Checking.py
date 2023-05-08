@@ -90,7 +90,10 @@ def synchronization(M1, M2):
                     if a == b:
                         if not ((q1, q2) in T):
                             T[(q1, q2)] = {}
-                        target = (T1[q1][a], T2[q2][b])
+                        if T1[q1][a] != "pi" and T2[q2][b] != "pi" :
+                            target = (T1[q1][a], T2[q2][b])
+                        else:
+                            target = "pi"
                         T[(q1, q2)][a] = target
     return T
 
@@ -186,6 +189,7 @@ def assumption_garantee(alphabet, m1, m2, property):
     # angluin.Lstar_Initialise()
     mq, pref, exp = {}, {}, []
     M1_P = completedAutomataByDFA(parallel_composition(m1, property))
+
     util.initialise(alphabet, M1_P, mq, exp, pref)
     while not util.is_closed(pref, exp, mq):
         util.lstar_close(mq, pref, exp, alphabet, M1_P)
@@ -214,6 +218,7 @@ def learning(m1, m2, assumption, property, alphabet, tables):
     M1_P = completedAutomataByDFA(parallel_composition(m1, property))
     answer = False
     while not answer:
+        print("M1_P", M1_P)
         # if satisfies(parallel_composition(m1, assumption), property):
         print("\nA_i", assumption)
         completed_compo = completedAutomataByDFA(parallel_composition(assumption, m1))
