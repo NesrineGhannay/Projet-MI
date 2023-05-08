@@ -254,7 +254,10 @@ def learning(m1, m2, assumption, property, alphabet, tables):
             print("m2", m2)
             print("assumption", assumption)
 
-            cex = satisfies(m2, assumption)
+            completed_assumption = completedAutomataByDFA(assumption)
+
+            # cex = satisfies(m2, assumption)
+            cex = satisfies(m2, completed_assumption)
             print("cex", cex)
             if cex == True:
                 answer = True
@@ -296,10 +299,12 @@ def real_error(m1, cex, property, alphabet):
     """
     composition = parallel_composition(m1, property)
     return composition.accepts_input(restriction(cex, alphabet))
-    # cex_trace_dfa = trace(cex, alphabet)
+
+    # # cex_trace_dfa = trace(cex, alphabet)
+    # cex_trace_dfa = trace(restriction(cex, alphabet), alphabet)
     # print("cex_trace_dfa", cex_trace_dfa)
     # # completed_compo = completedAutomataByDFA(parallel_composition(m1, cex_trace_dfa))
-    # compo = parallel_composition(m1, cex_trace_dfa)
+    # compo = parallel_composition(cex_trace_dfa, m1)
     # # print("completed compo", completed_compo)
     # # if satisfies(completed_compo, property):
     # print("compo", compo)
@@ -308,7 +313,7 @@ def real_error(m1, cex, property, alphabet):
     # return True
 
 
-def trace(cex, alphabet):  # TODO voir si on peut pas juste simuler cex sur M_1 || P_err
+def trace(cex, alphabet):  # TODO enlever alphabet
     """
     Determine the trace of a word
     :param cex: The word tha we want to determine the trace
@@ -318,7 +323,9 @@ def trace(cex, alphabet):  # TODO voir si on peut pas juste simuler cex sur M_1 
     states = {""}
     transition = {}
     state = ""
+    alphabet = set()
     for i in cex:
+        alphabet.add(i)
         state_avant = state
         state += str(i)
         transition[state_avant] = {}
@@ -515,6 +522,8 @@ alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.inpu
 # alphabet = Output.input_symbols
 
 assumption_garantee(alphabet, Input, Output, P)
+# A_i = DFA(states={'', 'a'}, input_symbols={'a', 'o', 's'}, transitions={'': {'a': 'a', 'o': 'a', 's': 'a'}, 'a': {'a': 'a', 'o': 'a', 's': 'a'}}, initial_state='', final_states={''}, allow_partial=False)
+
 
 # Exemple doc 2
 # M1 = DFA(

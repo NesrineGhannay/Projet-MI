@@ -1,6 +1,7 @@
 from automata.fa.dfa import DFA
 
 
+# def fill_the_table(u, automate, mq=None):
 def fill_the_table(u, automate, mq=None):
     """
     Fills the empty gaps in the observation table with membership tests.
@@ -10,11 +11,22 @@ def fill_the_table(u, automate, mq=None):
     """
     if mq is None:
         mq = {}
-    if automate.accepts_input(u):
+    #if automate.accepts_input(u):
+    if nesrine_ghannay(u, automate):
         mq[u] = 1
     else:
         mq[u] = 0
-
+    
+def nesrine_ghannay(mot, automaton):
+    etat_courant = automaton.initial_state
+    for lettre in mot:
+        if etat_courant not in automaton.transitions :
+            return True
+        elif lettre not in automaton.transitions[etat_courant]:
+            return True
+        elif automaton.transitions[etat_courant][lettre] == "pi":
+            return False
+        etat_courant = automaton.transitions[etat_courant][lettre]
 
 def initialise(alphabet, automaton, mq=None, exp=None, pref=None):
     if mq is None:
