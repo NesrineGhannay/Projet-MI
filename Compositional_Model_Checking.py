@@ -246,8 +246,9 @@ def learning(m1, m2, assumption, property, alphabet, tables):
             # completed_m2 = completedAutomataByDFA(m2)
             # print("completed m2", completed_m2)
             # cex = satisfies(completed_m2, assumption)
-            print("m2.input_symbols", m2.input_symbols)
-            print("assumption.input_symbols", assumption.input_symbols)
+            print("m2", m2)
+            print("assumption", assumption)
+
             cex = satisfies(m2, assumption)
             print("cex", cex)
             if cex == True:

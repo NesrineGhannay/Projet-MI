@@ -593,6 +593,7 @@ class DFA(fa.FA):
             # ancienetat = product_initial_state_name
 
         while queue:
+            # print("trace", trace)
             # Get next state in BFS queue
             curr_state = queue.popleft()
             # print("curr_state", curr_state)
@@ -658,7 +659,7 @@ class DFA(fa.FA):
 
         if witness:
             resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True)
-            # print(resultat)
+            #print(resultat)
             if resultat[0]:
                 return resultat[1] # le contre exemple
             else :
