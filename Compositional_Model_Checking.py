@@ -106,7 +106,7 @@ def interleaving(T, M1, M2):
                 if a not in M2.input_symbols:
                     if not ((q1, q2) in T):
                         T[(q1, q2)] = {}
-                    if T1[q1][a] != "pi" or T1[q2][a] != "pi":
+                    if T1[q1][a] != "pi" and q2 != "pi":
                         target = (T1[q1][a], q2)
                     else:
                         target = "pi"
@@ -115,7 +115,7 @@ def interleaving(T, M1, M2):
                 if b not in M1.input_symbols:
                     if not ((q1, q2) in T):
                         T[(q1, q2)] = {}
-                    if T1[q1][b] != "pi" or T1[q2][b] != "pi":
+                    if q1 != "pi" and T2[q2][b] != "pi":
                         target = (q1, T2[q2][b])
                     else:
                         target = "pi"
