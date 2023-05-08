@@ -196,7 +196,8 @@ def assumption_garantee(alphabet, m1, m2, property):
     # angluin = Angluin(alphabet, m2)
     # angluin.Lstar_Initialise()
     mq, pref, exp = {}, {}, []
-    M1_P = completedAutomataByDFA(parallel_composition(m1, property))
+    # M1_P = completedAutomataByDFA(parallel_composition(m1, property))
+    M1_P = parallel_composition(m1, property)
 
     util.initialise(alphabet, M1_P, mq, exp, pref)
     while not util.is_closed(pref, exp, mq):
@@ -223,7 +224,9 @@ def learning(m1, m2, assumption, property, alphabet, tables):
     :return: the correct assumption or False if it's not possible to generate it
     """
     mq, pref, exp = tables
-    M1_P = completedAutomataByDFA(parallel_composition(m1, property))
+    # M1_P = completedAutomataByDFA(parallel_composition(m1, property))
+    M1_P = parallel_composition(m1, property)
+
     answer = False
     while not answer:
         print("M1_P", M1_P)
@@ -233,9 +236,12 @@ def learning(m1, m2, assumption, property, alphabet, tables):
         print("M1 || A_i", completed_compo)
         first_result = satisfies(completed_compo, property)
         if first_result:
-            completed_m2 = completedAutomataByDFA(m2)
-            print("completed m2", completed_m2)
-            cex = satisfies(completed_m2, assumption)
+            # completed_m2 = completedAutomataByDFA(m2)
+            # print("completed m2", completed_m2)
+            # cex = satisfies(completed_m2, assumption)
+            print("m2.input_symbols", m2.input_symbols)
+            print("assumption.input_symbols", assumption.input_symbols)
+            cex = satisfies(m2, assumption)
             print("cex", cex)
             if cex == True:
                 answer = True
@@ -489,6 +495,7 @@ P = completedAutomata(
 )
 alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
 # alphabet = Output.input_symbols
+
 assumption_garantee(alphabet, Input, Output, P)
 
 # Exemple doc 2

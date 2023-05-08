@@ -621,7 +621,8 @@ class DFA(fa.FA):
             transitions_a = self.transitions[q_a]
             transitions_b = other.transitions[q_b]
 
-            for chr in self.input_symbols:
+            # for chr in self.input_symbols:
+            for chr in transitions_a.keys() & transitions_b.keys():
                 # print("chr", chr)
                 product_state = (transitions_a[chr], transitions_b[chr]) # état d'arrivée
                 product_state_name = get_name(product_state)
