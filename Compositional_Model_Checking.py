@@ -174,9 +174,10 @@ def parallel_composition(M1, M2):
     for state in F:
         if state not in reachable_states:
             reachable_final_states.remove(state)
-    if "pi" in clean_transitions:
-        for letter in aM:
-            clean_transitions["pi"][letter] = "pi"
+    if "pi" not in clean_transitions:
+        clean_transitions["pi"] = {}
+    for letter in aM:
+        clean_transitions["pi"][letter] = "pi"
     return DFA(states=reachable_states, input_symbols=aM, transitions=clean_transitions, initial_state=q_0,
                final_states=reachable_final_states, allow_partial=True)
 
