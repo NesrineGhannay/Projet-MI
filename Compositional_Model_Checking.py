@@ -1,5 +1,4 @@
 import util
-
 from Angluin import Angluin
 from automata.fa.dfa import DFA
 
@@ -107,13 +106,19 @@ def interleaving(T, M1, M2):
                 if a not in M2.input_symbols:
                     if not ((q1, q2) in T):
                         T[(q1, q2)] = {}
-                    target = (T1[q1][a], q2)
+                    if T1[q1][a] != "pi" or T1[q2][a] != "pi":
+                        target = (T1[q1][a], q2)
+                    else:
+                        target = "pi"
                     T[(q1, q2)][a] = target
             for b in T2[q2]:
                 if b not in M1.input_symbols:
                     if not ((q1, q2) in T):
                         T[(q1, q2)] = {}
-                    target = (q1, T2[q2][b])
+                    if T1[q1][b] != "pi" or T1[q2][b] != "pi":
+                        target = (q1, T2[q2][b])
+                    else:
+                        target = "pi"
                     T[(q1, q2)][b] = target
     return T
 
@@ -169,6 +174,9 @@ def parallel_composition(M1, M2):
     for state in F:
         if state not in reachable_states:
             reachable_final_states.remove(state)
+
+
+
     return DFA(states=reachable_states, input_symbols=aM, transitions=clean_transitions, initial_state=q_0,
                final_states=reachable_final_states, allow_partial=True)
 
