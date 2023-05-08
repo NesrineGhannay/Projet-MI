@@ -200,11 +200,13 @@ def assumption_garantee(alphabet, m1, m2, property):
     mq, pref, exp = {}, {}, []
     # M1_P = completedAutomataByDFA(parallel_composition(m1, property))
     M1_P = parallel_composition(m1, property)
+    print("M1_P", M1_P)
 
     util.initialise(alphabet, M1_P, mq, exp, pref)
     while not util.is_closed(pref, exp, mq):
         util.lstar_close(mq, pref, exp, alphabet, M1_P)
-    assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+    # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+    assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
     answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))
     if answer == False:
         print("ERROR")
@@ -231,12 +233,15 @@ def learning(m1, m2, assumption, property, alphabet, tables):
 
     answer = False
     while not answer:
-        print("M1_P", M1_P)
+        print("\nM1_P", M1_P)
         # if satisfies(parallel_composition(m1, assumption), property):
-        print("\nA_i", assumption)
-        completed_compo = completedAutomataByDFA(parallel_composition(assumption, m1))
-        print("M1 || A_i", completed_compo)
-        first_result = satisfies(completed_compo, property)
+        print("A_i", assumption)
+        # completed_compo = completedAutomataByDFA(parallel_composition(assumption, m1))
+        compo = parallel_composition(assumption, m1)
+        # print("M1 || A_i", completed_compo)
+        print("M1 || A_i", compo)
+        # first_result = satisfies(completed_compo, property)
+        first_result = satisfies(compo, property)
         if first_result:
             # completed_m2 = completedAutomataByDFA(m2)
             # print("completed m2", completed_m2)
@@ -257,12 +262,14 @@ def learning(m1, m2, assumption, property, alphabet, tables):
                 util.LSTAR_USEEQ(restriction(cex, alphabet), alphabet, mq, pref, exp, M1_P)
                 while not util.is_closed(pref, exp, mq):
                     util.lstar_close(mq, pref, exp, alphabet, M1_P)
-                assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+                # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+                assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
         else:
             util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
             while not util.is_closed(pref, exp, mq):
                 util.lstar_close(mq, pref, exp, alphabet, M1_P)
-            assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+            # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+            assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
 
     return assumption
 
@@ -285,9 +292,12 @@ def real_error(m1, cex, property, alphabet):
     return composition.accepts_input(restriction(cex, alphabet))
     # cex_trace_dfa = trace(cex, alphabet)
     # print("cex_trace_dfa", cex_trace_dfa)
-    # completed_compo = completedAutomataByDFA(parallel_composition(m1, cex_trace_dfa))
-    # print("completed compo", completed_compo)
-    # if satisfies(completed_compo, property):
+    # # completed_compo = completedAutomataByDFA(parallel_composition(m1, cex_trace_dfa))
+    # compo = parallel_composition(m1, cex_trace_dfa)
+    # # print("completed compo", completed_compo)
+    # # if satisfies(completed_compo, property):
+    # print("compo", compo)
+    # if satisfies(compo, property):
     #     return False
     # return True
 
