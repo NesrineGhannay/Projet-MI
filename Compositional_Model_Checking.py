@@ -47,11 +47,6 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
         new_transitions["pi"] = {}
         for char in alphabet:
             new_transitions["pi"][char] = "pi"
-    print("new_states", new_states)
-    print("input_symbols", alphabet)
-    print("transitions", transitions)
-    print("initial_state", initial_state)
-    print("final_states", final_states)
     return DFA(states=new_states, input_symbols=alphabet, transitions=new_transitions, initial_state=initial_state,
                final_states=final_states)
 
@@ -163,11 +158,15 @@ def parallel_composition(M1, M2):
         # reachable_states.add(start_state)
         for char in T_[start_state]:
             reachable_states.add(T_[start_state][char])
+    clean_transitions = copy_transitions(T_)
+    for start_state in T_:
+        if start_state not in reachable_states:
+            clean_transitions.pop(start_state)
     reachable_final_states = copy_set(F)
     for state in F:
         if state not in reachable_states:
             reachable_final_states.remove(state)
-    return DFA(states=reachable_states, input_symbols=aM, transitions=T_, initial_state=q_0,
+    return DFA(states=reachable_states, input_symbols=aM, transitions=clean_transitions, initial_state=q_0,
                final_states=reachable_final_states, allow_partial=True)
 
 
@@ -216,28 +215,30 @@ def learning(m1, m2, assumption, property, alphabet, tables):
     answer = False
     while not answer:
         # if satisfies(parallel_composition(m1, assumption), property):
-        print("A_i", assumption)
-        completed_compo = completedAutomataByDFA(parallel_composition(m1, assumption))
+        print("\nA_i", assumption)
+        completed_compo = completedAutomataByDFA(parallel_composition(assumption, m1))
         print("M1 || A_i", completed_compo)
-        if satisfies(completed_compo, property):
-            completed_m2 = completedAutomataByDFA(m2)  # TODO rajouter une surcharge qui transforme l'automate
+        first_result = satisfies(completed_compo, property)
+        if first_result:
+            completed_m2 = completedAutomataByDFA(m2)
+            print("completed m2", completed_m2)
             cex = satisfies(completed_m2, assumption)
+            print("cex", cex)
             if cex == True:
                 answer = True
             # elif real_error(cex, m2, property, alphabet):
             elif real_error(m1, cex, property, alphabet):
                 print("real_error")
-                print("cex", cex)
                 print("m1", m1)
                 return False
             else:
                 # assumption = angluin.LSTAR_USEEQ() # on entre jamais dedans ? il y a un paramètre normalement
-                util.LSTAR_USEEQ(cex, alphabet, mq, pref, exp, M1_P)
+                util.LSTAR_USEEQ(restriction(cex, alphabet), alphabet, mq, pref, exp, M1_P)
                 while not util.is_closed(pref, exp, mq):
                     util.lstar_close(mq, pref, exp, alphabet, M1_P)
                 assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
         else:
-            util.LSTAR_USEEQ(cex, alphabet, mq, pref, exp, M1_P)
+            util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
             while not util.is_closed(pref, exp, mq):
                 util.lstar_close(mq, pref, exp, alphabet, M1_P)
             assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
@@ -260,12 +261,11 @@ def real_error(m1, cex, property, alphabet):
     -- uses function parallel_composition
     """
     composition = parallel_composition(m1, property)
-    return not composition.accepts_input(restriction(cex, alphabet))
+    return composition.accepts_input(restriction(cex, alphabet))
     # cex_trace_dfa = trace(cex, alphabet)
     # print("cex_trace_dfa", cex_trace_dfa)
-    # compo = parallel_composition(m1, cex_trace_dfa)
-    # print("compo", compo)
-    # completed_compo = completedAutomata(compo.states, compo.input_symbols, compo.transitions, compo.initial_state, compo.final_states)
+    # completed_compo = completedAutomataByDFA(parallel_composition(m1, cex_trace_dfa))
+    # print("completed compo", completed_compo)
     # if satisfies(completed_compo, property):
     #     return False
     # return True
