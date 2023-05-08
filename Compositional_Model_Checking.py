@@ -1,16 +1,15 @@
-import copy
+import util
 
 from Angluin import Angluin
 from automata.fa.dfa import DFA
 
 
-# def restriction(mot, alphabet):
-#     motRestreint = ""
-#     for caractere in mot:
-#         if caractere in alphabet:
-#             motRestreint += caractere
-#     return motRestreint
-
+def restriction(mot, alphabet):
+    motRestreint = ""
+    for caractere in mot:
+        if caractere in alphabet:
+            motRestreint += caractere
+    return motRestreint
 
 
 def completedAutomata(states, alphabet, transitions, initial_state, final_states):
@@ -20,7 +19,8 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
     :param states : the states of the automaton P
     :param alphabet: the alphabet of the automaton P
     :param transitions: the transitions of the automaton P
-    :param initial_state: the initial states of the automaton P
+    :param initial_state
+    : the initial states of the automaton P
     :param final_states: the finals states of the automaton P
 
     :return: DFA P in which the error status was added = P_err.
@@ -47,8 +47,25 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
         new_transitions["pi"] = {}
         for char in alphabet:
             new_transitions["pi"][char] = "pi"
+    print("new_states", new_states)
+    print("input_symbols", alphabet)
+    print("transitions", transitions)
+    print("initial_state", initial_state)
+    print("final_states", final_states)
     return DFA(states=new_states, input_symbols=alphabet, transitions=new_transitions, initial_state=initial_state,
                final_states=final_states)
+
+
+def completedAutomataByDFA(automaton):
+    """
+    The automaton P (of property) is completed by a well state which is an error state (P_err = new automaton)
+
+    :param automaton: the dfa to be completed
+    :return: DFA P in which the error status was added = P_err.
+
+    """
+    return completedAutomata(automaton.states, automaton.input_symbols, automaton.transitions, automaton.initial_state,
+                             automaton.final_states)
 
 
 # Produit parallele : Lidia
@@ -57,6 +74,8 @@ Fonction print-transitions :
 input : T : transitions
 output : print ligne by ligne all transition one by one
 """
+
+
 def print_transitions(T):
     print("T ", T)
     for source in T:
@@ -100,6 +119,7 @@ def interleaving(T, M1, M2):
                     T[(q1, q2)][b] = target
     return T
 
+
 def get_final_states(etats1, etats2):
     """
     Returns the final states set for the parallel composition of two DFAs.
@@ -140,15 +160,18 @@ def parallel_composition(M1, M2):
     # suppression des états sans transitions
     reachable_states = {q_0}
     for start_state in T_:
-        #reachable_states.add(start_state)
+        # reachable_states.add(start_state)
         for char in T_[start_state]:
             reachable_states.add(T_[start_state][char])
     reachable_final_states = copy_set(F)
     for state in F:
         if state not in reachable_states:
             reachable_final_states.remove(state)
-    return DFA(states=reachable_states, input_symbols=aM, transitions=T_, initial_state=q_0, final_states=reachable_final_states, allow_partial=True)
-#Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
+    return DFA(states=reachable_states, input_symbols=aM, transitions=T_, initial_state=q_0,
+               final_states=reachable_final_states, allow_partial=True)
+
+
+# Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
 
 
 def assumption_garantee(alphabet, m1, m2, property):
@@ -160,13 +183,15 @@ def assumption_garantee(alphabet, m1, m2, property):
     :param property: Property to be verified
     :return: Return the automaton if the property is satisfied
     """
-    angluin = Angluin(alphabet, m2)
-    angluin.Lstar_Initialise()
-    while not angluin.is_closed():
-        angluin.lstar_close()
-    assump = angluin.lstar_build_automaton()
-    assumption = completedAutomata(assump.states, assump.input_symbols, assump.transitions, assump.initial_state, assump.final_states)
-    answer = learning(m1, m2, assumption, property, angluin, alphabet)
+    # angluin = Angluin(alphabet, m2)
+    # angluin.Lstar_Initialise()
+    mq, pref, exp = {}, {}, []
+    M1_P = completedAutomataByDFA(parallel_composition(m1, property))
+    util.initialise(alphabet, M1_P, mq, exp, pref)
+    while not util.is_closed(pref, exp, mq):
+        util.lstar_close(mq, pref, exp, alphabet, M1_P)
+    assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+    answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))
     if answer == False:
         print("ERROR")
     else:
@@ -174,7 +199,8 @@ def assumption_garantee(alphabet, m1, m2, property):
         return answer
 
 
-def learning(m1, m2, assumption, property, angluin, alphabet):
+# def learning(m1, m2, assumption, property, angluin, alphabet):
+def learning(m1, m2, assumption, property, alphabet, tables):
     """
     Model Checking Program
     :param m1: First system component
@@ -185,22 +211,39 @@ def learning(m1, m2, assumption, property, angluin, alphabet):
     :param alphabet: System alphabet
     :return: the correct assumption or False if it's not possible to generate it
     """
+    mq, pref, exp = tables
+    M1_P = completedAutomataByDFA(parallel_composition(m1, property))
     answer = False
-    while not answer :
+    while not answer:
         # if satisfies(parallel_composition(m1, assumption), property):
-        compo = parallel_composition(m1, assumption)
-        completed_compo = completedAutomata(compo.states, compo.input_symbols, compo.transitions, compo.initial_state, compo.final_states)
+        print("A_i", assumption)
+        completed_compo = completedAutomataByDFA(parallel_composition(m1, assumption))
+        print("M1 || A_i", completed_compo)
         if satisfies(completed_compo, property):
-            completed_m2 = completedAutomata(m2.states, m2.input_symbols, m2.transitions, m2.initial_state, m2.final_states) # TODO rajouter une surcharge qui transforme l'automate
+            completed_m2 = completedAutomataByDFA(m2)  # TODO rajouter une surcharge qui transforme l'automate
             cex = satisfies(completed_m2, assumption)
             if cex == True:
                 answer = True
             # elif real_error(cex, m2, property, alphabet):
-            elif real_error(m2, cex, property, alphabet):
+            elif real_error(m1, cex, property, alphabet):
+                print("real_error")
+                print("cex", cex)
+                print("m1", m1)
                 return False
-            else :
-                assumption = angluin.LSTAR_USEEQ() # on entre jamais dedans ? il y a un paramètre normalement
+            else:
+                # assumption = angluin.LSTAR_USEEQ() # on entre jamais dedans ? il y a un paramètre normalement
+                util.LSTAR_USEEQ(cex, alphabet, mq, pref, exp, M1_P)
+                while not util.is_closed(pref, exp, mq):
+                    util.lstar_close(mq, pref, exp, alphabet, M1_P)
+                assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+        else:
+            util.LSTAR_USEEQ(cex, alphabet, mq, pref, exp, M1_P)
+            while not util.is_closed(pref, exp, mq):
+                util.lstar_close(mq, pref, exp, alphabet, M1_P)
+            assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+
     return assumption
+
 
 def real_error(m1, cex, property, alphabet):
     """
@@ -217,7 +260,7 @@ def real_error(m1, cex, property, alphabet):
     -- uses function parallel_composition
     """
     composition = parallel_composition(m1, property)
-    return not composition.accepts_input(cex)
+    return not composition.accepts_input(restriction(cex, alphabet))
     # cex_trace_dfa = trace(cex, alphabet)
     # print("cex_trace_dfa", cex_trace_dfa)
     # compo = parallel_composition(m1, cex_trace_dfa)
@@ -227,7 +270,8 @@ def real_error(m1, cex, property, alphabet):
     #     return False
     # return True
 
-def trace(cex, alphabet): # TODO voir si on peut pas juste simuler cex sur M_1 || P_err
+
+def trace(cex, alphabet):  # TODO voir si on peut pas juste simuler cex sur M_1 || P_err
     """
     Determine the trace of a word
     :param cex: The word tha we want to determine the trace
@@ -243,8 +287,8 @@ def trace(cex, alphabet): # TODO voir si on peut pas juste simuler cex sur M_1 |
         transition[state_avant] = {}
         transition[state_avant][i] = state
         states.add(state)
-    return DFA(states=states, input_symbols=alphabet, transitions=transition, initial_state="", final_states={state}, allow_partial=True)
-
+    return DFA(states=states, input_symbols=alphabet, transitions=transition, initial_state="", final_states={state},
+               allow_partial=True)
 
 
 # A = DFA(
@@ -295,11 +339,13 @@ def satisfies(M, P):
     # P is now able to read words from the M alphabet
     return M.__le__(P, witness=True)
 
+
 def copy_set(s):
     result = set()
     for element in s:
         result.add(element)
     return result
+
 
 def copy_transitions(transitions):
     result = {}
@@ -308,6 +354,7 @@ def copy_transitions(transitions):
         for symbol in transitions[state]:
             result[state][symbol] = transitions[state][symbol]
     return result
+
 
 def extend_alphabet(A, symbols_to_add):
     """
@@ -397,9 +444,9 @@ Input = DFA(
     states={"0", "1", "2"},
     input_symbols={"a", "i", "s"},
     transitions={
-        "0" : {"i" : "1"},
-        "1" : {"s" : "2"},
-        "2" : {"a" : "0"}
+        "0": {"i": "1"},
+        "1": {"s": "2"},
+        "2": {"a": "0"}
     },
     initial_state="0",
     final_states={"0", "1", "2"},
@@ -409,9 +456,9 @@ Output = DFA(
     states={"0", "1", "2"},
     input_symbols={"a", "o", "s"},
     transitions={
-        "0" : {"s" : "1"},
-        "1" : {"o" : "2"},
-        "2" : {"a" : "0"}
+        "0": {"s": "1"},
+        "1": {"o": "2"},
+        "2": {"a": "0"}
     },
     initial_state="0",
     final_states={"0", "1", "2"},
@@ -421,16 +468,15 @@ P = completedAutomata(
     states={"0", "1"},
     alphabet={"i", "o"},
     transitions={
-        "0" : {"i" : "1"},
-        "1" : {"o" : "0"}
+        "0": {"i": "1"},
+        "1": {"o": "0"}
     },
     initial_state="0",
     final_states={"0", "1"}
 )
-# alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
-alphabet = Output.input_symbols
+alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
+# alphabet = Output.input_symbols
 assumption_garantee(alphabet, Input, Output, P)
-
 
 # Exemple doc 2
 # M1 = DFA(
