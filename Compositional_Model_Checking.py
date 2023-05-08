@@ -203,8 +203,13 @@ def assumption_garantee(alphabet, m1, m2, property):
     print("M1_P", M1_P)
 
     util.initialise(alphabet, M1_P, mq, exp, pref)
-    while not util.is_closed(pref, exp, mq):
-        util.lstar_close(mq, pref, exp, alphabet, M1_P)
+
+    while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
+        if not util.is_closed(pref, exp, mq):
+            util.lstar_close(mq, pref, exp, alphabet, M1_P)
+
+        if not util.is_consistent(mq, pref, exp, alphabet):
+            util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
     # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
     assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
     answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))

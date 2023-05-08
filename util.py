@@ -73,6 +73,52 @@ def lstar_close(mq, pref, exp, alphabet, automaton):
                     pref[str(s + a)] = "blue"
 
 
+def lstar_consistent(mq, pref, exp, automaton, alphabet):
+    """
+    Makes the automaton's table consistent.
+
+    -- uses function find_consistency_problem & fill_the_table
+    """
+    letter, e = find_consistency_problem(pref, exp, mq, alphabet)[1]
+    exp.append(str(letter + e))
+    for line in pref:
+        for e in exp:
+            if str(line + e) not in mq:
+                fill_the_table(str(line + e), automaton, mq)
+
+
+def is_consistent(mq, pref, exp, alphabet):
+    """
+        Allows to know if the table is consistent or not, thanks to find_consistency_problem
+
+        :return: False (if find_consistency_problem return [False, (a,e)] the table is not consistent)
+        True  (if find_consistency_problem return only [True] the table is consistent)
+        """
+    res = find_consistency_problem(pref, exp, mq, alphabet)
+    if res[0]:
+        return True
+    return False
+
+
+def find_consistency_problem(pref, exp, mq, alphabet):
+    """
+        Finds the example making the table not consistent if it is not.
+
+        :return: [False, (a,e)] if the word (a+e) make the table not consistent,
+                  [True] if the table is consistent
+
+        -- uses function compareOT
+            """
+    for word1 in red(pref):
+        for word2 in red(pref):
+            if compareOT(word1, word2, mq, exp):
+                for e in exp:
+                    for letter in alphabet:
+                        if mq[str(word1 + letter + e)] != mq[str(word2 + letter + e)]:
+                            return [False, (letter, e)]
+    return [True]
+
+
 def lstar_build_automaton(alphabet, mq, pref, exp):
     """
     Build the automaton thanks mq, pref and exp.
@@ -112,10 +158,10 @@ def LSTAR_USEEQ(answer, alphabet, mq, pref, exp, automaton):
         Modifies the observation table in order to correct the false assumption, by using the counter-example returned.
         :param answer: the counter-example returned after the equivalence query
         """
-    # print("avant:")
-    # print("mq", mq)
-    # print("pref", pref)
-    # print("exp", exp)
+    print("avant:")
+    print("mq", mq)
+    print("pref", pref)
+    print("exp", exp)
     prefixes = get_prefixes(answer)
     for p in prefixes:
         pref[p] = "red"
@@ -126,10 +172,10 @@ def LSTAR_USEEQ(answer, alphabet, mq, pref, exp, automaton):
         for e in exp:
             if str(line + e) not in mq:
                 fill_the_table(str(line + e), automaton, mq)
-    # print("après:")
-    # print("mq", mq)
-    # print("pref", pref)
-    # print("exp", exp)
+    print("après:")
+    print("mq", mq)
+    print("pref", pref)
+    print("exp", exp)
 
 
 def red(pref):
