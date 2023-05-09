@@ -19,6 +19,11 @@ class Angluin:
         self.exp = exp
 
     def Lstar_Initialise(self):
+        """
+        Initialise the observation table.
+
+        -- uses function fill_the_table
+        """
         red = [""]
         blue = []
         for letter in self.alphabet:
