@@ -18,6 +18,12 @@ def fill_the_table(u, automate, mq=None):
         mq[u] = 0
     
 def nesrine_ghannay(mot, automaton):
+    """
+    Renvoie faux ssi on arrive dans l'état d'erreur pi
+    :param mot:
+    :param automaton:
+    :return:
+    """
     etat_courant = automaton.initial_state
     for lettre in mot:
         if etat_courant not in automaton.transitions :
@@ -153,17 +159,24 @@ def lstar_build_automaton(alphabet, mq, pref, exp):
     final_states = set()
     transitions = {}
     for state in states:
-        if mq[state] == 1:
-            final_states.add(state)
+        # if mq[state] == 1:
+        #     final_states.add(state)
+        if mq[state] == 0:
+            continue
+        final_states.add(state)
         transitions[state] = {}
         for letter in alphabet:
             x = state + letter
             for other_state in states:
                 if compareOT(x, other_state, mq, exp):
+                    if mq[other_state] == 0:
+                        continue
                     transitions[state][letter] = other_state
                     break
-    return DFA(states=states, input_symbols=alphabet, transitions=transitions,
-               initial_state="", final_states=final_states)
+    # return DFA(states=states, input_symbols=alphabet, transitions=transitions,
+    #            initial_state="", final_states=final_states)
+    return DFA(states=final_states, input_symbols=alphabet, transitions=transitions,
+               initial_state="", final_states=final_states, allow_partial=True)
 
 
 def LSTAR_USEEQ(answer, alphabet, mq, pref, exp, automaton):
