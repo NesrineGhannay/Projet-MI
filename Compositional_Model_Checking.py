@@ -62,15 +62,13 @@ def completedAutomataByDFA(automaton):
                              automaton.final_states)
 
 
-# Produit parallele : Lidia
-"""
-Fonction print-transitions :
-input : T : transitions
-output : print ligne by ligne all transition one by one
-"""
-
-
 def print_transitions(T):
+    """
+    Print transitions as complete sentence
+    :param T : transitions
+    :return  Print transitions as sentences
+
+    """
     print("T ", T)
     for source in T:
         for label in T[source]:
@@ -79,6 +77,13 @@ def print_transitions(T):
 
 
 def synchronization(M1, M2):
+    """
+    Function to make transition if the letter is on both system
+    :param M1 : First system component
+    :param M2 : Second system component
+
+    :return: All transitions create if a letter is on both system
+    """
     T = {}
     T1 = M1.transitions
     T2 = M2.transitions
@@ -98,6 +103,14 @@ def synchronization(M1, M2):
 
 
 def interleaving(T, M1, M2):
+    """
+        Function to make transition if the letter isn't on both system
+        :param T : Transitions already created
+        :param M1 : First system component
+        :param M2 : Second system component
+
+        :return: All transitions create
+        """
     T1 = M1.transitions
     T2 = M2.transitions
     for q1 in T1:
@@ -138,6 +151,13 @@ def get_final_states(etats1, etats2):
 
 
 def parallel_composition(M1, M2):
+    """
+    Parallel Composition of two systems
+    :param M1 : First system component
+    :param M2 : Second system component
+
+    :return : DFA who is the composition of M1 and M2
+    """
     # Q : les etats (states)
     Q = set()
     Q1 = M1.states

@@ -36,7 +36,6 @@ class Angluin:
         for b in blue:
             self.pref[b] = "blue"
 
-        # STA = red + blue
         for e in self.exp:
             for word in self.pref:
                 self.fill_the_table(str(word + e))
