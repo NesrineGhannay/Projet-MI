@@ -184,10 +184,10 @@ def LSTAR_USEEQ(answer, alphabet, mq, pref, exp, automaton):
         Modifies the observation table in order to correct the false assumption, by using the counter-example returned.
         :param answer: the counter-example returned after the equivalence query
         """
-    print("avant:")
-    print("mq", mq)
-    print("pref", pref)
-    print("exp", exp)
+    # print("avant:")
+    # print("mq", mq)
+    # print("pref", pref)
+    # print("exp", exp)
     prefixes = get_prefixes(answer)
     for p in prefixes:
         pref[p] = "red"
@@ -198,10 +198,10 @@ def LSTAR_USEEQ(answer, alphabet, mq, pref, exp, automaton):
         for e in exp:
             if str(line + e) not in mq:
                 fill_the_table(str(line + e), automaton, mq)
-    print("après:")
-    print("mq", mq)
-    print("pref", pref)
-    print("exp", exp)
+    # print("après:")
+    # print("mq", mq)
+    # print("pref", pref)
+    # print("exp", exp)
 
 
 def red(pref):
@@ -264,7 +264,7 @@ def compareOT(word1, word2, mq, exp):
     """
     Compares the lines in the Observation Table given two words belonging to RED or BLUE
 
-    param word1: first word to compare
+    :param word1: first word to compare
     :param word2: second word to compare
     :return: True if the lines are equals, False if not
     """

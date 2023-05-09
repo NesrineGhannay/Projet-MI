@@ -204,8 +204,11 @@ def assumption_garantee(alphabet, m1, m2, property):
 
     util.initialise(alphabet, M1_P, mq, exp, pref)
 
-    while not util.is_closed(pref, exp, mq) :
-        util.lstar_close(mq, pref, exp, alphabet, M1_P)
+    while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
+        if not util.is_closed(pref, exp, mq):
+            util.lstar_close(mq, pref, exp, alphabet, M1_P)
+        if not util.is_consistent(mq, pref, exp, alphabet):
+            util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
     # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
     assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
     answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))
@@ -245,7 +248,8 @@ def learning(m1, m2, assumption, property, alphabet, tables):
         print("A_i || M1", compo)
         # first_result = satisfies(completed_compo, property)
         first_result = satisfies(compo, property)
-        if first_result:
+        print("first result", first_result)
+        if first_result == True:
             # completed_m2 = completedAutomataByDFA(m2)
             # print("completed m2", completed_m2)
             # cex = satisfies(completed_m2, assumption)
@@ -267,14 +271,24 @@ def learning(m1, m2, assumption, property, alphabet, tables):
             else:
                 # assumption = angluin.LSTAR_USEEQ() # on entre jamais dedans ? il y a un paramètre normalement
                 util.LSTAR_USEEQ(restriction(cex, alphabet), alphabet, mq, pref, exp, M1_P)
-                while not util.is_closed(pref, exp, mq):
-                    util.lstar_close(mq, pref, exp, alphabet, M1_P)
+                # while not util.is_closed(pref, exp, mq):
+                #     util.lstar_close(mq, pref, exp, alphabet, M1_P)
+                while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
+                    if not util.is_closed(pref, exp, mq):
+                        util.lstar_close(mq, pref, exp, alphabet, M1_P)
+                    if not util.is_consistent(mq, pref, exp, alphabet):
+                        util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
                 # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
                 assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
         else:
             util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
-            while not util.is_closed(pref, exp, mq):
-                util.lstar_close(mq, pref, exp, alphabet, M1_P)
+            # while not util.is_closed(pref, exp, mq):
+            #     util.lstar_close(mq, pref, exp, alphabet, M1_P)
+            while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
+                if not util.is_closed(pref, exp, mq):
+                    util.lstar_close(mq, pref, exp, alphabet, M1_P)
+                if not util.is_consistent(mq, pref, exp, alphabet):
+                    util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
             # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
             assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
 

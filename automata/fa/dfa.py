@@ -612,6 +612,7 @@ class DFA(fa.FA):
                 if witness :
                     # print("contre-exemple : ", trace[state_sets[q_a]])
                     contreexemple = trace[curr_state]
+                    # print("contre exemple", contreexemple)
                     return True, contreexemple
                 return True # si l'état de A est final et celui de B n'est pas final
                 # i.e. le mot est dans L(A) n Sigma* \ L(B) qui est censé être vide
@@ -627,8 +628,8 @@ class DFA(fa.FA):
             else:
                 letters = self.input_symbols
 
-            # for chr in letters:
-            for chr in self.input_symbols:
+            for chr in letters:
+            # for chr in self.input_symbols:
                 # print("chr", chr)
                 product_state = (transitions_a[chr], transitions_b[chr]) # état d'arrivée
                 product_state_name = get_name(product_state)
@@ -660,11 +661,13 @@ class DFA(fa.FA):
         def subset_state_fn(state_pair):
             """Check for reachable state that is counterexample to subset"""
             q_a, q_b = state_pair
+            # if lts:
+            #     return q_a != "pi" and q_b == "pi"
             return q_a in self.final_states and q_b not in other.final_states
 
         if witness:
-            print("self", self)
-            print("other", other)
+            # print("self", self)
+            # print("other", other)
             resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True, lts=lts)
             #print(resultat)
             if resultat[0]:
