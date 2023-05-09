@@ -101,10 +101,10 @@ class DFA(fa.FA):
         # print("equivalence")
         return [True, True]
 
-    def __le__(self, other, witness=False):
+    def __le__(self, other, witness=False, lts=False):
         """Return True if this DFA is a subset of (or equal to) another DFA."""
         if isinstance(other, DFA):
-            return self.issubset(other, witness)
+            return self.issubset(other, witness, lts)
         else:
             return NotImplemented
 
@@ -554,7 +554,7 @@ class DFA(fa.FA):
             allow_partial=self.allow_partial
         )
 
-    def _cross_product(self, other, state_target_fn, *, should_construct_dfa, retain_names=False, witness=False):
+    def _cross_product(self, other, state_target_fn, *, should_construct_dfa, retain_names=False, witness=False, lts=False):
         """
         Search reachable states corresponding to product graph between self and other.
 
@@ -622,8 +622,13 @@ class DFA(fa.FA):
             transitions_a = self.transitions[q_a]
             transitions_b = other.transitions[q_b]
 
-            # for chr in self.input_symbols:
-            for chr in transitions_a.keys() & transitions_b.keys():
+            if lts:
+                letters = transitions_a.keys() & transitions_b.keys()
+            else:
+                letters = self.input_symbols
+
+            # for chr in letters:
+            for chr in self.input_symbols:
                 # print("chr", chr)
                 product_state = (transitions_a[chr], transitions_b[chr]) # état d'arrivée
                 product_state_name = get_name(product_state)
@@ -649,7 +654,7 @@ class DFA(fa.FA):
             return [False]
         return False
 
-    def issubset(self, other, witness=False):
+    def issubset(self, other, witness=False, lts=False):
         """Return True if this DFA is a subset of another DFA."""
 
         def subset_state_fn(state_pair):
@@ -658,7 +663,9 @@ class DFA(fa.FA):
             return q_a in self.final_states and q_b not in other.final_states
 
         if witness:
-            resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True)
+            print("self", self)
+            print("other", other)
+            resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True, lts=lts)
             #print(resultat)
             if resultat[0]:
                 return resultat[1] # le contre exemple

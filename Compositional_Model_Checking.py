@@ -204,12 +204,8 @@ def assumption_garantee(alphabet, m1, m2, property):
 
     util.initialise(alphabet, M1_P, mq, exp, pref)
 
-    while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
-        if not util.is_closed(pref, exp, mq):
-            util.lstar_close(mq, pref, exp, alphabet, M1_P)
-
-        if not util.is_consistent(mq, pref, exp, alphabet):
-            util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
+    while not util.is_closed(pref, exp, mq) :
+        util.lstar_close(mq, pref, exp, alphabet, M1_P)
     # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
     assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
     answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))
@@ -219,6 +215,8 @@ def assumption_garantee(alphabet, m1, m2, property):
         print("Automate trouvé : ")
         return answer
 
+# TODO modifier satisfies pour tester si pi est atteignable dans A_i || M_1 || P
+# le cex serait le chemin qui permet d'arriver à pi
 
 # def learning(m1, m2, assumption, property, angluin, alphabet):
 def learning(m1, m2, assumption, property, alphabet, tables):
@@ -244,7 +242,7 @@ def learning(m1, m2, assumption, property, alphabet, tables):
         # completed_compo = completedAutomataByDFA(parallel_composition(assumption, m1))
         compo = parallel_composition(assumption, m1)
         # print("M1 || A_i", completed_compo)
-        print("M1 || A_i", compo)
+        print("A_i || M1", compo)
         # first_result = satisfies(completed_compo, property)
         first_result = satisfies(compo, property)
         if first_result:
@@ -298,7 +296,8 @@ def real_error(m1, cex, property, alphabet):
     -- uses function parallel_composition
     """
     composition = parallel_composition(m1, property)
-    return composition.accepts_input(restriction(cex, alphabet))
+    # return composition.accepts_input(restriction(cex, alphabet))
+    return not util.nesrine_ghannay(restriction(cex, alphabet), composition)
 
     # # cex_trace_dfa = trace(cex, alphabet)
     # cex_trace_dfa = trace(restriction(cex, alphabet), alphabet)
@@ -377,11 +376,12 @@ def satisfies(M, P):
     for symbol in M.input_symbols:
         if symbol not in P.input_symbols:
             restricted_symbols.add(symbol)
+    print("restricted symbols", restricted_symbols)
     if len(restricted_symbols) > 0:
         P_complete = extend_alphabet(P, restricted_symbols)
         P = P_complete
     # P is now able to read words from the M alphabet
-    return M.__le__(P, witness=True)
+    return M.__le__(P, witness=True, lts=True)
 
 
 def copy_set(s):
@@ -421,6 +421,7 @@ def extend_alphabet(A, symbols_to_add):
             completed_transitions[state][symbol] = state
     automate_complete = DFA(states=A.states.copy(), input_symbols=completed_alphabet, transitions=completed_transitions,
                             initial_state=A.initial_state, final_states=A.final_states.copy())
+    # print("automate_complete", automate_complete)
     return automate_complete
 
 

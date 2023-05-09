@@ -27,6 +27,7 @@ def nesrine_ghannay(mot, automaton):
         elif automaton.transitions[etat_courant][lettre] == "pi":
             return False
         etat_courant = automaton.transitions[etat_courant][lettre]
+    return True
 
 def initialise(alphabet, automaton, mq=None, exp=None, pref=None):
     if mq is None:
