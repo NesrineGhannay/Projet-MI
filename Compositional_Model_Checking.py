@@ -207,7 +207,7 @@ def assumption_garantee(alphabet, m1, m2, property):
     while not util.is_closed(pref, exp, mq) :
         util.lstar_close(mq, pref, exp, alphabet, M1_P)
     # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
-    assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
+    assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
     answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))
     if answer == False:
         print("ERROR")
@@ -270,13 +270,13 @@ def learning(m1, m2, assumption, property, alphabet, tables):
                 while not util.is_closed(pref, exp, mq):
                     util.lstar_close(mq, pref, exp, alphabet, M1_P)
                 # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
-                assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
+                assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
         else:
             util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
             while not util.is_closed(pref, exp, mq):
                 util.lstar_close(mq, pref, exp, alphabet, M1_P)
             # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
-            assumption = util.lstar_build_automaton(alphabet, mq, pref, exp)
+            assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
 
     return assumption
 

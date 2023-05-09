@@ -138,9 +138,9 @@ def find_consistency_problem(pref, exp, mq, alphabet):
     return [True]
 
 
-def lstar_build_automaton(alphabet, mq, pref, exp):
+def lstar_build_lts(alphabet, mq, pref, exp):
     """
-    Build the automaton thanks mq, pref and exp.
+    Build the LTS using mq, pref and exp.
 
     :return: the automaton built
 
