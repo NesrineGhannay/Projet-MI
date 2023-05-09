@@ -241,6 +241,9 @@ def learning(m1, m2, assumption, property, alphabet, tables):
     while not answer:
         print("\nM1_P", M1_P)
         # if satisfies(parallel_composition(m1, assumption), property):
+        print("mq", mq)
+        print("pref", pref)
+        print("exp", exp)
         print("A_i", assumption)
         # completed_compo = completedAutomataByDFA(parallel_composition(assumption, m1))
         compo = parallel_composition(assumption, m1)
