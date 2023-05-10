@@ -148,6 +148,11 @@ def lstar_build_lts(alphabet, mq, pref, exp):
     """
     Build the LTS using mq, pref and exp.
 
+    :param alphabet: automaton's alphabet
+    :param mq:
+    :param pref:
+    :param exp:
+
     :return: the automaton built
 
     -- uses functions red, compareOT

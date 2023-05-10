@@ -1,3 +1,5 @@
+import time
+
 from Angluin import *
 import matplotlib.pyplot as plt
 
@@ -12,7 +14,7 @@ abscissa = []
 ordinate = []
 
 
-for i in range(0, 2000001, 250000):
+for i in range(0, 10001, 1000):
     abscissa.append(i+2)
     automaton = DFA(states=states, input_symbols= alphabet, transitions=transitions, initial_state=initial_state, final_states=final_states)
     a = time.time()
@@ -20,7 +22,8 @@ for i in range(0, 2000001, 250000):
     angluin.lstar()
     b = time.time()
     ordinate.append(b-a)
-    for j in range(250000):
+    print(i)
+    for j in range(1000):
         states.add(i+j+1)
         transitions[i+j] = {"a": i+j+1, "b": i+j+1}
         transitions[i+j+1] = {"a": "puits", "b": "puits"}

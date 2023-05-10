@@ -223,7 +223,7 @@ def test_get_prefixes():
                           ])
 def test_lstar_useeq(automaton, mq0, pref0, exp0, answer, expected_mq, expected_pref):
     a = Angluin(alphabet_ab, automaton, mq0, pref0, exp0.copy())
-    a.LSTAR_USEEQ(answer)
+    a.Lstar_use_eq(answer)
     assert a.mq == expected_mq
     assert a.pref == expected_pref
     assert a.exp == exp0
@@ -253,7 +253,5 @@ def test_lstar(list_angluin):
         automaton_to_guess = a.automate.copy()
         assert a.automate == automaton_to_guess
         p = a.lstar()
-        print(p)
-        print(a.automate)
         assert p.__eq__(a.automate)
         #en revanche assert a.__eq__(a.automate) fonctionne...

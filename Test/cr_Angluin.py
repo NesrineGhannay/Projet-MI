@@ -13,16 +13,17 @@ def add_abs_ord(beginning, ending, step):
         abscissa.append(i)
         result = 0
         print(i)
-        for j in range(100):
+        for j in range(1000):
             A = random_dfa({"a", "b"}, i)
             a = time.time()
             angluin = Angluin({"a", "b"}, A, mq={}, pref={}, exp=[])
             angluin.lstar()
             b = time.time()
             result += b-a
-        ordinate.append(result/100)
+        ordinate.append(result/1000)
 
-add_abs_ord(1, 100002, 10000)
+
+add_abs_ord(1, 10002, 1000)
 
 plt.figure()
 plt.plot(abscissa, ordinate)

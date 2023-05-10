@@ -209,8 +209,6 @@ def assumption_garantee(alphabet, m1, m2, property):
     """
     mq, pref, exp = {}, {}, []
     M1_P = parallel_composition(m1, property)
-    print("M1_P", M1_P)
-
     util.initialise(alphabet, M1_P, mq, exp, pref)
 
     util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
