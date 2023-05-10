@@ -304,23 +304,10 @@ def real_error(m1, cex, property, alphabet):
     -- uses function parallel_composition
     """
     composition = parallel_composition(m1, property)
-    # return composition.accepts_input(restriction(cex, alphabet))
     return not util.nesrine_ghannay(restriction(cex, alphabet), composition)
 
-    # # cex_trace_dfa = trace(cex, alphabet)
-    # cex_trace_dfa = trace(restriction(cex, alphabet), alphabet)
-    # print("cex_trace_dfa", cex_trace_dfa)
-    # # completed_compo = completedAutomataByDFA(parallel_composition(m1, cex_trace_dfa))
-    # compo = parallel_composition(cex_trace_dfa, m1)
-    # # print("completed compo", completed_compo)
-    # # if satisfies(completed_compo, property):
-    # print("compo", compo)
-    # if satisfies(compo, property):
-    #     return False
-    # return True
 
-
-def trace(cex, alphabet):  # TODO enlever alphabet
+def trace(cex, alphabet):  # TODO enlever alphabet des paramètres
     """
     Determine the trace of a word
     :param cex: The word tha we want to determine the trace
@@ -340,38 +327,6 @@ def trace(cex, alphabet):  # TODO enlever alphabet
         states.add(state)
     return DFA(states=states, input_symbols=alphabet, transitions=transition, initial_state="", final_states={state},
                allow_partial=True)
-
-
-# A = DFA(
-#         states = {"0", "1", "2"},
-#         input_symbols = {"in", "send", "ack"},
-#         transitions = {
-#             "0": {"in" : "1"},
-#             "1": {"send" : "2"},
-#             "2": {"ack" : "0"}
-#                         },
-#         initial_state = "0",
-#         final_states = {"2"},
-#         allow_partial=True
-#         )
-#
-# B = DFA(
-#         states = {"a", "b", "c"},
-#         input_symbols = {"out", "send", "ack"},
-#         transitions = {
-#             "a": {"send" : "b"},
-#             "b": {"out" : "c"},
-#             "c": {"ack" : "a"}
-#                         },
-#         initial_state = "a",
-#         final_states = {"c"},
-#         allow_partial=True
-#         )
-#
-# # print_transitions(A.transitions)
-# # print(A)
-# # print(B)
-# print(parallel_composition(A, B))
 
 def satisfies(M, P):
     """
@@ -429,9 +384,39 @@ def extend_alphabet(A, symbols_to_add):
             completed_transitions[state][symbol] = state
     automate_complete = DFA(states=A.states.copy(), input_symbols=completed_alphabet, transitions=completed_transitions,
                             initial_state=A.initial_state, final_states=A.final_states.copy())
-    # print("automate_complete", automate_complete)
     return automate_complete
 
+# tests Lidia
+# A = DFA(
+#         states = {"0", "1", "2"},
+#         input_symbols = {"in", "send", "ack"},
+#         transitions = {
+#             "0": {"in" : "1"},
+#             "1": {"send" : "2"},
+#             "2": {"ack" : "0"}
+#                         },
+#         initial_state = "0",
+#         final_states = {"2"},
+#         allow_partial=True
+#         )
+#
+# B = DFA(
+#         states = {"a", "b", "c"},
+#         input_symbols = {"out", "send", "ack"},
+#         transitions = {
+#             "a": {"send" : "b"},
+#             "b": {"out" : "c"},
+#             "c": {"ack" : "a"}
+#                         },
+#         initial_state = "a",
+#         final_states = {"c"},
+#         allow_partial=True
+#         )
+#
+# # print_transitions(A.transitions)
+# # print(A)
+# # print(B)
+# print(parallel_composition(A, B))
 
 # tests pauline
 # M = DFA(
@@ -528,10 +513,7 @@ P = completedAutomata(
     final_states={"0", "1"}
 )
 alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
-# alphabet = Output.input_symbols
-
 assumption_garantee(alphabet, Input, Output, P)
-# A_i = DFA(states={'', 'a'}, input_symbols={'a', 'o', 's'}, transitions={'': {'a': 'a', 'o': 'a', 's': 'a'}, 'a': {'a': 'a', 'o': 'a', 's': 'a'}}, initial_state='', final_states={''}, allow_partial=False)
 
 
 # Exemple doc 2
