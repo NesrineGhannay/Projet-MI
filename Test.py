@@ -131,7 +131,6 @@ assumption_garantee(alphabet, Input, Output, P)
 # )
 
 
-
 # M1 = DFA(
 #     states={"0", "1", "2", "3", "4"},
 #     input_symbols={"a", "b", "c", "d"},
@@ -176,7 +175,7 @@ assumption_garantee(alphabet, Input, Output, P)
 # TEST UNITAIRES
 
 
-# Composition Parralèle Lidia
+# Composition Parralèlle Lidia
 # A = DFA(
 #         states = {"0", "1", "2"},
 #         input_symbols = {"in", "send", "ack"},
