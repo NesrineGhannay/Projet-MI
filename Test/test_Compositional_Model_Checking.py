@@ -74,3 +74,10 @@ def test_completedAutomataByDFA(Input):
 
 def test_synchronisation(Input, Output):
     assert synchronization(Input, Output) == {("1", "0") : {"s" : ("2", "1")}, ("2", "2") : {"a" : ("0", "0")}}
+
+
+def test_interleaving(Input, Output):
+    assert interleaving({("1", "0") : {"s" : ("2", "1")}, ("2", "2") : {"a" : ("0", "0")}}, Input, Output) == \
+           {("1", "0") : {"s" : ("2", "1")}, ("2", "2") : {"a" : ("0", "0")}, ("0", "0") : {"i" : ("1", "0")},
+            ("2", "1") : {"o" : ("2", "2")},
+            ('0', '1'): {'i': ('1', '1'), 'o': ('0', '2')}, ('0', '2'): {'i': ('1', '2')}, ('1', '1'): {'o': ('1', '2')}, }
