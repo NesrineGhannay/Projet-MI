@@ -2,6 +2,48 @@ from Compositional_Model_Checking import *
 import pytest
 from automata.fa.dfa import DFA
 
+@pytest.fixture
+def Input():
+    return DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "i", "s"},
+    transitions={
+        "0": {"i": "1"},
+        "1": {"s": "2"},
+        "2": {"a": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"},
+    allow_partial=True
+)
+
+@pytest.fixture
+def Output():
+    return DFA(
+    states={"0", "1", "2"},
+    input_symbols={"a", "o", "s"},
+    transitions={
+        "0": {"s": "1"},
+        "1": {"o": "2"},
+        "2": {"a": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1", "2"},
+    allow_partial=True
+)
+
+@pytest.fixture
+def P() :
+    return completedAutomata(
+    states={"0", "1"},
+    alphabet={"i", "o"},
+    transitions={
+        "0": {"i": "1"},
+        "1": {"o": "0"}
+    },
+    initial_state="0",
+    final_states={"0", "1"}
+)
 
 @pytest.mark.parametrize("word, alphabet, exp",
                          [("oiaubav", {"a", "b"}, "aba"),
@@ -21,5 +63,14 @@ def test_completedAutomata(states, alphabet, transitions, initial_state, final_s
         DFA(states=exp_s, input_symbols=alphabet, transitions=exp_t, initial_state=initial_state,
             final_states=final_states))
 
-#TODO : je ne sais pas comment fr pour completedAutomataByDFA
-#TODO : print transitions pas important
+
+def test_completedAutomataByDFA(Input):
+    assert completedAutomataByDFA(Input).__eq__(DFA(states={"0", "1", "puits"}, input_symbols={"i", "o"},
+                               transitions={"0": {"i": "1", "o":"puits"}, "1": {"o": "0", "i":"puits"}, "puits" : {"o" : "puits", "i" : "puits"}},
+                               initial_state="0", final_states={"0", "1"}))
+
+#print transitions pas necessaire
+
+
+def test_synchronisation(Input, Output):
+    assert synchronization(Input, Output) == {("1", "0") : {"s" : ("2", "1")}, ("2", "2") : {"a" : ("0", "0")}}
