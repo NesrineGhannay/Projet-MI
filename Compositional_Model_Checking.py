@@ -43,7 +43,7 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
                 # if "pi" not in new_states:
                 #     new_states.add("pi")
     if add_pi:
-        # if "pi" not in new_states : JSP SI ON DOIT LE METTRE
+        # if "pi" not in new_states
         new_states.add("pi")
         new_transitions["pi"] = {}
         for char in alphabet:
