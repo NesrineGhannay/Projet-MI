@@ -30,20 +30,14 @@ def completedAutomata(states, alphabet, transitions, initial_state, final_states
     add_pi = False
     new_states = copy_set(states)
     new_transitions = copy_transitions(transitions)
-    # for dictionary in new_transitions:
     for state in new_states:
         if state not in new_transitions:
             new_transitions[state] = {}
         for char in alphabet:
-            # if char not in new_transitions[dictionary]:
             if char not in new_transitions[state]:
-                # new_transitions[dictionary][char] = "pi"
                 new_transitions[state][char] = "pi"
                 add_pi = True
-                # if "pi" not in new_states:
-                #     new_states.add("pi")
     if add_pi:
-        # if "pi" not in new_states : JSP SI ON DOIT LE METTRE
         new_states.add("pi")
         new_transitions["pi"] = {}
         for char in alphabet:
@@ -203,8 +197,6 @@ def parallel_composition(M1, M2):
     return DFA(states=reachable_states, input_symbols=aM, transitions=clean_transitions, initial_state=q_0,
                final_states=reachable_final_states, allow_partial=True)
 
-# Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
-
 
 def assumption_garantee(alphabet, m1, m2, property):
     """
@@ -275,6 +267,7 @@ def learning(m1, m2, assumption, property, alphabet, tables):
             elif real_error(m1, cex, property, alphabet):
                 print("real_error")
                 return False
+
             else:
                 util.LSTAR_USEEQ(restriction(cex, alphabet), alphabet, mq, pref, exp, M1_P)
                 util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
