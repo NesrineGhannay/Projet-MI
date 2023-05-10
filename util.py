@@ -137,6 +137,15 @@ def find_consistency_problem(pref, exp, mq, alphabet):
                             return [False, (letter, e)]
     return [True]
 
+def make_close_and_consistent(mq, pref, exp, alphabet, automaton):
+    """
+    Closes and completes the observation table.
+    """
+    while not is_closed(pref, exp, mq) or not is_consistent(mq, pref, exp, alphabet):
+        if not is_closed(pref, exp, mq):
+            lstar_close(mq, pref, exp, alphabet, automaton)
+        if not is_consistent(mq, pref, exp, alphabet):
+            lstar_consistent(mq, pref, exp, automaton, alphabet)
 
 def lstar_build_lts(alphabet, mq, pref, exp):
     """

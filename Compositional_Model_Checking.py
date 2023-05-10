@@ -1,14 +1,16 @@
 import util
-from Angluin import Angluin
 from automata.fa.dfa import DFA
 
-
-def restriction(mot, alphabet):
-    motRestreint = ""
-    for caractere in mot:
-        if caractere in alphabet:
-            motRestreint += caractere
-    return motRestreint
+def restriction(word, alphabet):
+    """
+    Restricts a word to a given alphabet.
+    :return: The word restricted to the letters belonging to the alphabet
+    """
+    restricted_word = ""
+    for letter in word:
+        if letter in alphabet:
+            restricted_word += letter
+    return restricted_word
 
 
 def completedAutomata(states, alphabet, transitions, initial_state, final_states):
@@ -66,7 +68,6 @@ def print_transitions(T):
     """
     Print transitions as complete sentence
     :param T : transitions
-    :return  Print transitions as sentences
 
     """
     print("T ", T)
@@ -136,18 +137,18 @@ def interleaving(T, M1, M2):
     return T
 
 
-def get_final_states(etats1, etats2):
+def get_final_states(states1, states2):
     """
     Returns the final states set for the parallel composition of two DFAs.
-    :param etats1: final states set for the first DFA
-    :param etats2: final states set for the second DFA
+    :param states1: final states set for the first DFA
+    :param states2: final states set for the second DFA
     :return: A set of final states composed of
     """
-    etats = set()
-    for etat1 in etats1:
-        for etat2 in etats2:
-            etats.add((etat1, etat2))
-    return etats
+    states = set()
+    for state1 in states1:
+        for state2 in states2:
+            states.add((state1, state2))
+    return states
 
 
 def parallel_composition(M1, M2):
@@ -180,10 +181,9 @@ def parallel_composition(M1, M2):
     T_ = interleaving(T, M1, M2)
     # F : final and accepted states
     F = get_final_states(M1.final_states, M2.final_states)
-    # suppression des états sans transitions
+    # suppression des états inutiles (sans transitions)
     reachable_states = {q_0}
     for start_state in T_:
-        # reachable_states.add(start_state)
         for char in T_[start_state]:
             reachable_states.add(T_[start_state][char])
     clean_transitions = copy_transitions(T_)
@@ -194,6 +194,7 @@ def parallel_composition(M1, M2):
     for state in F:
         if state not in reachable_states:
             reachable_final_states.remove(state)
+    # redirection vers un état d'erreur unique
     if "pi" in reachable_states:
         if "pi" not in clean_transitions:
             clean_transitions["pi"] = {}
@@ -201,7 +202,6 @@ def parallel_composition(M1, M2):
             clean_transitions["pi"][letter] = "pi"
     return DFA(states=reachable_states, input_symbols=aM, transitions=clean_transitions, initial_state=q_0,
                final_states=reachable_final_states, allow_partial=True)
-
 
 # Carla : Pourquoi les transitions de la synchronisation n'y sont pas ?
 
@@ -215,21 +215,14 @@ def assumption_garantee(alphabet, m1, m2, property):
     :param property: Property to be verified
     :return: Return the automaton if the property is satisfied
     """
-    # angluin = Angluin(alphabet, m2)
-    # angluin.Lstar_Initialise()
     mq, pref, exp = {}, {}, []
-    # M1_P = completedAutomataByDFA(parallel_composition(m1, property))
     M1_P = parallel_composition(m1, property)
     print("M1_P", M1_P)
 
     util.initialise(alphabet, M1_P, mq, exp, pref)
 
-    while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
-        if not util.is_closed(pref, exp, mq):
-            util.lstar_close(mq, pref, exp, alphabet, M1_P)
-        if not util.is_consistent(mq, pref, exp, alphabet):
-            util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
-    # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+    util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
+
     assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
     answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))
     if answer == False:
@@ -238,10 +231,6 @@ def assumption_garantee(alphabet, m1, m2, property):
         print("Automate trouvé : ")
         return answer
 
-# TODO modifier satisfies pour tester si pi est atteignable dans A_i || M_1 || P
-# le cex serait le chemin qui permet d'arriver à pi
-
-# def learning(m1, m2, assumption, property, angluin, alphabet):
 def learning(m1, m2, assumption, property, alphabet, tables):
     """
     Model Checking Program
@@ -254,65 +243,47 @@ def learning(m1, m2, assumption, property, alphabet, tables):
     :return: the correct assumption or False if it's not possible to generate it
     """
     mq, pref, exp = tables
-    # M1_P = completedAutomataByDFA(parallel_composition(m1, property))
+
     M1_P = parallel_composition(m1, property)
 
     answer = False
     while not answer:
         print("\nM1_P", M1_P)
-        # if satisfies(parallel_composition(m1, assumption), property):
         print("mq", mq)
         print("pref", pref)
         print("exp", exp)
         print("A_i", assumption)
-        # completed_compo = completedAutomataByDFA(parallel_composition(assumption, m1))
+
         compo = parallel_composition(assumption, m1)
-        # print("M1 || A_i", completed_compo)
         print("A_i || M1", compo)
-        # first_result = satisfies(completed_compo, property)
-        first_result = satisfies(compo, property)
+
+        first_result = satisfies(compo, property) # first oracle
         print("first result", first_result)
+
         if first_result == True:
-            # completed_m2 = completedAutomataByDFA(m2)
-            # print("completed m2", completed_m2)
-            # cex = satisfies(completed_m2, assumption)
             print("m2", m2)
             print("assumption", assumption)
 
             completed_assumption = completedAutomataByDFA(assumption)
 
-            # cex = satisfies(m2, assumption)
             cex = satisfies(m2, completed_assumption)
             print("cex", cex)
+
             if cex == True:
                 answer = True
-            # elif real_error(cex, m2, property, alphabet):
+
             elif real_error(m1, cex, property, alphabet):
                 print("real_error")
-                print("m1", m1)
                 return False
             else:
-                # assumption = angluin.LSTAR_USEEQ() # on entre jamais dedans ? il y a un paramètre normalement
                 util.LSTAR_USEEQ(restriction(cex, alphabet), alphabet, mq, pref, exp, M1_P)
-                # while not util.is_closed(pref, exp, mq):
-                #     util.lstar_close(mq, pref, exp, alphabet, M1_P)
-                while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
-                    if not util.is_closed(pref, exp, mq):
-                        util.lstar_close(mq, pref, exp, alphabet, M1_P)
-                    if not util.is_consistent(mq, pref, exp, alphabet):
-                        util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
-                # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+                util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
+
                 assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
         else:
             util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
-            # while not util.is_closed(pref, exp, mq):
-            #     util.lstar_close(mq, pref, exp, alphabet, M1_P)
-            while not util.is_closed(pref, exp, mq) or not util.is_consistent(mq, pref, exp, alphabet):
-                if not util.is_closed(pref, exp, mq):
-                    util.lstar_close(mq, pref, exp, alphabet, M1_P)
-                if not util.is_consistent(mq, pref, exp, alphabet):
-                    util.lstar_consistent(mq, pref, exp, M1_P, alphabet)
-            # assumption = completedAutomataByDFA(util.lstar_build_automaton(alphabet, mq, pref, exp))
+            util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
+
             assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
 
     return assumption
