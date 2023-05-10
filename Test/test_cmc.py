@@ -1,5 +1,7 @@
 from automata.fa.dfa import DFA
 import Compositional_Model_Checking
+
+
 M1 = DFA(
     states={"0", "1", "2", "3", "4"},
     input_symbols={"a", "b", "c", "d"},
