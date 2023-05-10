@@ -68,8 +68,6 @@ class DFA(fa.FA):
 
         trace = {} # pour associer chaque état de state_sets au mot par lequel on l'a découvert
 
-        # print("pair_stack : ", pair_stack)
-
         # Do union find
         state_sets.union(initial_state_a, initial_state_b) # et là on fusionne
         pair_stack.append((initial_state_a, initial_state_b)) # on fait une pile avec toutes les paires d'états
@@ -82,9 +80,7 @@ class DFA(fa.FA):
             q_a, q_b = pair_stack.pop() # on récupère la fin de la deque
 
             if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif
-                # print("!!!!!!!!! LA ON A", q_a, is_final_state(q_a))
                 if witness :
-                    # print("contre-exemple : ", trace[state_sets[q_a]])
                     return [False, trace[state_sets[q_a]]]
                 return [False, False]
 
@@ -98,7 +94,6 @@ class DFA(fa.FA):
                         trace[state_sets[r_1]] = trace[state_sets[q_a]] + symbol
                     pair_stack.append((r_1, r_2))
 
-        # print("equivalence")
         return [True, True]
 
     def __le__(self, other, witness=False, lts=False):
@@ -593,10 +588,8 @@ class DFA(fa.FA):
             # ancienetat = product_initial_state_name
 
         while queue:
-            # print("trace", trace)
             # Get next state in BFS queue
             curr_state = queue.popleft()
-            # print("curr_state", curr_state)
             # curr_state_name = get_name(curr_state)
 
             # Add state to the transition dict if constructing DFA
@@ -610,9 +603,7 @@ class DFA(fa.FA):
             # Otherwise, just check the target function
             elif state_target_fn(curr_state):
                 if witness :
-                    # print("contre-exemple : ", trace[state_sets[q_a]])
                     contreexemple = trace[curr_state]
-                    # print("contre exemple", contreexemple)
                     return True, contreexemple
                 return True # si l'état de A est final et celui de B n'est pas final
                 # i.e. le mot est dans L(A) n Sigma* \ L(B) qui est censé être vide
@@ -630,14 +621,12 @@ class DFA(fa.FA):
 
             for chr in letters:
             # for chr in self.input_symbols:
-                # print("chr", chr)
                 product_state = (transitions_a[chr], transitions_b[chr]) # état d'arrivée
                 product_state_name = get_name(product_state)
 
                 if witness:
                     # trace[product_state_name] = trace[ancienetat] + chr
                     trace[product_state] = trace[curr_state] + chr
-                    # print("trace", trace)
 
                 if should_construct_dfa:
                     state_transitions[chr] = product_state_name
@@ -666,10 +655,7 @@ class DFA(fa.FA):
             return q_a in self.final_states and q_b not in other.final_states
 
         if witness:
-            # print("self", self)
-            # print("other", other)
             resultat = self._cross_product(other, subset_state_fn, should_construct_dfa=False, witness=True, lts=lts)
-            #print(resultat)
             if resultat[0]:
                 return resultat[1] # le contre exemple
             else :
