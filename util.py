@@ -1,7 +1,5 @@
 from automata.fa.dfa import DFA
 
-
-# def fill_the_table(u, automate, mq=None):
 def fill_the_table(u, automate, mq=None):
     """
     Fills the empty gaps in the observation table with membership tests.
@@ -11,13 +9,12 @@ def fill_the_table(u, automate, mq=None):
     """
     if mq is None:
         mq = {}
-    #if automate.accepts_input(u):
-    if nesrine_ghannay(u, automate):
+    if membership_query(u, automate):
         mq[u] = 1
     else:
         mq[u] = 0
     
-def nesrine_ghannay(mot, automaton):
+def membership_query(mot, automaton):
     """
     Renvoie faux ssi on arrive dans l'état d'erreur pi
     :param mot:
@@ -168,8 +165,6 @@ def lstar_build_lts(alphabet, mq, pref, exp):
     final_states = set()
     transitions = {}
     for state in states:
-        # if mq[state] == 1:
-        #     final_states.add(state)
         if mq[state] == 0:
             continue
         final_states.add(state)
@@ -182,21 +177,15 @@ def lstar_build_lts(alphabet, mq, pref, exp):
                         continue
                     transitions[state][letter] = other_state
                     break
-    # return DFA(states=states, input_symbols=alphabet, transitions=transitions,
-    #            initial_state="", final_states=final_states)
     return DFA(states=final_states, input_symbols=alphabet, transitions=transitions,
                initial_state="", final_states=final_states, allow_partial=True)
 
 
 def LSTAR_USEEQ(answer, alphabet, mq, pref, exp, automaton):
     """
-        Modifies the observation table in order to correct the false assumption, by using the counter-example returned.
-        :param answer: the counter-example returned after the equivalence query
-        """
-    # print("avant:")
-    # print("mq", mq)
-    # print("pref", pref)
-    # print("exp", exp)
+    Modifies the observation table in order to correct the false assumption, by using the counter-example returned.
+    :param answer: the counter-example returned after the equivalence query
+    """
     prefixes = get_prefixes(answer)
     for p in prefixes:
         pref[p] = "red"
@@ -207,11 +196,6 @@ def LSTAR_USEEQ(answer, alphabet, mq, pref, exp, automaton):
         for e in exp:
             if str(line + e) not in mq:
                 fill_the_table(str(line + e), automaton, mq)
-    # print("après:")
-    # print("mq", mq)
-    # print("pref", pref)
-    # print("exp", exp)
-
 
 def red(pref):
     """

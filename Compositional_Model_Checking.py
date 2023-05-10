@@ -304,7 +304,7 @@ def real_error(m1, cex, property, alphabet):
     -- uses function parallel_composition
     """
     composition = parallel_composition(m1, property)
-    return not util.nesrine_ghannay(restriction(cex, alphabet), composition)
+    return not util.membership_query(restriction(cex, alphabet), composition)
 
 
 def trace(cex, alphabet):  # TODO enlever alphabet des paramètres
