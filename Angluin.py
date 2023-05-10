@@ -44,7 +44,7 @@ class Angluin:
         """
         Compares the lines in the Observation Table given two words belonging to RED or BLUE
 
-        param word1: first word to compare
+        :param word1: first word to compare
         :param word2: second word to compare
         :return: True if the lines are equals, False if not
         """
@@ -275,7 +275,7 @@ class Angluin:
             assumption = self.lstar_build_automaton()
             answer = assumption.__eq__(self.automate, witness=True) # equivalence query
 
-            if not answer[0] :  #TODO : l'erreur était ici !!!
+            if not answer[0] :
                 self.Lstar_use_eq(answer[1])
             else:
                 return assumption
