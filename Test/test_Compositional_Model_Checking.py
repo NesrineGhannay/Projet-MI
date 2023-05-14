@@ -106,3 +106,26 @@ def test_parallel_composition(Input, Output):
         initial_state=("0", "0"),
         final_states={("0", "0"), ("1", "0"), ("2", "1"), ("2", "2")},
         allow_partial=True)
+
+
+def test_assumption_garantee(Input, Output, P):
+    alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
+    assert assumption_garantee(alphabet, Input, Output, P) != "ERROR" #TODO :Vérifier d'abord que cela ne retourne pas erreur
+
+
+def test_learning(Input, Output, P):
+    alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
+    assumption = DFA(states={''}, input_symbols={'a', 's', 'o'}, transitions={'': {'a': '', 's': ''}}, initial_state='',
+        final_states={''}, allow_partial=True)
+    tables = [{'': 1, 'a': 1, 's': 1, 'o': 0, 'oa': 0, 'os': 0, 'oo': 0},
+              {'': 'red', 'a': 'blue', 's': 'blue', 'o': 'red', 'oa': 'blue', 'os': 'blue', 'oo': 'blue'},
+              ['']]
+    assert learning(Input, Output, assumption, P, alphabet, tables) is not None  #TODO : à calculer à la main
+
+
+@pytest.mark.parametrize("A_i, expected",
+                         [(DFA(states={''}, input_symbols={'o', 'a', 's'}, transitions={'': {'a': '', 's': ''}}, initial_state='', final_states={''}, allow_partial=True),
+                           "isai")])
+def test_satisfies_with_composition_A_i_Input(A_i, expected, Input, P):
+    compo = parallel_composition(A_i, Input)
+    assert satisfies(compo, P) == expected #TODO : essayer sur d'autres exemples calculés à la main

@@ -214,12 +214,14 @@ def assumption_garantee(alphabet, m1, m2, property):
     util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
 
     assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
+
     answer = learning(m1, m2, assumption, property, alphabet, (mq, pref, exp))
     if answer == False:
         print("ERROR")
     else:
         print("Automate trouvé : ")
         return answer
+
 
 def learning(m1, m2, assumption, property, alphabet, tables):
     """
@@ -238,11 +240,11 @@ def learning(m1, m2, assumption, property, alphabet, tables):
 
     answer = False
     while not answer:
-        print("\nM1_P", M1_P)
-        print("mq", mq)
-        print("pref", pref)
-        print("exp", exp)
+        print("mq :", mq)
+        print("pref :", pref)
+        print("exp :", exp)
         print("A_i", assumption)
+        print(property)
 
         compo = parallel_composition(assumption, m1)
         print("A_i || M1", compo)
@@ -272,7 +274,7 @@ def learning(m1, m2, assumption, property, alphabet, tables):
 
                 assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
         else:
-            util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
+            util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P) #ICI On a peut-être l'erreur
             util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
 
             assumption = util.lstar_build_lts(alphabet, mq, pref, exp)

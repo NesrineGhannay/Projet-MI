@@ -6,6 +6,7 @@ from automata.fa.dfa import DFA
 
 alphabet_ab = {"a", "b"}
 alphabet_01 = {"0", "1"}
+alphabet_abc = {"a", "b", "c"}
 
 
 # List of initial instances of Angluin with the automaton to guess:
@@ -13,10 +14,14 @@ alphabet_01 = {"0", "1"}
 def list_angluin():
     result = []
     for automaton in samples.liste:
+        if automaton == samples.odd_number_of_1 :
+            alphabet = alphabet_01
+        elif automaton == samples.A_with_c :
+            alphabet = alphabet_abc
+        else:
+            alphabet = alphabet_ab
         result.append(
-            Angluin(
-                alphabet_01 if automaton == samples.odd_number_of_1 else alphabet_ab,
-                automaton, mq={}, pref={}, exp=[]))
+            Angluin(alphabet, automaton, mq={}, pref={}, exp=[]))
     return result
 
 
@@ -153,17 +158,23 @@ def test_is_closed(no_consistent):
     assert no_consistent.is_closed() == True
 
 
-@pytest.mark.parametrize("automaton, mq0, pref0, exp0, expected_mq, expected_pref",
-                         [(samples.A, {"": 0, "a": 1, "b": 0}, {"": "red", "a": "blue", "b": "blue"}, [""],
+@pytest.mark.parametrize("automaton, alphabet, mq0, pref0, exp0, expected_mq, expected_pref",
+                         [(samples.A, alphabet_ab,
+                           {"": 0, "a": 1, "b": 0}, {"": "red", "a": "blue", "b": "blue"}, [""],
                            {"": 0, "a": 1, "b": 0, "aa": 1, "ab": 0},
                            {"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"}),
 
-                          (samples.B, {"": 0, "a": 0, "b": 1}, {"": "red", "a": "blue", "b": "blue"}, [""],
-                           {"": 0, "a": 0, "b": 1, "ba": 0, "bb": 1},
-                           {"": "red", "b": "red", "a": "blue", "ba": "blue", "bb": "blue"})
+                          (samples.odd_number_of_1, alphabet_01,
+                           {"": 0,"0": 0,"1" : 1}, {"" : "red", "0" : "blue", "1" : "blue"}, [""],
+                           {"": 0,"0": 0,"1" : 1, "10" : 1, "11" : 0}, {"" : "red", "1" : "red", "0" : "blue", "10" : "blue", "11": "blue"}),
+
+                          (samples.A_with_c, alphabet_abc,
+                           {"": 0, "a": 1, "b": 0, "c" : 0}, {"": "red", "a": "blue", "b": "blue", "c" : "blue"}, [""],
+                           {"": 0, "a": 1, "b": 0, "c" : 0, "aa": 1, "ab": 0, "ac" : 0},
+                           {"": "red", "a": "red", "b": "blue", "c" : "blue", "aa": "blue", "ab": "blue", "ac" : "blue"})
                           ])
-def test_lstar_close(automaton, mq0, pref0, exp0, expected_mq, expected_pref):
-    angluin = Angluin(alphabet_ab, automaton, mq0, pref0, exp0.copy())
+def test_lstar_close(automaton, alphabet, mq0, pref0, exp0, expected_mq, expected_pref):
+    angluin = Angluin(alphabet, automaton, mq0, pref0, exp0.copy())
     angluin.lstar_close()
     assert angluin.mq == expected_mq
     assert angluin.pref == expected_pref
@@ -254,4 +265,3 @@ def test_lstar(list_angluin):
         assert a.automate == automaton_to_guess
         p = a.lstar()
         assert p.__eq__(a.automate)
-        #en revanche assert a.__eq__(a.automate) fonctionne...

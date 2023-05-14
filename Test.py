@@ -38,7 +38,7 @@ P = completedAutomata(
 )
 
 alphabet = (Input.input_symbols.union(P.input_symbols)).intersection(Output.input_symbols)
-assumption_garantee(alphabet, Input, Output, P)
+print(assumption_garantee(alphabet, Input, Output, P))
 
 # Problème rencontré :
 # M1_P DFA(states={('1', '1'), 'pi', ('2', '0'), ('2', '1'), ('0', '0'), ('1', '0'), ('0', '1')}, input_symbols={'o', 'i', 's', 'a'}, transitions={('0', '0'): {'i': ('1', '1'), 'o': 'pi'}, ('0', '1'): {'i': 'pi', 'o': ('0', '0')}, ('1', '0'): {'s': ('2', '0'), 'o': 'pi'}, ('1', '1'): {'s': ('2', '1'), 'o': ('1', '0')}, ('2', '0'): {'a': ('0', '0'), 'o': 'pi'}, ('2', '1'): {'a': ('0', '1'), 'o': ('2', '0')}, 'pi': {'o': 'pi', 'a': 'pi', 'i': 'pi', 's': 'pi'}}, initial_state=('0', '0'), final_states={('1', '1'), ('2', '0'), ('2', '1'), ('0', '0'), ('1', '0'), ('0', '1')}, allow_partial=True)

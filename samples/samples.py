@@ -84,5 +84,16 @@ odd_number_of_1_version2 = DFA(states={0, 1},
                                initial_state=0,
                                final_states={1})
 
+
+A_with_c = DFA(states={"0", "1", "puits"},
+        input_symbols={"b", "a", "c"},
+        transitions={
+            "0": {"a": "1", "b": "0", "c" : "puits"},
+            "1": {"a": "1", "b": "puits", "c" : "puits"},
+            "puits": {"a": "puits", "b": "puits", "c" : "puits"}},
+        initial_state="0",
+        final_states={"1"}
+        )
+
 # List of DFA with whom we test our functions :
-liste = [A, B, C, odd_number_of_1, A2, automate, automate2]
+liste = [A, B, C, odd_number_of_1, A2, automate, automate2, A_with_c]

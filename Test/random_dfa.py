@@ -6,7 +6,7 @@ import pytest
 from automata.fa.dfa import DFA
 
 
-def get_accessible(alphabet, liste_states):
+def set_accessible(alphabet, liste_states):
     list_letters = list(alphabet)
     transitions = {0: {}}
     waited_list = copy.copy(liste_states)
@@ -37,7 +37,7 @@ def complete_randomly(transitions, alphabet, liste_states):
 def random_dfa(alphabet, number_states, all_final = False):
     list_states = [i for i in range(number_states)]
     states = set(copy.copy(list_states))
-    transitions = get_accessible(alphabet, list_states)
+    transitions = set_accessible(alphabet, list_states)
     transitions = complete_randomly(transitions, alphabet, list_states)
     if all_final :
         final = copy.deepcopy(states)
