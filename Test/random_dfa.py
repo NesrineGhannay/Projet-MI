@@ -24,26 +24,27 @@ def set_accessible(alphabet, liste_states):
     return transitions
 
 
-def complete_randomly(transitions, alphabet, liste_states):
+def complete_randomly(transitions, alphabet, liste_states, p):
     for source in liste_states:  # Pour que l'automate soit complet
         for letter in alphabet:
             if not letter in transitions[source]:
-                target = random.choice(liste_states)
-                transitions[source][letter] = target
+                if random.random() < p :
+                    target = random.choice(liste_states)
+                    transitions[source][letter] = target
     return transitions
 
 
-# construit un automate déterministe fini complet aléatoirement
-def random_dfa(alphabet, number_states, all_final = False):
+# construit un automate déterministe fini aléatoirement
+def random_dfa(alphabet, number_states, all_final = False, p=1):
     list_states = [i for i in range(number_states)]
     states = set(copy.copy(list_states))
     transitions = set_accessible(alphabet, list_states)
-    transitions = complete_randomly(transitions, alphabet, list_states)
+    transitions = complete_randomly(transitions, alphabet, list_states, p)
     if all_final :
         final = copy.deepcopy(states)
     else :
         final = set(random.sample(list_states, random.randint(1, number_states)))
-    return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=0, final_states=final)
+    return DFA(states=states, input_symbols=alphabet, transitions=transitions, initial_state=0, final_states=final, allow_partial=True)
 
 
 @pytest.mark.parametrize("nombre", range(100))
