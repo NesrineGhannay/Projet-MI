@@ -32,7 +32,19 @@ def membership_query(mot, automaton):
         etat_courant = automaton.transitions[etat_courant][lettre]
     return True
 
+
 def initialise(alphabet, automaton, mq=None, exp=None, pref=None):
+    """
+    Initialise the observation table.
+
+    :param alphabet : the alphabet
+    :param automaton: the unknown automaton
+    :param mq:
+    :param exp:
+    :param pref:
+
+    -- uses function fill_the_table
+    """
     if mq is None:
         mq = {}
     if exp is None:
