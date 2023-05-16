@@ -267,10 +267,18 @@ def test_lstar(list_angluin):
         assert a.automate == automaton_to_guess
         assert p.__eq__(a.automate)[0]
 
+def test_lstar_soucis():
+    angluin = Angluin(alphabet_ab, samples.soucis, mq={}, pref={}, exp=[])
+    automaton_to_guess = angluin.automate.copy()
+    p = angluin.lstar()
+    assert angluin.automate == automaton_to_guess
+    assert p.__eq__(angluin.automate)[0]
+
 def test_lstar_random(): #TODO : TESTER
-    for i in range(5) :
-        a = random_dfa.random_dfa(alphabet_ab, 10)
+    for i in range(100):
+        a = random_dfa.random_dfa(alphabet_ab, 3)
         A = Angluin(alphabet_ab, a, mq={}, pref={}, exp=[])
         p = A.lstar()
         assert A.automate == a
         assert p.__eq__(a)[0]
+        print(i, "ième DFA aléatoire validé")

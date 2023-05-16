@@ -81,6 +81,7 @@ class DFA(fa.FA):
 
             if is_final_state(q_a) ^ is_final_state(q_b): # c'est un ou exclusif
                 if witness :
+                    print(trace[state_sets[q_a]])
                     return [False, trace[state_sets[q_a]]]
                 return [False]
 

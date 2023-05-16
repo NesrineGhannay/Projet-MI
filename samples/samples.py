@@ -95,5 +95,8 @@ A_with_c = DFA(states={"0", "1", "puits"},
         final_states={"1"}
         )
 
+soucis = DFA(states={0, 1, 2}, input_symbols={'a', 'b'}, transitions={0: {'b': 1}, 1: {'a': 2}, 2: {}}, initial_state=0, final_states={2}, allow_partial=True)
+
+
 # List of DFA with whom we test our functions :
 liste = [A, B, C, odd_number_of_1, A2, automate, automate2, A_with_c]

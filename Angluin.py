@@ -117,7 +117,7 @@ class Angluin:
         :param s: Line of the table we want to compare
         :return: True if there's different False else
 
-        -- uses function red
+        -- uses function red :
         -- uses function line
         """
         for u in self.red():
