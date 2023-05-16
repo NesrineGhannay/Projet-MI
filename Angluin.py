@@ -264,7 +264,7 @@ class Angluin:
         """
         self.Lstar_Initialise()
         first_iteration = True # to enter the while loop
-        while first_iteration or not answer :
+        while first_iteration or not answer[0] :
             first_iteration = False
             while not self.is_closed() or not self.is_consistent():
                 if not self.is_closed():
@@ -274,10 +274,11 @@ class Angluin:
                     self.lstar_consistent()
 
             assumption = self.lstar_build_automaton()
-            answer = assumption.__eq__(self.automate, witness=True) # equivalence query
+            answer = assumption.__eq__(self.automate, witness=True)
 
             if not answer[0] :
                 self.Lstar_use_eq(answer[1])
             else:
+                print(assumption)
                 return assumption
         return assumption

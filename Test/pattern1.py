@@ -14,15 +14,18 @@ abscissa = []
 ordinate = []
 
 
-for i in range(0, 10001, 1000):
+for i in range(0, 101, 10):
     abscissa.append(i+2)
     automaton = DFA(states=states, input_symbols= alphabet, transitions=transitions, initial_state=initial_state, final_states=final_states)
+    print(automaton)
     a = time.time()
     angluin = Angluin(alphabet=alphabet, DFA_to_learn=automaton, mq={}, pref={}, exp=[])
-    angluin.lstar()
+    result = angluin.lstar()
     b = time.time()
+    print(result)
     ordinate.append(b-a)
-    for j in range(1000):
+    print(i)
+    for j in range(10):
         states.add(i+j+1)
         transitions[i+j] = {"a": i+j+1, "b": i+j+1}
         transitions[i+j+1] = {"a": "puits", "b": "puits"}

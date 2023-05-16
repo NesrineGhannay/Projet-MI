@@ -265,7 +265,7 @@ def test_lstar(list_angluin):
         automaton_to_guess = a.automate.copy()
         p = a.lstar()
         assert a.automate == automaton_to_guess
-        assert p.__eq__(a.automate)
+        assert p.__eq__(a.automate)[0]
 
 def test_lstar_random():
     for i in range(100) :
@@ -273,4 +273,4 @@ def test_lstar_random():
         A = Angluin(alphabet_ab, a, mq={}, pref={}, exp=[])
         p = A.lstar()
         assert A.automate == a
-        assert p.__eq__(a)
+        assert p.__eq__(a)[0]
