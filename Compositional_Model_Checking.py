@@ -166,11 +166,8 @@ def parallel_composition(M1, M2):
     aM2 = M2.input_symbols
     aM = aM1 | aM2
     T = synchronization(M1, M2)
-    # si lettre existante dans un seul des alphabet
     T_ = interleaving(T, M1, M2)
-    # F : final and accepted states
     F = get_final_states(M1.final_states, M2.final_states)
-    # suppression des états inutiles (sans transitions)
     reachable_states = {q_0}
     for start_state in T_:
         for char in T_[start_state]:
@@ -183,7 +180,6 @@ def parallel_composition(M1, M2):
     for state in F:
         if state not in reachable_states:
             reachable_final_states.remove(state)
-    # redirection vers un état d'erreur unique
     if "pi" in reachable_states:
         if "pi" not in clean_transitions:
             clean_transitions["pi"] = {}
@@ -234,7 +230,7 @@ def learning(m1, m2, assumption, property, alphabet, tables):
     answer = False
     while not answer:
         compo = parallel_composition(assumption, m1)
-        first_result = satisfies(compo, property) # first oracle
+        first_result = satisfies(compo, property)
         if first_result == True:
             completed_assumption = completedAutomataByDFA(assumption)
             cex = satisfies(m2, completed_assumption)
@@ -247,7 +243,7 @@ def learning(m1, m2, assumption, property, alphabet, tables):
                 util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
                 assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
         else:
-            util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P) #ICI On a peut-être l'erreur
+            util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
             util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
             assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
     return assumption
@@ -271,7 +267,7 @@ def real_error(m1, cex, property, alphabet):
     return not util.membership_query(restriction(cex, alphabet), composition)
 
 
-def trace(cex, alphabet):  # TODO enlever alphabet des paramètres
+def trace(cex):
     """
     Determine the trace of a word
     :param cex: The word tha we want to determine the trace
@@ -306,7 +302,6 @@ def satisfies(M, P):
     if len(restricted_symbols) > 0:
         P_complete = extend_alphabet(P, restricted_symbols)
         P = P_complete
-    # P is now able to read words from the M alphabet
     return M.__le__(P, witness=True, lts=True)
 
 
@@ -335,12 +330,8 @@ def extend_alphabet(A, symbols_to_add):
     :param symbols_to_add: list of symbols to be added to the DFA
     :return: the completed DFA
     """
-    # we are not using copy() to get the original alphabet because it is represented by a frozenset (immutable)
     completed_alphabet = copy_set(A.input_symbols)
-
-    # we are not using copy() to get the original transition set because it is represented by a frozendict (immutable)
     completed_transitions = copy_transitions(A.transitions)
-
     for symbol in symbols_to_add:
         completed_alphabet.add(symbol)
         for state in A.states:
