@@ -322,7 +322,6 @@ def learning(m1, m2, assumption, property, alphabet, tables):
                 util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
                 assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
         else:
-            print("salut")
             util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P)
             util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
             assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
