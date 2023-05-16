@@ -22,7 +22,6 @@ for i in range(0, 10001, 1000):
     angluin.lstar()
     b = time.time()
     ordinate.append(b-a)
-    print(i)
     for j in range(1000):
         states.add(i+j+1)
         transitions[i+j] = {"a": i+j+1, "b": i+j+1}

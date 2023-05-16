@@ -9,6 +9,14 @@ ordinate = []
 
 
 def add_abs_ord(beginning, ending, step):
+    """
+    Add abscissa and ordinate. The abscissa are the number of states of the DFA and ordinate are the average time of
+    Angluin's execution.
+
+    :param beginning: the number of states of first built DFA's
+    :param ending: the number of states of last built DFA's
+    :param step: for each loop, we increase the number of states of "step" states.
+    """
     for i in range(beginning, ending, step):
         abscissa.append(i)
         result = 0
