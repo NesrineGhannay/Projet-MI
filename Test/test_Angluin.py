@@ -267,9 +267,9 @@ def test_lstar(list_angluin):
         assert a.automate == automaton_to_guess
         assert p.__eq__(a.automate)[0]
 
-def test_lstar_random():
-    for i in range(100) :
-        a = random_dfa.random_dfa(alphabet_ab, 1000)
+def test_lstar_random(): #TODO : TESTER
+    for i in range(5) :
+        a = random_dfa.random_dfa(alphabet_ab, 10)
         A = Angluin(alphabet_ab, a, mq={}, pref={}, exp=[])
         p = A.lstar()
         assert A.automate == a

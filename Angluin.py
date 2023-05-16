@@ -279,6 +279,5 @@ class Angluin:
             if not answer[0] :
                 self.Lstar_use_eq(answer[1])
             else:
-                print(assumption)
                 return assumption
         return assumption
