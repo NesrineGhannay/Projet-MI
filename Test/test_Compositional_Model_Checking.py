@@ -68,6 +68,7 @@ def test_completedAutomata(states, alphabet, transitions, initial_state, final_s
             final_states=final_states))
 
 
+#TODO : rendre l'automate complet Test.py
 def test_completedAutomataByDFA(Input):
     assert completedAutomataByDFA(Input).__eq__(DFA(states={"0", "1", "puits"}, input_symbols={"i", "o"},
                                                     transitions={"0": {"i": "1", "o": "puits"},
@@ -128,4 +129,14 @@ def test_learning(Input, Output, P):
                            "isai")])
 def test_satisfies_with_composition_A_i_Input(A_i, expected, Input, P):
     compo = parallel_composition(A_i, Input)
-    assert satisfies(compo, P) == expected #TODO : essayer sur d'autres exemples calculés à la main
+    assert satisfies(compo, P) == expected
+
+
+#TODO : tests Pauline
+@pytest.mark.parametrize("M, P, expected",
+                         [])
+def test_satisfies_with_composition_A_i_Input(M, P, expected):
+    assert satisfies(M, P) == expected
+
+
+#TODO : tests unitaires de real_error, trace, copy_set, copy_transitions, extend_alphabet

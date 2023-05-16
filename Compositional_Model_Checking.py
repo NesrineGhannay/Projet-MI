@@ -153,23 +153,18 @@ def parallel_composition(M1, M2):
 
     :return : DFA who is the composition of M1 and M2
     """
-    # Q : les etats (states)
     Q = set()
     Q1 = M1.states
     Q2 = M2.states
     for q1 in Q1:
         for q2 in Q2:
             Q.add((q1, q2))
-    # q_0 : etat initial
     q1_0 = M1.initial_state
     q2_0 = M2.initial_state
     q_0 = (q1_0, q2_0)
-    # aM : alphabet
     aM1 = M1.input_symbols
     aM2 = M2.input_symbols
     aM = aM1 | aM2
-    # les transitons
-    # si lettre dans intersection des alphabets de M1 et M2
     T = synchronization(M1, M2)
     # si lettre existante dans un seul des alphabet
     T_ = interleaving(T, M1, M2)
@@ -235,50 +230,26 @@ def learning(m1, m2, assumption, property, alphabet, tables):
     :return: the correct assumption or False if it's not possible to generate it
     """
     mq, pref, exp = tables
-
     M1_P = parallel_composition(m1, property)
-
     answer = False
     while not answer:
-        print("mq :", mq)
-        print("pref :", pref)
-        print("exp :", exp)
-        print("A_i", assumption)
-        print(property)
-
         compo = parallel_composition(assumption, m1)
-        print("A_i || M1", compo)
-
         first_result = satisfies(compo, property) # first oracle
-        print("first result", first_result)
-
         if first_result == True:
-            print("m2", m2)
-            print("assumption", assumption)
-
             completed_assumption = completedAutomataByDFA(assumption)
-
             cex = satisfies(m2, completed_assumption)
-            print("cex", cex)
-
             if cex == True:
                 answer = True
-
             elif real_error(m1, cex, property, alphabet):
-                print("real_error")
                 return False
-
             else:
                 util.LSTAR_USEEQ(restriction(cex, alphabet), alphabet, mq, pref, exp, M1_P)
                 util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
-
                 assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
         else:
             util.LSTAR_USEEQ(restriction(first_result, alphabet), alphabet, mq, pref, exp, M1_P) #ICI On a peut-être l'erreur
             util.make_close_and_consistent(mq, pref, exp, alphabet, M1_P)
-
             assumption = util.lstar_build_lts(alphabet, mq, pref, exp)
-
     return assumption
 
 
@@ -332,7 +303,6 @@ def satisfies(M, P):
     for symbol in M.input_symbols:
         if symbol not in P.input_symbols:
             restricted_symbols.add(symbol)
-    print("restricted symbols", restricted_symbols)
     if len(restricted_symbols) > 0:
         P_complete = extend_alphabet(P, restricted_symbols)
         P = P_complete

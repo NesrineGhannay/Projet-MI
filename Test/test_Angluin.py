@@ -2,6 +2,7 @@ import copy
 import pytest
 from Angluin import *
 from samples import samples
+import random_dfa
 from automata.fa.dfa import DFA
 
 alphabet_ab = {"a", "b"}
@@ -262,6 +263,14 @@ def test_lstar_build_automaton(automaton, mq, pref, exp):
 def test_lstar(list_angluin):
     for a in list_angluin:
         automaton_to_guess = a.automate.copy()
-        assert a.automate == automaton_to_guess
         p = a.lstar()
+        assert a.automate == automaton_to_guess
         assert p.__eq__(a.automate)
+
+def test_lstar_random():
+    for i in range(100) :
+        a = random_dfa.random_dfa(alphabet_ab, 1000)
+        A = Angluin(alphabet_ab, a, mq={}, pref={}, exp=[])
+        p = A.lstar()
+        assert A.automate == a
+        assert p.__eq__(a)
