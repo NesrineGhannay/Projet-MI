@@ -29,11 +29,11 @@ def list_angluin():
 # Instance of an Angluin in which the table is not consistent (the automaton is A2)
 @pytest.fixture
 def no_consistent():
-    mq0 = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0, 'bba': 0, 'bbb': 0}
-    pref0 = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
+    mq = {'': 1, 'a': 0, 'aa': 1, 'b': 0, 'bb': 1, 'ab': 0, 'ba': 0, 'bba': 0, 'bbb': 0}
+    pref = {'': 'red', 'a': 'red', 'b': 'red', 'bb': 'red', 'aa': 'blue', 'ab': 'blue', 'ba': 'blue', 'bba': 'blue',
              'bbb': 'blue'}
-    exp0 = ['']
-    return Angluin(alphabet_ab, samples.A2, mq0, pref0, exp0)
+    exp = ['']
+    return Angluin(alphabet_ab, samples.A2, mq, pref, exp)
 
 
 # Two instances of the Angluin in which the table has become consistent
@@ -159,7 +159,7 @@ def test_is_closed(no_consistent):
     assert no_consistent.is_closed() == True
 
 
-@pytest.mark.parametrize("automaton, alphabet, mq0, pref0, exp0, expected_mq, expected_pref",
+@pytest.mark.parametrize("automaton, alphabet, mq, pref, exp, expected_mq, expected_pref",
                          [(samples.A, alphabet_ab,
                            {"": 0, "a": 1, "b": 0}, {"": "red", "a": "blue", "b": "blue"}, [""],
                            {"": 0, "a": 1, "b": 0, "aa": 1, "ab": 0},
@@ -174,12 +174,12 @@ def test_is_closed(no_consistent):
                            {"": 0, "a": 1, "b": 0, "c" : 0, "aa": 1, "ab": 0, "ac" : 0},
                            {"": "red", "a": "red", "b": "blue", "c" : "blue", "aa": "blue", "ab": "blue", "ac" : "blue"})
                           ])
-def test_lstar_close(automaton, alphabet, mq0, pref0, exp0, expected_mq, expected_pref):
-    angluin = Angluin(alphabet, automaton, mq0, pref0, exp0.copy())
+def test_lstar_close(automaton, alphabet, mq, pref, exp, expected_mq, expected_pref):
+    angluin = Angluin(alphabet, automaton, mq, pref, exp.copy())
     angluin.lstar_close()
     assert angluin.mq == expected_mq
     assert angluin.pref == expected_pref
-    assert angluin.exp == exp0
+    assert angluin.exp == exp
 
 
 def test_find_consistency_problem(no_consistent, consistent_a):
@@ -212,7 +212,7 @@ def test_get_prefixes():
 # TODO : faire le test de __eq__
 
 
-@pytest.mark.parametrize("automaton, mq0, pref0, exp0, answer, expected_mq, expected_pref",
+@pytest.mark.parametrize("automaton, mq, pref, exp, answer, expected_mq, expected_pref",
                          [(samples.A, {"": 0, "a": 1, "b": 0, "aa": 1, "ab": 0},
                            {"": "red", "a": "red", "b": "blue", "aa": "blue", "ab": "blue"},
                            [""], "aba",
@@ -233,12 +233,12 @@ def test_get_prefixes():
                             "aa": "blue", "abb": "blue", "abaa": "blue", "abab": "blue", "bb": "blue", "baa": "blue",
                             "bab": "blue"})
                           ])
-def test_lstar_useeq(automaton, mq0, pref0, exp0, answer, expected_mq, expected_pref):
-    a = Angluin(alphabet_ab, automaton, mq0, pref0, exp0.copy())
+def test_lstar_useeq(automaton, mq, pref, exp, answer, expected_mq, expected_pref):
+    a = Angluin(alphabet_ab, automaton, mq, pref, exp.copy())
     a.Lstar_use_eq(answer)
     assert a.mq == expected_mq
     assert a.pref == expected_pref
-    assert a.exp == exp0
+    assert a.exp == exp
 
 
 @pytest.mark.parametrize("automaton, mq, pref, exp",
